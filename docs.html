@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Cowl docs</title>
+	</head>
+	<body>
+		<h1>Cowl documentation</h1>
+		
+		<p>This document is a work in progress.</p>
+		
+		<h2>Navigation</h2>
+		
+		<ol>
+			<li><a href="#intro">Introduction</a></li>
+			<li><a href="#goal">Goal</a></li>
+			<li>
+				<a href="#style">Style</a>
+				<ol type="a">
+					<li>
+						<a href="#style-conventions">Conventions</a>
+						<ol type="i">
+							<li>Names</li>
+							<li>Brackets</li>
+							<li>Indentation</li>
+							<li>Spaces</li>
+						</ol>
+					</li>
+					<li><a href="#style-documentation">Documentation</a></li>
+				</ol>
+			</li>
+			<li><a href="#contributions">Contributions</a></li>
+			<li><a href="#contact">Contact</a></li>
+		</ol>
+		
+		<h3 id="intro">Intro</h3>
+		
+			<p>Welcome to <strong>Cowl</strong>. Cowl is an <em>Object Oriented PHP 5 framework designed to make writing boring, generic websites less boring and generic</em>. Created by teen super child Erik Andersson from the dark abcsesses of Sweden.</p>
+		
+		<h3 id="goal">Goal</h3>
+		
+			<p>First and formost, the goal of Cowl is to stay alive as an open source project and receive a steady stream of commits improving the ecosystem that is Cowl. Secondly the goal is to make creating websites fun and challenging again. The time spent om boring things should always be at a minimun when developing with Cowl.</p>
+		
+			<p>Cowl is not meant to be a super MVC framework, because I have never taken the time to learn what really constitutes an MVC framework. The main point is to work in real world cases. Cowl was built from needs.</p>
+		
+		<h3 id="style">Style</h3>
+		
+			<p>Sadly, Cowl can not force you to write <strong>good</strong> code (but the devs (me) will probably hate you if you're stupid). However, the damages will be kept at a minimum if you choose to follow these conventions.</p> 
+		
+			<h4 id="style-conventions">Conventions</h4>
+		
+				<p>Non-believers will probably hate these conventions, and I hate non-believers.</p>
+		
+				<p>To keep the code <em>clean</em> and <em>standardized</em> in Core Cowl developers should always follow these conventions, unless they want their hard work to get neglected, unfed, murdered and rot in code hell. Damn sadists I say.</p>
+		
+				<p>If you find any non-conventional code in Core Cowl you are allowed to crucify the dev responsible. It is you duty as a human being to correct the atrocity.</p>
+		
+				<h5>Names</h5>
+					
+					<p>Names should follow the following conventions:</p>
+					
+					<h6>Code</h6> <!-- Oh crap! Out of nesting! -->
+					
+					<dl>
+						<dt>Classes</dt>
+						<dd>PascalCased. Namespacing names ala PHP 4|5 foo_bar_MooTools is not necessary and should not be used.</dd>
+						<dt>Methods</dt>
+						<dd>camelCased verbs. Names should be descriptive and short. The less words the better.</dd>
+						<dd>Getters and setters should be prefixed with <var>getFoo()</var> respectively <var>setFoo()</var>.</dd>
+						<dt>Properties</dt>
+						<dd>with_underscore. If a boolean value is stored <var>is_</var> should be prefixed, so it can be read as "Is exists?" or "Is dirty?".</dd>
+						<dt>Variables</dt>
+						<dd>Variables follow the same conventions as class properties.</dd>
+					</dl>
+					
+					<h6>Files</h6>
+					
+					<p>Files follow special rules and therefor gets their own definition list:</p>
+					
+					<dl>
+						<dt>Core files</dt>
+						<dd>Core files should be placed in the cowl/-directory with simply the name of the class contained (lowercased) as its own.</dd>
+						<dt>Plugins</dt>
+						<dd>Plugins are placed in the cowl/plugins/-directory. They can be placed in any number of sub-directories and the actual plugin filename should be prefixed with plugin.<var>pluginname</var>.php. Other files are ignored and can thus be used as library files.</dd>
+						<dt>Commands</dt>
+						<dd>Prefixed with command.<var>commandname</var>.php and <var>commandname</var> is of course the name of the contained command (class).</dd>
+						<dt>Model</dt>
+						<dd>This feature is not yet decided. Please come again.</dd>
+						<dt>Views</dt>
+						<dd>This feature is not yet decided. Please come again.</dd>
+					</dl>
+				
+				<h5>Brackets</h5>
+				
+				<p>Finally it is my turn to govern whether the newline should be placed before or after the brackets!</p>
+				
+				<p>The newline should be placed <strong>after</strong> the closing parens and <strong>before</strong> the bracket, resulting in this spacious code:</p>
+				
+<pre><code>
+/*
+	These block-statements follow the general convention.
+*/
+
+if ( $user->is_online )
+{
+	// ...	
+}
+
+while ( true )
+{
+	// ...
+}
+
+foreach ( $users as $user )
+{
+	// ...
+}
+
+for ( $i = 0; $i < 100; $i++ )
+{
+	// ...
+}
+
+/*
+	These do not.
+*/
+
+// Don't we all love exceptions
+try {
+	throw new Exception('Error');
+} catch ( Exception $e ) {
+	// ...
+}
+
+do { // do looks naked without the bracket to the right of it
+	
+} while ( false );
+</code></pre>
+				
+				<p>Notice the exception in the <code>try { ... } catch () { ... }</code>-block and <code>do { ... } while ();</code>.</p>
+				
+				<h5>Indentation</h5>
+				
+				<p>Indentation should <em>almost</em> always be a tab (\t) character. The exception is in the config.ini file, where spaces should be used for unified indentation.</p>
+				
+				<h5>Spaces</h5>
+				
+				<p>Spaces should be used as follows:</p>
+
+<pre><code>
+
+if ( ! empty($input) )
+{
+	if ( preg_match($regex, $input) )
+	{
+		$user->set('field', $input);
+		$user->update();
+	}
+}
+else
+{
+	foreach ( $users as $user )
+	{
+		$user->collect();
+	}
+}
+
+</code></pre>
+				
+			<h4 id="style-documentation">Documentation</h4>
+		
+			<p>Cowl's style of documentation follows that of <a href="http://www.naturaldocs.org/">NaturalDocs</a>. For the curious, information can be found at NaturalDocs website.</p>
+		
+			<p>Be sure to always take some time off every coding session to walk through and document your code. <strong>This step is very important.</strong> Any code commited that is not thouroghly documentated will not be accepted.</p>
+			
+		<h3 id="contributions">Contributions</h3>
+		
+		<p>Contributions can come in all shapes and sizes, in monetary support or core code. <a href="#contact">Contact</a> me if you are interested in either.</p>
+		
+		<h3 id="contact">Contact</h3>
+		
+		<p>I can be reached at <em>erik.rothoff@gmail.com</em>. Cowl may probably never have its own website, so let's hope it still can live and prosper as open source software.</p>
+		
+		<hr />
+		
+		<p>I would like to welcome You, fickle programmer, to the world of Cowl.</p>
+	</body>
+</html>

@@ -1,0 +1,43 @@
+<rev>
+	<create type="table" name="categories" engine="MYISAM">
+		<field
+			name="id"
+			type="int"
+			length="11"
+			auto_increment="true"
+			primary_key="true" />
+		
+		<field
+			name="app_id"
+			type="int"
+			length="11" />
+		
+		<field
+			name="name"
+			type="varchar"
+			length="75" />
+	</create>
+	
+	<create type="table" name="sorting" engine="MYISAM">
+		<field
+			name="id"
+			type="int(11)"
+			length="11"
+			auto_increment="true"
+			primary_key="true" />
+		
+		<field
+			name="name"
+			type="varchar"
+			length="50" />
+		
+		<field
+			name="sort_index"
+			type="int"
+			length="11" />
+	</create>
+	
+	<alter type="table" name="sorting">
+		<drop name="sort_index2" />
+	</alter>
+</rev>

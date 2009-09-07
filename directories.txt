@@ -1,0 +1,13 @@
+cowl/	
+	cache/
+	
+	plugins/
+	
+	lib/
+		registries/
+		validators/
+	
+	app/
+		models/
+		commands/
+	
