@@ -9,10 +9,10 @@
 
 class Controller
 {
-	private static $HEADERS = array(
+	private static $headers = array(
 		'json' => 'text/json',
 		'css' => 'text/css',
-		'js' => 'text/javascript',
+		'js' => 'text/x-javascript',
 		'jpg' => 'image/jpeg',
 		'gif' => 'image/gif',
 		'png' => 'image/png',

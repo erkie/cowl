@@ -1,7 +1,5 @@
 <?php
 
-class RequestInfoNotFoundException extends RegistryFailException {}
-
 /*
 	Class:
 		<Request>
@@ -51,6 +49,11 @@ class Request extends Registry
 	
 	public function setInfo($key, $value)
 	{
+		if ( $this->has($key) && is_array($value) )
+		{
+			$old = $this->getInfo($key);
+			$value = array_merge($old, $value);
+		}
 		$this->request_data[$key] = $value;
 	}
 	
@@ -63,7 +66,7 @@ class Request extends Registry
 		Parameters:
 			$key - The key to fetch
 		
-		Returns
+		Returns:
 			The value.
 	*/
 	
@@ -71,9 +74,24 @@ class Request extends Registry
 	{
 		if ( ! isset($this->request_data[$key]) )
 		{
-			throw new RequestInfoNotFoundException($key);
+			return null;
 		}
 		
 		return $this->request_data[$key];
+	}
+	
+	/*
+		Method:
+			<Request::has>
+		
+		Checks to see if the key exists.
+		
+		Returns:
+			True if it does, else false.
+	*/
+	
+	public function has($key)
+	{
+		return isset($this->request_data[$key]);
 	}
 }

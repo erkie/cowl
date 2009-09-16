@@ -68,4 +68,8 @@ class Current
 	// Property: <Current::$plugins>
 	// Current plugin object.
 	public static $plugins;
+	
+	// Property: <Current::$auth>
+	// Placeholder for a global named auth
+	public static $auth;
 }

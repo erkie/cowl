@@ -19,14 +19,14 @@ class Config extends Registry
 	// Property: <Config::$instance>
 	// See <Registry::$instance>
 	protected static $instance;
-	
+
 	// Property: <Config::$path>
 	// Points to the directory in which the config.ini file lies.
 	private static $path = '';
 	
-	// Property: <Config::$base>
-	// The directory for which the tilde in names is replaced with.
-	private $base = '';
+	// Property: <Config::$cache>
+	// The <PHPCache>-instance for the config-file.
+	private $cache;
 	
 	// Property: <Config::instance>
 	// See <Registry::instance>
@@ -39,12 +39,19 @@ class Config extends Registry
 		Method:
 			<Config::initialize>
 		
-		Parse ini-file and add variables to store.
+		Parse ini-file and add variables to store. The values are also stored in the cache file as serialized php.
 	*/
 	
 	protected function initialize()
 	{
-		$this->parseIniFile(self::$path . 'config.ini');
+		$cache_name = self::$path . 'config.ini';
+		
+		$this->cache = new PHPFileCache('cowl.config', $cache_name);
+		if ( false === ($this->data = $this->cache->get()) )
+		{
+			$this->parseIniFile(self::$path . 'config.ini');
+			$this->cache->update($this->data);
+		}
 	}
 	
 	/*
@@ -57,11 +64,11 @@ class Config extends Registry
 	private function parseIniFile($filename)
 	{
 		$arr = parse_ini_file($filename);
-		$this->base = $arr['paths.base'];
+		$base = $arr['paths.base'];
 		
 		foreach ( $arr as $key => $value )
 		{
-			$arr[$key] = str_replace('~', $this->base, $value);
+			$arr[$key] = str_replace('~', $base, $value);
 		}
 		$this->data = $arr;
 	}

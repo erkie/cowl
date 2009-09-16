@@ -23,7 +23,7 @@ abstract class Command
 	
 	// Property: <Command::$view>
 	// The name of the view to include as template.
-	private $view = 'view.main.php';
+	private $view;
 	
 	/*
 		Constructor:
@@ -97,11 +97,11 @@ abstract class Command
 		}
 		
 		// Set view to either the base-name of the class, which is default or the name of the method
-		if ( $this->template->exists('view.' . $method . '.php') )
+		if ( is_null($this->view) && $this->template->exists('view.' . $method . '.php') )
 		{
 			$this->setView($method);
 		}
-		else
+		else if ( is_null($this->view) )
 		{
 			$this->setView($view);
 		}

@@ -1,87 +1,51 @@
 <?php
 
-class AuthenticationFailException extends Exception {}
-class AuthenticationFileNotFoundException extends AuthenticationFailException {}
+class AuthenticationFailException extends Exception
+{
+	private $keys = array();
+	
+	public function __construct($keys)
+	{
+		parent::__construct();
+		$this->keys = $keys;
+	}
+	
+	public function getKeys()
+	{
+		return $this->keys;	
+	}
+}
 
 class Authentication extends Plugin
 {
-	private $rights;
-	private $rights_file = array();
-	
-	// Property: <Autentication::$args>
-	// Contains the arguments passed to the active command.
-	private $args;
+	private $failures = array();
 	
 	public function __construct()
 	{
-		$this->rights_file = Current::$config->get('plugins.authentication.rights');
-		if ( ! file_exists($this->rights_file) )
+		Current::$auth = $this;
+	}
+	
+	public function force($rule, $key)
+	{
+		$this->enforce($rule, $key);
+		$this->runTests();
+	}
+	
+	public function enforce($rule, $key)
+	{
+		if ( ! $rule )
 		{
-			throw new AuthenticationFileNotFoundException($this->rights_file);
-		}
-		$this->rights = parse_ini_file($this->rights_file);
-	}
-	
-	public function hasAccessRights()
-	{
-		$key = 'access';
-		
-		foreach ( $this->args as $piece )
-		{
-			$key .= '.' . $piece;
-			if ( isset($this->rights[$key]) )
-			{
-				$this->enforce($this->rights[$key]);
-			}
-		}
-		
-		return true;
-	}
-	
-	public function hasRights()
-	{
-		return true;
-	}
-	
-	public function enforce($rule)
-	{
-		$parser = new AuthenticationParser($rule);
-		return $parser->run();
-	}
-	
-	public function commandRun($method, $args)
-	{
-		$this->args = $args['pieces'];
-		array_push($this->args, $method);
-		
-		if ( ! $this->hasAccessRights($args) )
-		{
-			throw new AuthenticationFailException();
+			$this->failures[] = $key;
 		}
 	}
 	
-	public function dbFind(DataMapper $mapper, $args)
+	public function runTests()
 	{
-		$class = get_class($mapper);
-		
-		if ( ! $this->hasRights($class, 'find') )
+		if ( count($this->failures) )
 		{
-			throw new AuthenticationFailException();
+			throw new AuthenticationFailException($this->failures);
 		}
-	}
-	
-	public function dbInsert(DataMapper $mapper, DomainObject $object)
-	{
 		
-	}
-	
-	public function dbUpdate(DataMapper $mapper, DomainObject $object)
-	{
-		
-	}
-	
-	public function dbRemove(DataMapper $mapper, $id)
-	{
-		
+		$this->failures = array();
 	}
 }

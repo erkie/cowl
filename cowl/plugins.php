@@ -1,5 +1,7 @@
 <?php
 
+include('plugin.php');
+
 /*
 	Class:
 		<Plugins>
@@ -86,10 +88,7 @@ class Plugins
 		
 		foreach ( $this->plugins as $plugin )
 		{
-			if ( method_exists($plugin, $method) )
-			{
-				call_user_func_array(array($plugin, $method), $args);
-			}
+			call_user_func_array(array($plugin, $method), $args);
 		}
 	}
 	
@@ -115,29 +114,4 @@ class Plugins
 		$name = preg_replace('/plugin\.(.*?)\.php/', '$1', end(explode('/', $filename)));
 		return str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
 	}
-}
-
-/*
-	Class:
-		<Plugin>
-	
-	Abstract base class for all plugins.
-*/
-
-abstract class Plugin
-{
-	// FrontController-related hooks
-	public function prePathParse(Controller $controller) {}
-	public function postPathParse($args) {}
-	public function postRun() {}
-	
-	// Command-related hooks
-	public function commandRun($method, $args) {}
-	
-	// ORM-related hooks
-	public function dbPopulate(DataMapper $mapper, DomainObject $object) {}
-	public function dbFind(DataMapper $mapper, $args) {}
-	public function dbInsert(DataMapper $mapper, DomainObject $object) {}
-	public function dbUpdate(DataMapper $mapper, DomainObject $object) {}
-	public function dbRemove(DataMapper $mapper, $id) {}
 }

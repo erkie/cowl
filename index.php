@@ -9,4 +9,3 @@ $controle->execute();
 
 $time = xdebug_time_index();
 echo '<p>', $time, '</p>';
-

@@ -2,64 +2,54 @@
 
 class Revisions
 {
-	private $revisions_dir = 'revisions/';
-	private $cache = 'cache/';
+	private $dir;
 	
 	public function __construct() {}
 	
-	public function setDir($revisions_dir)
+	public function setDir($dir)
 	{
-		$this->revisions_dir = $revisions_dir;
+		$this->dir = $dir;
 	}
 	
-	public function setCache($cache)
+	public function update($current)
 	{
-		if ( ! file_exists($cache) )
-		{
-			// create file
-			fclose(fopen($cache, 'x+'));
-		}
-		$this->cache = $cache;
-	}
-	
-	public function uptodate()
-	{
-		$current = file_get_contents($this->cache);
-		$diff = $this->getDiff($current);
+		$next = (! $current) ? 1 : $current + 1;
 		
-		if ( count($diff) )
+		while ( $this->doRevision($next) )
 		{
-			foreach ( $diff as $revision )
-			{
-				$this->loadRevision($revision);
-			}
+			$next++;
+		}
+		
+		// Return current
+		return $next - 1;
+	}
+	
+	private function doRevision($revision)
+	{
+		$filename = $this->dir . $revision . '.sql';
+		
+		if ( ! file_exists($filename) )
+		{
+			return false;
+		}
+		
+		$statements = explode(';', trim(file_get_contents($filename), ';'));
+		
+		array_map(array($this, 'runStatement'), $statements);
+		
+		return true;
+	}
+	
+	private function runStatement($statement)
+	{
+		try {
+			Current::db()->execute($statement);
+		} catch ( DBQueryException $e )
+		{
+			echo '<h1>Versions Error!</h1>';
+			echo '<p>' . $e->getMessage() . '<p>';
 			
-			file_put_contents($this->cache, $revision);
+			return false;
 		}
-	}
-	
-	public function loadRevision($rev)
-	{
-		//echo $rev, '<br />';
-	}
-	
-	private function getDiff($current)
-	{		
-		// Fetch revisionfiles filter out . and .., and sort in a natural order
-		$revs = scandir($this->revisions_dir);
-		foreach ( $revs as $key => $rev )
-		{
-			if ( $rev == '.' || $rev == '..' )
-			{
-				unset($revs[$key]);
-			}
-		}
-		natsort($revs);
-		return array_slice($revs, array_search($current, $revs));
-	}
-	
-	private function parseRevision()
-	{
-		
 	}
 }

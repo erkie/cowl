@@ -11,9 +11,9 @@ require('plugins.php');
 require('validator.php');
 require('templater.php');
 require('viewhelper.php');
-require('cache.php');
 require('library.php');
 
+require('library/cache/cache.php');
 require('library/orm/db.php');
 
 /*
@@ -38,6 +38,7 @@ class FrontController
 	
 	public function __construct()
 	{
+		Cache::setDir(COWL_CACHE_DIR);
 		Current::initialize(COWL_DIR);
 		
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
