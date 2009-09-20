@@ -107,13 +107,20 @@ abstract class Command
 		}
 		
 		// Set the appropriate shell for the response type
-		$this->template->setType($argv['response_type']);
+		try {
+			$this->template->setType($argv['response_type']);
+		}
+		catch ( TPLShellNotExistsException $e )
+		{
+			$this->template->setType('html');
+		}
 		
 		Current::$plugins->hook('commandRun', $method, $argv);
 		
 		// _This_ is where all the magic happens
 		$ret = call_user_func_array(array($this, $method), $args);
 		
+		// If an array is returned it is used as pieces for a <Cowl::url> redirect
 		if ( is_array($ret) )
 		{
 			$url = call_user_func_array('Cowl::url', $ret);

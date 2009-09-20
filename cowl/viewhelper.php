@@ -10,14 +10,27 @@ class VH
 	
 	public static function css()
 	{
-		try {
-			$stylesheets = Current::$request->getInfo('css');
-			
+		$stylesheets = Current::$request->getInfo('css');
+		
+		if ( is_array($stylesheets) )
+		{
 			foreach ( $stylesheets as $stylesheet )
 			{
 				printf('<link rel="stylesheet" type="text/css" media="all" href="%s" />', $stylesheet);
 			}
 		}
-		catch ( RequestInfoNotFoundException $e ) {}
+	}
+	
+	public static function js()
+	{
+		$scripts = Current::$request->getInfo('js');
+		
+		if ( is_array($scripts) )
+		{
+			foreach ( $scripts as $script )
+			{
+				printf('<script type="text/javascript" href="%s"></script>', $script);
+			}
+		}
 	}
 }

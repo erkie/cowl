@@ -8,7 +8,7 @@ class TodoMainCommand extends Command
 	{
 		Library::load('Pager');
 		
-		$this->pager = new Pager($this->todoitemmapper, $page);
+		$this->pager = new Pager($this->todoitemmapper, $page, 20);
 		$this->items = $this->todoitemmapper->by('id')->find('all');
 		
 		$this->template->add('items', $this->items);

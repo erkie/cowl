@@ -12,6 +12,13 @@ define('COWL_CACHE_DIR', COWL_DIR . 'cache' . DIRECTORY_SEPARATOR);
 // The root of the URL. Will almost always be '/' in production.
 define('COWL_BASE', dirname($_SERVER['SCRIPT_NAME']) . '/');
 
+/*
+	Class:
+		<Cowl>
+	
+	Contains information about Cowl.
+*/
+
 class Cowl
 {
 	const version = '1.0';

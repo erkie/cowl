@@ -8,4 +8,4 @@ $controle = new FrontController();
 $controle->execute();
 
 $time = xdebug_time_index();
-echo '<p>', $time, '</p>';
+echo '<p>', round($time, 5), '</p>';

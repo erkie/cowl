@@ -14,5 +14,7 @@
 			
 			<?php include($this->template); ?>
 		</div>
+		
+		<?php VH::js(); ?>
 	</body>
 </html>

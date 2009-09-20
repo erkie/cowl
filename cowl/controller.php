@@ -82,11 +82,19 @@ class Controller
 	
 	public function parse()
 	{
+		$return = array();
+		$is_error = false;
+		
 		if ( preg_match('/\.[A-Za-z0-9]{2,4}$/', $this->path) )
 		{
 			$period = strrpos($this->path, '.');
 			$path = substr($this->path, 0, $period);
 			$response_type = substr($this->path, $period + 1);
+			
+			if ( ! isset(self::$headers[$response_type]) )
+			{
+				$is_error = true;
+			}
 			
 			$pieces = explode('/', trim($path, '/'));
 		}
@@ -95,8 +103,6 @@ class Controller
 			$response_type = self::$default_type;
 			$pieces = explode('/', trim($this->path, '/'));
 		}
-		
-		$return = array();
 		
 		if ( ! count($pieces) || empty($pieces[0]) )
 		{
@@ -137,10 +143,7 @@ class Controller
 				}
 				else
 				{
-					$directory = self::$commands_dir;
-					$command_name = 'command.error.php';
-					
-					$return['argv'] = array_merge(array($this->error_command), $pieces);
+					$is_error = true;
 				}
 			}
 			else
@@ -154,6 +157,14 @@ class Controller
 				
 				$return['argv'] = array_merge(array($command), $args);
 			}
+		}
+		
+		if ( $is_error )
+		{
+			$directory = self::$commands_dir;
+			$command_name = 'command.error.php';
+			
+			$return['argv'] = array_merge(array($this->error_command), $pieces);
 		}
 		
 		require($directory . $command_name);
