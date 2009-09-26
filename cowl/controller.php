@@ -9,7 +9,7 @@
 
 class Controller
 {
-	private static $headers = array(
+	private static $HEADERS = array(
 		'json' => 'text/json',
 		'css' => 'text/css',
 		'js' => 'text/x-javascript',
@@ -91,7 +91,7 @@ class Controller
 			$path = substr($this->path, 0, $period);
 			$response_type = substr($this->path, $period + 1);
 			
-			if ( ! isset(self::$headers[$response_type]) )
+			if ( ! isset(self::$HEADERS[$response_type]) )
 			{
 				$is_error = true;
 			}
@@ -116,17 +116,21 @@ class Controller
 		{
 			$directories = $pieces;
 			$glued = implode(DIRECTORY_SEPARATOR, $directories);
-			$was_main = false;
 			
-			while ( count($directories) && ! (is_dir(self::$commands_dir . $glued) && ($was_main = is_dir(self::$commands_dir . $glued . DIRECTORY_SEPARATOR . 'main'))) )
+			// Traverse to the innermost directory, checking for packages
+			while ( count($directories) && ! is_dir(self::$commands_dir . $glued) )
 			{
 				array_pop($directories);
 				$glued = implode(DIRECTORY_SEPARATOR, $directories);
 			}
 			
-			if ( $was_main )
+			if ( is_dir(self::$commands_dir . $glued . DIRECTORY_SEPARATOR . 'main') )
 			{
 				$directories[] = 'main';
+				// Add junk to beginning of pieces so the
+				// $args = array_slice($pieces, count($directories));
+				// Won't remove one to many
+				array_unshift($pieces, 0);
 			}
 			
 			// Command in base directory
@@ -146,10 +150,11 @@ class Controller
 					$is_error = true;
 				}
 			}
+			// Command in sub-directory
 			else
 			{
 				$command = implode('', $directories) . 'Command';
-				$args = array_slice($pieces, count($directories) - 1);
+				$args = array_slice($pieces, count($directories));
 				$dir_pieces = $directories;
 				
 				$directory = self::$commands_dir . implode(DIRECTORY_SEPARATOR, $directories) . DIRECTORY_SEPARATOR;
@@ -175,7 +180,7 @@ class Controller
 		
 		return $return;
 	}
-	
+		
 	/*
 		Method:
 			<Controller::isPackage>

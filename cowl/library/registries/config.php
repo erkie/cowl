@@ -1,6 +1,6 @@
 <?php
 
-class ConfigKeyNotFoundException extends RegistryFailException {}
+class ConfigKeyNotFoundException extends RegistryException {}
 
 /*
 	Class:

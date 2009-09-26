@@ -2,30 +2,38 @@
 
 class TodoMainCommand extends Command
 {
-	protected $objects = array('TodoItem');
+	protected $objects = array('TodoItem', 'TodoList');
 	
-	public function index($page = 1)
+	public function initialize()
+	{
+		$this->lists = $this->todolistmapper->find('all');
+		$this->template->add('lists', $this->lists);
+	}
+	
+	public function index($list_id = 1, $page = 1)
 	{
 		Library::load('Pager');
 		
 		$this->pager = new Pager($this->todoitemmapper, $page, 20);
-		$this->items = $this->todoitemmapper->by('id')->find('all');
+		$this->items = $this->todoitemmapper->by('is_done DESC', 'todo')->find(array('list_id' => $list_id));
 		
 		$this->template->add('items', $this->items);
 		$this->template->add('pager', $this->pager);
+		$this->template->add('list_id', $list_id);
 	}
 	
 	public function add()
 	{
 		try {
 			$item = new TodoItem();
+			$item->set('list_id', Current::$request->get('list_id'));
 			$item->set('todo', Current::$request->get('value'));
 			$this->todoitemmapper->uptodate($item);
 			
-			return array('todo');
+			return array('todo', Current::$request->get('list_id'));
 		}
-		catch (RegistryFailException $e) {}
-		catch (ValidatorFailException $e)
+		catch (RegistryException $e) {}
+		catch (ValidatorException $e)
 		{
 			$this->template->add('message', $e->getMessage() . ': Input failed.');
 		}
@@ -39,10 +47,12 @@ class TodoMainCommand extends Command
 		}
 		else
 		{
-			$this->todoitemmapper->remove(new TodoItem($id));
+			$item = $this->todoitemmapper->populate(new TodoItem($id));
+			
+			$this->todoitemmapper->remove($item);
 			$this->template->add('message', 'Removed!');
 			
-			return array('todo');
+			return array('todo', $item->list_id);
 		}
 	}
 	

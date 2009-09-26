@@ -64,21 +64,31 @@ abstract class DomainObject
 		$this->validator = new Validator();
 	}
 	
-	public function set($name, $value)
+	public function set($name, $value, $raw = false)
 	{
 		if ( ! isset($this->members[$name]) )
 		{
 			throw new DOMemberNotFoundException($name);
 		}
 		
-		if ( $this->validate($name, $value) )
+		if ( $raw || (! $raw && $this->validate($name, $value)) )
 		{
 			$this->values[$name] = $value;
 		}
 	}
 	
+	public function setRaw($name, $value)
+	{
+		$this->set($name, $value, true);
+	}
+	
 	public function get($name)
 	{
+		if ( $name === 'id' )
+		{
+			return $this->getID();
+		}
+		
 		if ( ! isset($this->members[$name]) )
 		{
 			throw new DOMemberNotFoundException($name);
@@ -89,10 +99,6 @@ abstract class DomainObject
 	
 	public function __get($name)
 	{
-		if ( $name == 'id' )
-		{
-			return $this->getID();
-		}
 		return $this->get($name);
 	}
 	
@@ -137,24 +143,3 @@ abstract class DomainObject
 		return true;
 	}
 }
-
-//Current::initialize();
-//Validator::setPath(Current::$config->get('paths.validators'));
-
-class Post extends DomainObject
-{
-	protected $members = array(
-		'header' => array('is_mandatory' => 'yes', 'max_length' => 50),
-		'message' => array('is_mandatory' => 'yes'),
-		'added' => array('is_date' => 'yes'),
-		'edited' => array('is_date' => 'yes')
-	);
-}
-
-/*printf("<h3>Testing DomainObject</h3>");
-
-$post = new Post();
-$post->set("header", "Testing this baby out! " . str_repeat("*", 2));
-$post->set("body", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc in purus est, quis semper dolor. Morbi malesuada scelerisque lectus ut fermentum. Integer congue consectetur erat, tristique ultricies dolor eleifend vel. Phasellus mattis feugiat tincidunt. Donec eu ante leo. In ultrices urna leo. Nam lacinia, felis non eleifend rhoncus, mauris risus bibendum ante, id vulputate libero odio ut risus. Cras viverra, leo ut hendrerit bibendum, quam neque mattis purus, vitae porttitor turpis mauris vel risus. Nullam eget urna est, ut fermentum leo. Mauris nec sapien urna. Cras venenatis tempor tellus vel laoreet. Nulla malesuada placerat convallis. Quisque ac accumsan dolor. Suspendisse odio magna, bibendum quis varius in, aliquet non justo. Sed auctor turpis suscipit lectus semper sollicitudin. Suspendisse in turpis nec nulla condimentum tristique vitae eget dolor.");
-
-printf("<p>Passed.</p>");*/

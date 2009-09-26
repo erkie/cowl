@@ -77,6 +77,7 @@ abstract class DataMapper
 			throw new MapperNoTableException(get_class($this));
 		}
 		
+		// Remove the word "Mapper" from classname
 		$this->object_name = substr(get_class($this), 0, -6);		
 		$this->builder = new QueryBuilder($this->table, $this->primary_key);
 	}
@@ -144,13 +145,11 @@ abstract class DataMapper
 	{
 		Current::$plugins->hook('dbPopulate', $this, $object);
 		
-		$query = $this->builder->buildSelect($object);
+		$query = $this->builder->buildSelectObject($object);
 		
 		$result = Current::db()->execute($query);
 		$this->populateFromDBResult($object, $result);
-
-		//echo '<pre>', $query, '</pre>';
-
+		
 		return $object;
 	}
 	
@@ -212,13 +211,11 @@ abstract class DataMapper
 		$query = $this->builder->buildFind($args, $order, $offset, $amount);
 		$result = Current::db()->execute($query);
 		
-		//echo '<pre>', $query, '</pre>';
-		
 		return new DomainCollection($result, $this);
 	}
 	
 	// Alias: <DataMapper::fetch>
-	// Alias for <DataMapper::find>. See <DataMapper::find>.
+	// See <DataMapper::find>.
 	
 	public function fetch()
 	{
@@ -253,6 +250,8 @@ abstract class DataMapper
 		
 		Set the current state of the querybuilder to ORDER BY $by. Used to chain mapper-calls for a more intuituve API. This method has to be called before <DataMapper::find>
 		
+		If the number of arguments is larger than one, the func_get_args array is added.
+		
 		(begin code)
 		
 		$mapper = DataMapper::get('post');
@@ -263,6 +262,11 @@ abstract class DataMapper
 			echo $post->header . PHP_EOL;
 			echo $post->message . PHP_EOL;
 		}
+		
+		// Other examples
+		
+		$mapper->by('modified DESC', 'name');
+		$mapper->by(array('modfied DESC', 'name')); // Will yield the same result
 		
 		(end code)
 		
@@ -276,8 +280,10 @@ abstract class DataMapper
 	public function by($by)
 	{
 		$this->state_dirty = true;
-				
-		$this->state['order'] = $by;
+		
+		$args = func_get_args();
+		$this->state['order'] = (count($args) > 1) ? $args : $by;
+		
 		return $this;
 	}
 	
@@ -370,6 +376,7 @@ abstract class DataMapper
 		$query = $this->builder->buildInsert($object);
 		$result = Current::db()->execute($query);
 		
+		$object->setID($result->getID());
 		//echo '<pre>', $query, '</pre>';
 		
 		return $object;
@@ -505,7 +512,7 @@ abstract class DataMapper
 		foreach ( $row as $field => $value )
 		{
 			if ( $field == 'id' ) $object->setID($value);
-			else $object->set($field, $value);
+			else $object->setRaw($field, $value);
 		}
 		return $object;
 	}
@@ -523,6 +530,21 @@ abstract class DataMapper
 	public function createObject()
 	{
 		return new $this->object_name;
+	}
+	
+	/*
+		Method:
+			<DataMapper::getTable>
+		
+		Get the mapper's table name.
+		
+		Returns:
+			Returns the <DataMapper::$table>
+	*/
+	
+	public function getTable()
+	{
+		return $this->table;
 	}
 	
 	/*

@@ -1,7 +1,7 @@
 <?php
 
-class RegistryFailException extends Exception {}
-class RegistryMemberNotFoundException extends RegistryFailException {}
+class RegistryException extends Exception {}
+class RegistryMemberNotFoundException extends RegistryException {}
 
 abstract class Registry
 {

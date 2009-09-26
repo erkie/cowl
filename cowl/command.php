@@ -79,7 +79,6 @@ abstract class Command
 		$args = array_slice($argv['argv'], 1);
 		$method = (count($args)) ? $args[count($args) - 1] : false;
 		
-		
 		// Call initialize method, if one exists
 		if ( method_exists($this, 'initialize') )
 		{
@@ -171,48 +170,3 @@ abstract class Command
 	public abstract function index();
 }
 
-/*
-	To-be removed
-*/
-
-class ThreadCommand extends Command
-{
-	protected $objects = array('Thread');
-	
-	private $thread;
-	
-	public function initialize($slug)
-	{
-		$this->thread = new Thread();
-		$thread->set('slug', $slug);
-		$thread->fetch();
-	}
-	
-	# www.example.com/forum/thread/my-name-is-earl
-	public function index()
-	{	
-		$this->fetch();
-	}
-	
-	# www.example.com/forum/thread/my-name-is-earl/fetch
-	public function fetch()
-	{
-		$this->template->add($thread);
-	}
-	
-	# www.example.com/forum/thread/my-name-is-earl/delete
-	public function delete()
-	{
-		$key = Current::$user->getAuthKey();
-		$this->thread->delete($key);
-	}
-	
-	# www.example.com/forum/thread/my-name-is-earl/reply
-	public function post()
-	{
-		$post = new Post();
-		$post->set('thread_id', $this->thread->getID());
-		$post->set('message', Request::get('message'));
-		$post->update();
-	}
-}

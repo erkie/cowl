@@ -33,4 +33,30 @@ class VH
 			}
 		}
 	}
+	
+	public static function onlyIf($test, $if_true, $if_false = '')
+	{
+		if ( $test )
+		{
+			echo $if_true;
+		}
+		else
+		{
+			echo $if_false;
+		}
+	}
+	
+	public static function toOptions(DomainCollection $collection, $key_value, $key_text, $selected = null)
+	{
+		$html = '';
+		
+		foreach ( $collection as $object )
+		{
+			$value = $object->get($key_value);
+			$is_selected = ($value == $selected) ? 'selected="selected" ' : '';
+			
+			$html .= sprintf('<option %svalue="%s">%s</option>', $is_selected, $value, $object->get($key_text));
+		}
+		echo $html;
+	}
 }

@@ -1,7 +1,8 @@
 <?php
 
-class ValidatorNotFoundException extends Exception {}
-class ValidatorFailException extends Exception {}
+class ValidatorException extends Exception {}
+class ValidatorNotFoundException extends ValidatorException {}
+class ValidatorFailException extends ValidatorException {}
 
 /*
 	Class:
@@ -100,6 +101,11 @@ class Validator
 		if ( file_exists($filename) )
 		{
 			require($filename);
+			
+			if ( ! $this->hasValidator(self::makeName($name)) )
+			{
+				throw new ValidatorNotFoundException($name);
+			}
 		}
 		else
 		{
