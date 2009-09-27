@@ -8,7 +8,7 @@ class ValidatorFailException extends ValidatorException {}
 	Class:
 		<Validator>
 	
-	A validator class capable of including validators, validating input.
+	A validator class capable of including validators and validating input.
 */
 
 class Validator
@@ -100,6 +100,7 @@ class Validator
 		{
 			require($filename);
 			
+			// Still no validator...
 			if ( ! $this->hasValidator(self::makeName($name)) )
 			{
 				throw new ValidatorNotFoundException($name);
