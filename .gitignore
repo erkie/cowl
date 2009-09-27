@@ -1,2 +1,3 @@
 .DS_Store
-cowl/cache/
+cowl/cache/*
+!cowl/cache/index.html
