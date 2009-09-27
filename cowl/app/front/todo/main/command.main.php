@@ -12,14 +12,20 @@ class TodoMainCommand extends Command
 	
 	public function index($list_id = 1, $page = 1)
 	{
-		Library::load('Pager');
+		// No, thanks :)
+		//$this->template->setCache($this->getCachePath());
 		
-		$this->pager = new Pager($this->todoitemmapper, $page, 20);
-		$this->items = $this->todoitemmapper->by('is_done DESC', 'todo')->find(array('list_id' => $list_id));
-		
-		$this->template->add('items', $this->items);
-		$this->template->add('pager', $this->pager);
-		$this->template->add('list_id', $list_id);
+		if ( $this->template->isOutDated() )
+		{
+			Library::load('Pager');
+			
+			$this->pager = new Pager($this->todoitemmapper, $page, 20);
+			$this->items = $this->todoitemmapper->by('is_done DESC', 'todo')->find(array('list_id' => $list_id));
+			
+			$this->template->add('items', $this->items);
+			$this->template->add('pager', $this->pager);
+			$this->template->add('list_id', $list_id);
+		}
 	}
 	
 	public function add()
@@ -72,7 +78,7 @@ class TodoMainCommand extends Command
 			
 			$this->template->add('message', 'Updated!');
 			
-			return array('todo');
+			return array('todo', $item->list_id);
 		}
 	}
 }

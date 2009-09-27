@@ -21,6 +21,10 @@ abstract class Command
 	// Holds an instance to the Templater class, which takes care of all templateing needs.
 	protected $template;
 	
+	// Property: <Command::$argv>
+	// The argv passed to <Command::run>
+	protected $argv;
+	
 	// Property: <Command::$view>
 	// The name of the view to include as template.
 	private $view;
@@ -46,7 +50,7 @@ abstract class Command
 		Method:
 			<Command::run>
 		
-		Runs a method of the current class from the specified $args. The first element of the $args should be the name of the class (just as in CLI).
+		Runs a method of the current class from the specified $args. The first element of the $args['argv'] should be the name of the class (just as in CLI).
 		
 		Examples:
 			> // Argument array
@@ -73,6 +77,8 @@ abstract class Command
 	
 	public final function run($argv)
 	{
+		$this->argv = $argv;
+		
 		$view = explode('.', $argv['command']);
 		$view = $view[1];
 		
@@ -165,6 +171,24 @@ abstract class Command
 		$path = implode('/', array_slice($args, 0, -1));
 		$path .= 'view.' . end($args) . '.php';
 		$this->view = $path;
+	}
+	
+	/*
+		Method:
+			<Command::getCachePath>
+		
+		Returns:
+			A path that can be used for any <Cache> that is specific to the method run and arguments passed.
+	*/
+	
+	public function getCachePath()
+	{
+		$argv = $this->argv['argv'];
+		$pieces = $this->argv['pieces'];
+		array_shift($argv);
+		$pieces = array_merge($pieces, $argv);
+
+		return 'command.' . implode('.', $pieces);
 	}
 	
 	public abstract function index();

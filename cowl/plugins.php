@@ -71,6 +71,27 @@ class Plugins
 	
 	/*
 		Method:
+			<Plugins::removeInstance>
+		
+		Removes an instance from <Plugins::$plugins>.
+		
+		Parameters:
+			Plugin $plugin - The instance to remove.
+	*/
+	
+	public function removeInstance(Plugin $instance)
+	{
+		foreach ( $this->plugins as $key => $plugin )
+		{
+			if ( $plugin === $instance )
+			{
+				unset($this->plugins[$key]);
+			}
+		}
+	}
+	
+	/*
+		Method:
 			<Plugins::hook>
 		
 		Call the plugins' hooks.

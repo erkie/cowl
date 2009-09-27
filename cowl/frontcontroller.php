@@ -14,7 +14,7 @@ require('viewhelper.php');
 require('library.php');
 
 require('library/cache/cache.php');
-require('library/orm/db.php');
+require('library/db/db.php');
 
 /*
 	Class:
@@ -43,10 +43,9 @@ class FrontController
 		
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		
-		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $tplcache_dir, $view_dir) = 
+		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir) = 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
-				'paths.validators', 'paths.library','paths.caches.template',
-				'paths.view');
+				'paths.validators', 'paths.library', 'paths.view');
 		
 		Controller::setDir($commands_dir);	
 		$this->controller = new Controller($this->path);
@@ -54,10 +53,9 @@ class FrontController
 		DataMapper::setMappersDir($model_dir);
 		DataMapper::setObjectsDir($model_dir);
 		Validator::setPath($validators_dir);
-		Library::setPath($library_dir);
-		Templater::setCacheDir($tplcache_dir);
 		Templater::setBaseDir($view_dir);
-		
+		Library::setPath($library_dir);	
+			
 		Current::$plugins = new Plugins($plugins_dir);
 	}
 	
@@ -74,14 +72,15 @@ class FrontController
 		
 		// Parse arguments from path and call appropriate command
 		$args = $this->controller->parse();
-		$instance = new $args['argv'][0];
+		$command = new $args['argv'][0];
 		
+		// Set template directory, which is the same directory as the command directory
 		$view_dir = Current::$config->get('paths.view') . str_replace(Current::$config->get('paths.commands'), '', $args['directory']);
-		$instance->setTemplateDir($view_dir);
+		$command->setTemplateDir($view_dir);
 		
 		Current::$plugins->hook('postPathParse', $args);
 		
-		$instance->run($args);
+		$command->run($args);
 		
 		Current::$plugins->hook('postRun');
 	}

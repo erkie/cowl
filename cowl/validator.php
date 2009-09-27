@@ -16,9 +16,7 @@ class Validator
 	// Property: <Validator::$path>
 	// Contains the pathname to where the validators are contained.
 	private static $path = 'validators/';
-	
-	public function __construct() {}
-	
+		
 	/*
 		Method:
 			<Validator::setPath>

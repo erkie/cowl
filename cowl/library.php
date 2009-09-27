@@ -3,9 +3,29 @@
 class LibraryNotFoundException extends Exception {}
 class LibraryAlreadyExistsException extends Exception {}
 
+/*
+	Class:
+		<Library>
+	
+	Keeps track and loads libraries.
+*/
+
 class Library
 {
+	// Property: <Library::$path>
+	// The directory in which library files are contained.
 	private static $path = 'library/';
+	
+	/*
+		Method:
+			<Library::load>
+		
+		Loads all libraries. If they are not found in <Library::$path> a <LibraryNotFoundException> is thrown. If it already has been included, a <LibraryAlreadyExistsException> is thrown.
+		
+		Parameters:
+			string $library1 - The name of the library to load
+			string $libraryN - ...
+	*/
 	
 	public static function load()
 	{
@@ -26,10 +46,23 @@ class Library
 		}
 	}
 	
+	/*
+		Method:
+			<Library::loadInstance>
+		
+		Load $library and return an instance of that class.
+		
+		Parameters:
+			string $library - The name of the library to load.
+			mixed $arg1 - Argument to be passed to the constructor of the new instance.
+			mixed $argN - ...
+	*/
+	
 	public static function loadInstance($library)
 	{
 		self::load($library);
 		
+		// Get constructor arguments
 		$args = func_get_args();
 		$args = array_slice($args, 1);
 		
@@ -38,6 +71,16 @@ class Library
 			$args
 		);
 	}
+	
+	/*
+		Method:
+			<Library::setPath>
+
+		Set the path in which libraries are loaded from.
+		
+		Parameters:
+			string $path - The path to the libraries.
+	*/
 	
 	public static function setPath($path)
 	{
