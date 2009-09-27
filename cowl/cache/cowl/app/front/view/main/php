@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Cowl</title>
+		
+		<link rel="stylesheet" type="text/css" media="all" href="/TE08A/css/site.css" /><link rel="stylesheet" type="text/css" media="all" href="/TE08A/css/main.css" />	</head>
+	
+	<body>
+		<div id="wrapper">
+			<h1><a href="/TE08A/">Cowl</a></h1>
+			
+			<p id="cowl-message">Welcome, to Cowl.</p>			
+			<p><a href="/TE08A/todo/list">See what's left to do!</a></p>
+
+<h1>Hello</h1>
+
+<p>Welcome, to Cowl.</p>		</div>
+		
+			</body>
+</html>
