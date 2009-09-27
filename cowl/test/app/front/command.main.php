@@ -1,1 +1,0 @@
-<p>Main command included.<br /><?php echo __FILE__; ?></p>

@@ -1,1 +1,0 @@
-<p>Error command included<br /><?php echo __FILE__; ?></p>

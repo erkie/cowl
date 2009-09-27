@@ -1,1 +1,0 @@
-<p>package3 included<br /><?php echo __FILE__; ?></p>
