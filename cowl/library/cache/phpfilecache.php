@@ -19,6 +19,6 @@ class PHPFileCache extends PHPCache
 	// See <FileCache::isOutDated> for more details.
 	public function isOutDated()
 	{
-		return ! ($this->doesExist() && filemtime($this->file) < $this->cache_time);
+		return ! $this->doesExist() || filemtime($this->file) < $this->cache_time;
 	}
 }
