@@ -15,6 +15,8 @@
 			<?php include($this->template); ?>
 		</div>
 		
+		<p>Page (not really) rendered in <?php echo round(xdebug_time_index(), 4); ?> seconds</p> 
+		
 		<?php VH::js(); ?>
 	</body>
 </html>
