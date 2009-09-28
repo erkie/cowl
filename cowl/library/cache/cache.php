@@ -155,9 +155,6 @@ class Cache
 			$this->createFile($this->file);
 			$this->exists = true;
 		}
-		echo get_class($this) . ' updated<br />"' . $contents . '"';
-		if ( get_class($this) == 'Cache' )
-			new Nothing();
 		file_put_contents($this->file, $contents, $flags);
 	}
 	
