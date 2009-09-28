@@ -42,16 +42,18 @@ class Plugins
 	
 	private function loadPlugins($dir)
 	{
-		$plugins = Current::$config->get('plugins.load');
-		
-		foreach ( $plugins as $plugin )
-		{
-			$path = Current::$config->get('plugins.' . $plugin . '.path');
-			require($path);
+		try {
+			$plugins = Current::$config->get('plugins.load');
 			
-			$name = Plugins::makeName($path);
-			$this->plugins[] = new $name();
-		}
+			foreach ( $plugins as $plugin )
+			{
+				$path = Current::$config->get('plugins.' . $plugin . '.path');
+				require($path);
+				
+				$name = Plugins::makeName($path);
+				$this->plugins[] = new $name();
+			}
+		} catch ( RegistryException $e ) {}
 	}
 	
 	/*
