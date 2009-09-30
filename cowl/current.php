@@ -31,6 +31,16 @@ class Current
 		self::$config = Config::instance();
 	}
 	
+	/*
+		Method:
+			<Current::db>
+		
+		Method for fetching the database instance. If no instance has yet been created, create one.
+		
+		Returns:
+			The global database instance.
+	*/
+	
 	public static function db()
 	{
 		if ( is_null(self::$db) )
@@ -41,12 +51,8 @@ class Current
 		return self::$db;
 	}
 	
-	// Property: <Current::$user>
-	// User object, should really be removed.
-	public static $user;
-	
 	// Property: <Current::$request>
-	// $_POST, $_GET data
+	// $_POST, $_GET, $_COOKIE data
 	public static $request;
 	
 	// Property: <Current::$db>
@@ -68,8 +74,4 @@ class Current
 	// Property: <Current::$plugins>
 	// Current plugin object.
 	public static $plugins;
-	
-	// Property: <Current::$auth>
-	// Placeholder for a global named auth
-	public static $auth;
 }
