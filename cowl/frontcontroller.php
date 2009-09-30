@@ -10,8 +10,8 @@ require('current.php');
 require('plugins.php');
 require('validator.php');
 require('templater.php');
-require('viewhelper.php');
 require('library.php');
+require('helpers.php');
 
 require('library/cache/cache.php');
 require('library/db/db.php');
@@ -43,9 +43,10 @@ class FrontController
 		
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		
-		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir) = 
+		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir, $helpers_dir) = 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
-				'paths.validators', 'paths.library', 'paths.view');
+				'paths.validators', 'paths.library', 'paths.view',
+				'paths.helpers');
 		
 		Controller::setDir($commands_dir);	
 		$this->controller = new Controller($this->path);
@@ -55,8 +56,12 @@ class FrontController
 		Validator::setPath($validators_dir);
 		Templater::setBaseDir($view_dir);
 		Library::setPath($library_dir);	
+		Helpers::setPath($helpers_dir);
 			
 		Current::$plugins = new Plugins($plugins_dir);
+		
+		// Load default helper file
+		Helpers::load('standard');
 	}
 	
 	/*
