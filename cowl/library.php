@@ -42,7 +42,7 @@ class Library
 				throw new LibraryAlreadyExistsException($library);
 			}
 			
-			include($name);
+			require($name);
 		}
 	}
 	
