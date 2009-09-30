@@ -3,12 +3,12 @@
 	<head>
 		<title>Cowl</title>
 		
-		<?php VH::css(); ?>
+		<?php css(); ?>
 	</head>
 	
 	<body>
 		<div id="wrapper">
-			<h1><a href="<?php VH::url(); ?>">Cowl</a></h1>
+			<h1><a href="<?php url(); ?>">Cowl</a></h1>
 			
 			<?php if ( isset($message) ): ?><p id="cowl-message"><?php echo $message; ?></p><?php endif; ?>
 			
@@ -17,6 +17,6 @@
 		
 		<p>Page (not really) rendered in <?php echo round(xdebug_time_index(), 4); ?> seconds</p> 
 		
-		<?php VH::js(); ?>
+		<?php js(); ?>
 	</body>
 </html>

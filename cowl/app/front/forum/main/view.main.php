@@ -2,6 +2,6 @@
 
 <ul>
 	<?php foreach ( $categories as $category ): ?>
-	<li><?php VH::url($category); ?></li>
+	<li><?php url($category); ?></li>
 	<?php endforeach; ?>
 </ul>
