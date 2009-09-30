@@ -12,8 +12,7 @@ class TodoMainCommand extends Command
 	
 	public function index($list_id = 1, $page = 1)
 	{
-		// No, thanks :)
-		//$this->template->setCache($this->getCachePath());
+		$this->template->activateCache();
 		
 		if ( $this->template->isOutDated() )
 		{
@@ -25,6 +24,8 @@ class TodoMainCommand extends Command
 			$this->template->add('items', $this->items);
 			$this->template->add('pager', $this->pager);
 			$this->template->add('list_id', $list_id);
+			
+			echo 'update';
 		}
 	}
 	

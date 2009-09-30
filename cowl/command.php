@@ -120,6 +120,9 @@ abstract class Command
 			$this->template->setType('html');
 		}
 		
+		// Set cache path, if the user wants to activate cacheing
+		$this->template->setCachePath($this->getCachePath(), 600);
+		
 		Current::$plugins->hook('commandRun', $method, $argv);
 		
 		// _This_ is where all the magic happens

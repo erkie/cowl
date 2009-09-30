@@ -32,6 +32,14 @@ class Templater
 	// Holds an instance of <Cache>, if the output is cached.
 	protected $cache;
 	
+	// Property: <Templater::$cache_path>
+	// Holds the values that will be passed to <Cache> when cacheing is activated.
+	protected $cache_path;
+	
+	// Property: <Templater::$cache_active>
+	// True if output should use cached version
+	protected $cache_active = false;
+	
 	// Property: <Templater::$base_dir>
 	// Base directory for all templates.
 	protected static $base_dir = 'templates/';
@@ -82,7 +90,7 @@ class Templater
 		
 		// If cacheing is enabled and not outdated use that copy
 		// Else start output buffering so we can catch outputed contents.
-		if ( ! is_null($this->cache) )
+		if ( $this->cache_active )
 		{
 			if ( ! $this->isOutDated() )
 			{
@@ -100,7 +108,7 @@ class Templater
 		include($this->shell);
 		
 		// Update cache with outputed contents
-		if ( ! is_null($this->cache) )
+		if ( $this->cache_active )
 		{
 			$contents = ob_get_contents();
 			$this->cache->update($contents);
@@ -119,7 +127,7 @@ class Templater
 	
 	public function isOutDated()
 	{
-		return ( is_null($this->cache) ) ? true : $this->cache->isOutDated();
+		return ( ! $this->cache_active ) ? true : $this->cache->isOutDated();
 	}
 	
 	/*
@@ -161,16 +169,29 @@ class Templater
 		Method:
 			<Templater::setCache>
 		
-		Create new instance of <Cache> that will be used for output. This effectively enables caching of output.
-				
+		Set values to <Templater::$cache> that will be used as paramaters if cacheing is enabled.
+						
 		Parameters:
 			string $path - The path for <Cache::__construct>.
 			int $time - (optiona) The amount of time, in seconds, to cache a template.
 	*/
 	
-	public function setCache($path, $time = 600)
+	public function setCachePath($path, $time = 600)
 	{
-		$this->cache = new Cache($path, $time);
+		$this->cache_path = array($path, $time);
+	}
+	
+	/*
+		Method:
+			<Templater::activeCache>
+		
+		Activate cacheing of output. Create the instance of <Cache> that will be used for output, using the <Templater::$cache_path> as array path.
+	*/
+	
+	public function activateCache()
+	{
+		$this->cache_active = true;
+		$this->cache = new Cache($this->cache_path[0], $this->cache_path[1]);
 	}
 	
 	// Method: <Templater::setDir>
