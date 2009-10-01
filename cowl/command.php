@@ -133,8 +133,7 @@ abstract class Command
 		{
 			$url = call_user_func_array('Cowl::url', $ret);
 			
-			header('Location: ' . $url);
-			exit($url);
+			Cowl::redirect($url);
 		}
 		
 		// Render the template

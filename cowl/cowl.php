@@ -28,4 +28,10 @@ class Cowl
 		$args = func_get_args();
 		return COWL_BASE . implode('/', $args);
 	}
+	
+	public static function redirect($url)
+	{
+		header('Location: ' . $url);
+		exit($url);
+	}
 }
