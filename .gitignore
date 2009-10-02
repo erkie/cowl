@@ -1,3 +1,9 @@
 .DS_Store
 cowl/cache/*
 !cowl/cache/index.html
+cowl/app/front/*
+cowl/app/back/*
+!cowl/app/front/shell.html.php
+!cowl/app/front/shell.json.php
+!cowl/app/front/shell.ajax.php
+!cowl/app/back/index.html
