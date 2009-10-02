@@ -1,6 +1,6 @@
 <?php
 
-class HelpersNotFoundException extends Exception {}
+class HelperNotFoundException extends Exception {}
 
 /*
 	Class:
