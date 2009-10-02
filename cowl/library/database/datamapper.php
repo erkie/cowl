@@ -84,8 +84,9 @@ abstract class DataMapper
 		Database::loadDriver($this->driver);
 		
 		// Remove the word "Mapper" from classname
-		$this->object_name = substr(get_class($this), 0, -6);		
-		$this->builder = new QueryBuilder($this->table, $this->primary_key);
+		$this->object_name = substr(get_class($this), 0, -6);
+		$querybuilder = $this->driver . 'QueryBuilder';		
+		$this->builder = new $querybuilder($this->table, $this->primary_key);
 	}
 	
 	/*
@@ -153,7 +154,7 @@ abstract class DataMapper
 		
 		$query = $this->builder->buildFindObject($object);
 		
-		$result = Current::db()->execute($query);
+		$result = Current::db($this->driver)->execute($query);
 		$this->populateFromDBResult($object, $result);
 		
 		return $object;
@@ -215,7 +216,7 @@ abstract class DataMapper
 		}
 		
 		$query = $this->builder->buildFind($args, $order, $offset, $amount);
-		$result = Current::db()->execute($query);
+		$result = Current::db($this->driver)->execute($query);
 		
 		return new DomainCollection($result, $this);
 	}
@@ -380,7 +381,7 @@ abstract class DataMapper
 		Current::$plugins->hook('dbInsert', $this, $object);
 		
 		$query = $this->builder->buildInsert($object);
-		$result = Current::db()->execute($query);
+		$result = Current::db($this->driver)->execute($query);
 		
 		$object->setID($result->getID());
 		//echo '<pre>', $query, '</pre>';
@@ -406,7 +407,7 @@ abstract class DataMapper
 		Current::$plugins->hook('dbUpdate', $this, $object);
 		
 		$query = $this->builder->buildUpdate($object);
-		$result = Current::db()->execute($query);
+		$result = Current::db($this->driver)->execute($query);
 
 		return $object;
 	}
@@ -439,7 +440,7 @@ abstract class DataMapper
 		Current::$plugins->hook('dbRemove', $this, $id);
 		
 		$query = $this->builder->buildDelete($id);
-		$result = Current::db()->execute($query);
+		$result = Current::db($this->driver)->execute($query);
 		
 		//echo '<pre>', $query, '</pre>';
 	}
@@ -475,7 +476,7 @@ abstract class DataMapper
 		}
 		
 		$query = $this->builder->buildCount($args, $order, $offset, $amount);
-		return end(Current::db()->execute($query)->row());
+		return end(Current::db($this->driver)->execute($query)->row());
 	}
 	
 	/*

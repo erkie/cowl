@@ -1,6 +1,6 @@
 <?php
 
-class QueryBuilder
+class DirectoryQueryBuilder
 {
 	private $directory;
 	

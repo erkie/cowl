@@ -1,9 +1,9 @@
 <?php
 
-class DBQueryException extends Exception {}
-class DBQueryNoTypeException extends DBQueryException {}
+class DirectoryDBQueryException extends Exception {}
+class DirectoryDBQueryNoTypeException extends DBQueryException {}
 
-class DB
+class DirectoryDB
 {
 	public function __construct() {}
 	
@@ -11,7 +11,7 @@ class DB
 	{
 		if ( ! isset($parameters['type']) )
 		{
-			throw new DBQueryNoTypeException();
+			throw new DirectoryDBQueryNoTypeException();
 		}
 		
 		switch ( $parameters )

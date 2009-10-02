@@ -7,7 +7,7 @@
 	A wrapper for a resource returned by mysql_query. Acts as an iterator so it can be passed to foreach() to loop through results.
 */
 
-class DBResult implements Iterator
+class MySQLDBResult extends DBResult
 {
 	// Property: <DBresult::$result>
 	// The resource returned by mysql_query.
@@ -28,10 +28,6 @@ class DBResult implements Iterator
 	// Property: <DBResult::$rows>
 	// All rows fetched.
 	private $rows;
-	
-	// Property: <DBResult::$position>
-	// For <Iterator>
-	private $position = 0;
 	
 	/*
 		Constructor:
@@ -122,42 +118,6 @@ class DBResult implements Iterator
 	{
 		return mysql_fetch_assoc($this->result);
 	}
-	
-	// Method: <DBResult::rewind>
-	// For <Iterator>
-	public function rewind()
-	{
-		$this->position = 0;
-	}
-	
-	
-	// Method: <DBResult::current>
-	// For <Iterator>
-	public function current()
-	{
-		return $this->get($this->position);
-	}
-	
-	// Method: <DBResult::key>
-	// For <Iterator>
-	public function key()
-	{
-		return $this->position;
-	}
-	
-	// Method: <DBResult::next>
-	// For <Iterator>
- 	public function next()
- 	{
- 		return $this->fetchRow();
- 	}
-	
-	// Method: <DBResult::valid>
-	// For <Iterator>
- 	public function valid()
- 	{
- 		return (bool)$this->current();
- 	}
  	
  	/*
  		Method:

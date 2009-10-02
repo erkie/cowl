@@ -1,8 +1,8 @@
 <?php
 
-class QBInvalidArgumentException extends Exception {}
-class QBInvalidFormatModifierException extends Exception {}
-class QBFormatValueNotSpecifiedException extends Exception {}
+class MySQLQBInvalidArgumentException extends Exception {}
+class MySQLQBInvalidFormatModifierException extends Exception {}
+class MySQLQBFormatValueNotSpecifiedException extends Exception {}
 
 /*
 	Class:
@@ -11,7 +11,7 @@ class QBFormatValueNotSpecifiedException extends Exception {}
 	Takes a table and primary_key and is used by <DataMapper> to build querys.
 */
 
-class QueryBuilder
+class MySQLQueryBuilder
 {
 	// Property: <QueryBuilder::$table>
 	// Contains the table for which the particular <QueryBuilder> is pointed to.
@@ -135,13 +135,13 @@ class QueryBuilder
 				case 'quote': $key = $this->quote($pieces[1]); break;
 				case 'value': $key = $this->qouteValue($pieces[1]); break;
 				case 'field': $key = $this->quoteField($pieces[1]); break;
-				default: throw new QBInvalidFormatModifierException($pieces[0]); break;
+				default: throw new MySQLQBInvalidFormatModifierException($pieces[0]); break;
 			}
 		}
 		
 		if ( ! isset($this->values[$key]) )
 		{
-			throw new QBFormatValueNotSpecifiedException($key);
+			throw new MySQLQBFormatValueNotSpecifiedException($key);
 		}
 		
 		return $this->values[$key];
@@ -243,7 +243,7 @@ class QueryBuilder
 		}
 		elseif ( $args != '*' && $args != 'all' )
 		{
-			throw new QBInvalidArgumentException((empty($args)) ? 'none passed' : $args);
+			throw new MySQLQBInvalidArgumentException((empty($args)) ? 'none passed' : $args);
 		}
 		return $query;
 	}

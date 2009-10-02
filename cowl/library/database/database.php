@@ -3,6 +3,7 @@
 require('datamapper.php');
 require('domainobject.php');
 require('domaincollection.php');
+require('dbresult.php');
 
 class DatabaseDriverException extends Exception {}
 

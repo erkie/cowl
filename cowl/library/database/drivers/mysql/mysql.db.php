@@ -1,8 +1,8 @@
 <?php
 
-class DBConnectionException extends Exception {}
-class DBDatabaseSelectException extends Exception {}
-class DBQueryException extends Exception {}
+class MySQLDBConnectionException extends Exception {}
+class MySQLDBDatabaseSelectException extends Exception {}
+class MySQLDBQueryException extends Exception {}
 
 /*
 	Class:
@@ -11,7 +11,7 @@ class DBQueryException extends Exception {}
 	MySQL database wrapper with built in data sanitation.
 */
 
-class DB
+class MySQLDB
 {
 	// Property: <DB::$conn>
 	// Holds the connection ID returned by mysql_query.
@@ -53,12 +53,12 @@ class DB
 			
 			if ( ! $this->conn )
 			{
-				throw new DBConnectionException(mysql_error());
+				throw new MySQLDBConnectionException(mysql_error());
 			}
 			
 			if ( ! mysql_select_db($database) )
 			{
-				throw new DBDatabaseSelectException(mysql_error());
+				throw new MySQLDBDatabaseSelectException(mysql_error());
 			}
 		}
 	}
@@ -85,7 +85,7 @@ class DB
 		
 		$res = $this->query($query, $args);
 		
-		$result = new DBResult($res);
+		$result = new MySQLDBResult($res);
 		$result->setID(mysql_insert_id());
 		$result->setAffected(mysql_affected_rows());
 		
@@ -111,7 +111,7 @@ class DB
 		$ret = mysql_query(vsprintf($query, self::sanitize($args)));
 		if ( ! $ret )
 		{
-			throw new DBQueryException(mysql_error());
+			throw new MySQLDBQueryException(mysql_error());
 		}
 		return $ret;
 	}
