@@ -37,18 +37,22 @@ class Current
 		
 		Method for fetching the database instance. If no instance has yet been created, create one.
 		
+		Parameters:
+			string $driver - The driver to use, e.g "mysql" or "directory", etc
+		
 		Returns:
 			The global database instance.
 	*/
 	
-	public static function db()
+	public static function db($driver)
 	{
-		if ( is_null(self::$db) )
+		if ( ! isset(self::$db[$driver]) )
 		{
 			list($server, $user, $pass, $database) = self::$config->gets('db.server', 'db.user', 'db.password', 'db.database');
-			self::$db = new DB($server, $user, $pass, $database);
+			$dbclass = $driver . 'DB';
+			self::$db[$driver] = new $dbclass($server, $user, $pass, $database);
 		}
-		return self::$db;
+		return self::$db[$driver];
 	}
 	
 	// Property: <Current::$request>
@@ -57,7 +61,7 @@ class Current
 	
 	// Property: <Current::$db>
 	// Database object
-	public static $db;
+	public static $db = array();
 	
 	// Property: <Current::$store>
 	// User session registry

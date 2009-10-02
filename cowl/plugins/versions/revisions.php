@@ -96,7 +96,7 @@ class Revisions
 	private function runStatement($statement)
 	{
 		try {
-			Current::db()->execute($statement);
+			Current::db('mysql')->execute($statement);
 		} catch ( DBQueryException $e )
 		{
 			echo '<h1>Versions Error!</h1>';
