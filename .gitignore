@@ -23,5 +23,5 @@ cowl/app/static/gfx/*
 !cowl/app/static/gfx/index.html
 
 # Other files
-cowl/app/static/files/
+cowl/app/static/files/*
 !cowl/app/static/files/index.html
