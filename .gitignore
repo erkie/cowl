@@ -2,8 +2,12 @@
 cowl/cache/*
 !cowl/cache/index.html
 cowl/app/front/*
-cowl/app/back/*
 !cowl/app/front/shell.html.php
 !cowl/app/front/shell.json.php
 !cowl/app/front/shell.ajax.php
+
+cowl/app/back/*
+cowl/app/static/css/*
+!cowl/app/static/site.css
+
 !cowl/app/back/index.html

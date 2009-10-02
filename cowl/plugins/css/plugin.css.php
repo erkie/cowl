@@ -81,7 +81,7 @@ class CSS extends Plugin
 		Method:
 			<CSS::postPathParse>
 		
-		This is a hook, meant to be called when the requested command has been determined. If the package directory contains a style.commandname.css-file, it will be compiled and added to this request.
+		This is a hook, meant to be called when the requested command has been determined. If the package directory contains a commandname.css-file, it will be compiled and added to this request.
 		
 		Parameters:
 			$args - The $argv array of the request.
@@ -92,7 +92,7 @@ class CSS extends Plugin
 		// Get supposed style file
 		$name = explode('.', $args['command']);
 		$name = $name[1];
-		$file = $args['directory'] . 'style.' . $name . '.css';
+		$file = $args['directory'] . $name . '.css';
 		
 		if ( file_exists($file) )
 		{
