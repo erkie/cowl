@@ -9,14 +9,15 @@
 
 class Controller
 {
-	private static $HEADERS = array(
+	private static $MIMES = array(
 		'json' => 'text/json',
 		'css' => 'text/css',
 		'js' => 'text/x-javascript',
 		'jpg' => 'image/jpeg',
 		'gif' => 'image/gif',
 		'png' => 'image/png',
-		'bmp' => 'image/bmp'
+		'bmp' => 'image/bmp',
+		'html' => 'text/html'
 	);
 	
 	// Property: <Controller::$path>
@@ -85,13 +86,14 @@ class Controller
 		$return = array();
 		$is_error = false;
 		
+		// If a file-ending is specified in the URL
 		if ( preg_match('/\.[A-Za-z0-9]{2,4}$/', $this->path) )
 		{
 			$period = strrpos($this->path, '.');
 			$path = substr($this->path, 0, $period);
 			$response_type = substr($this->path, $period + 1);
 			
-			if ( ! isset(self::$HEADERS[$response_type]) )
+			if ( ! isset(self::$MIMES[$response_type]) )
 			{
 				$is_error = true;
 			}
@@ -104,6 +106,7 @@ class Controller
 			$pieces = explode('/', trim($this->path, '/'));
 		}
 		
+		// No command? Go to main
 		if ( ! count($pieces) || empty($pieces[0]) )
 		{
 			$directory = self::$commands_dir;
@@ -112,6 +115,7 @@ class Controller
 			
 			$return['argv'] = array($this->default_command);
 		}
+		// Start searching for commands
 		else
 		{
 			$directories = $pieces;
@@ -128,7 +132,7 @@ class Controller
 			{
 				$directories[] = 'main';
 				// Add junk to beginning of pieces so the
-				// $args = array_slice($pieces, count($directories));
+				// "$args = array_slice($pieces, count($directories));"
 				// Won't remove one to many
 				array_unshift($pieces, 0);
 			}
