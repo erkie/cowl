@@ -1,14 +1,5 @@
 <?php
 
-if ( ! defined('COWL_CACHED') )
-{
-	require('dbresult.php');
-	require('datamapper.php');
-	require('domainobject.php');
-	require('domaincollection.php');
-	require('querybuilder.php');
-}
-
 class DBConnectionException extends Exception {}
 class DBDatabaseSelectException extends Exception {}
 class DBQueryException extends Exception {}
@@ -54,7 +45,7 @@ class DB
 			string $database - The name of the database to connect to.
 	*/
 	
-	public function connect($server, $user, $password, $database)
+	private function connect($server, $user, $password, $database)
 	{
 		if ( ! $this->conn )
 		{

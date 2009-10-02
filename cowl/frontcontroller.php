@@ -14,7 +14,7 @@ require('library.php');
 require('helpers.php');
 
 require('library/cache/cache.php');
-require('library/db/db.php');
+require('library/database/database.php');
 
 /*
 	Class:
@@ -43,10 +43,10 @@ class FrontController
 		
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		
-		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir, $helpers_dir) = 
+		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir, $helpers_dir, $drivers_dir) = 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
-				'paths.helpers');
+				'paths.helpers', 'paths.drivers');
 		
 		Controller::setDir($commands_dir);	
 		$this->controller = new Controller($this->path);
@@ -57,7 +57,8 @@ class FrontController
 		Templater::setBaseDir($view_dir);
 		Library::setPath($library_dir);	
 		Helpers::setPath($helpers_dir);
-			
+		Database::setPath($drivers_dir);
+		
 		Current::$plugins = new Plugins($plugins_dir);
 		
 		// Load default helper file

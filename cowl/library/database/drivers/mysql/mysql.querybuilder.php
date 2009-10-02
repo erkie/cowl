@@ -149,7 +149,7 @@ class QueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildSelectObject>
+			<QueryBuilder::buildFindObject>
 		
 		Build a query using information from a passed <DomainObject>. If the <DomainObject> has set an ID, that will be the WHERE parameter. Otherwise all values of the <DomainObject> that do exist will be used for the WHERE clause.
 		
@@ -157,7 +157,7 @@ class QueryBuilder
 			DomainObject $object
 	*/
 	
-	public function buildSelectObject(DomainObject $object)
+	public function buildFindObject(DomainObject $object)
 	{
 		$query = sprintf('SELECT * FROM `%s` as %s', $this->table, $this->prefix) . PHP_EOL;
 		$query .= 'WHERE ';

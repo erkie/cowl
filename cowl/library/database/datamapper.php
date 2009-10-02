@@ -29,6 +29,10 @@ abstract class DataMapper
 	
 	protected $primary_key = 'id';
 	
+	// Property: <DataMapper::$driver>
+	// Contains the database driver which this mapper uses.
+	protected $driver = 'mysql';
+	
 	/*
 		Property:
 			<DataMapper::$state>
@@ -76,6 +80,8 @@ abstract class DataMapper
 		{
 			throw new MapperNoTableException(get_class($this));
 		}
+		
+		Database::loadDriver($this->driver);
 		
 		// Remove the word "Mapper" from classname
 		$this->object_name = substr(get_class($this), 0, -6);		
@@ -145,7 +151,7 @@ abstract class DataMapper
 	{
 		Current::$plugins->hook('dbPopulate', $this, $object);
 		
-		$query = $this->builder->buildSelectObject($object);
+		$query = $this->builder->buildFindObject($object);
 		
 		$result = Current::db()->execute($query);
 		$this->populateFromDBResult($object, $result);
@@ -401,9 +407,7 @@ abstract class DataMapper
 		
 		$query = $this->builder->buildUpdate($object);
 		$result = Current::db()->execute($query);
-		
-		//echo '<pre>', $query, '</pre>';
-		
+
 		return $object;
 	}
 	
