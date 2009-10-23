@@ -7,7 +7,7 @@
 	General purpose class for a database rowset and lazy instantiaton of <DomainObject>-objects.
 */
 
-class DomainCollection implements Iterator
+class DomainCollection implements Iterator, Countable
 {
 	// Property: <DomainCollection::$result>
 	// Holds the instance of <DBResult> to interface.
@@ -76,7 +76,7 @@ class DomainCollection implements Iterator
 		Method:
 			<DomainCollection::count>
 		
-		Get amount of results. Substitutes count($result_array).
+		Get amount of results. As <DomainCollection> implements <Countable> the standard PHP function <count> can be used on a <DomainCollection>-object.
 		
 		Returns:
 			The number of rows as an integer.
