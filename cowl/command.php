@@ -88,7 +88,12 @@ abstract class Command
 		// Call initialize method, if one exists
 		if ( method_exists($this, 'initialize') )
 		{
-			call_user_func_array(array($this, 'initialize'), $args);
+			$redirect = call_user_func_array(array($this, 'initialize'), $args);
+			if ( is_array($redirect) )
+			{
+				$url = call_user_func_array('Cowl::url', $redirect);
+				Cowl::redirect($url);
+			}
 		}
 		
 		// If aliases exists, "reroute" the method
@@ -131,8 +136,7 @@ abstract class Command
 		// If an array is returned it is used as pieces for a <Cowl::url> redirect
 		if ( is_array($ret) )
 		{
-			$url = call_user_func_array('Cowl::url', $ret);
-			
+			$url = call_user_func_array('Cowl::url', $ret);			
 			Cowl::redirect($url);
 		}
 		
