@@ -65,6 +65,14 @@ class DomainCollection implements Iterator, Countable
 		return $this->get($this->result->key());
 	}
 	
+	// Method: <DomainCollection::prev>
+	// Interfaces <DBResult::prev>
+	public function prev()
+	{
+		$this->result->prev();
+		return $this->current();
+	}
+	
 	// Method: <DomainCollection::valid>
 	// For <Iterator>
 	public function valid()
