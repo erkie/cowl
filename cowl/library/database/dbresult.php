@@ -4,6 +4,7 @@ abstract class DBResult implements Iterator
 {
 	abstract public function get($index);
 	abstract public function fetchRow();
+	abstract public function row();
 	
 	// Property: <DBResult::$position>
 	// For <Iterator>
@@ -35,6 +36,14 @@ abstract class DBResult implements Iterator
  	public function next()
  	{
  		return $this->fetchRow();
+ 	}
+ 	
+ 	// Method: <DBResult::prev>
+ 	// Returns the previous result.
+ 	public function prev()
+ 	{
+ 		$this->position--;
+ 		return $this->current();
  	}
 	
 	// Method: <DBResult::valid>
