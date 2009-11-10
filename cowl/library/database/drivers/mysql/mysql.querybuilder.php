@@ -81,13 +81,12 @@ class MySQLQueryBuilder
 		
 		Examples:
 			$qb->format('
-				SELECT * FROM %(table) AS %(prefix)
-				WHERE %(field->field) %(value->value)
+				SELECT * FROM %(this->table) AS %(prefix)
+				WHERE %(field->my_field) %(value->my_value)
 			', array(
-				'table' => 'users',
 				'prefix' => 'us',
-				'field' => 'auth_level',
-				'value' => '> 3'
+				'my_field' => 'auth_level',
+				'my_value' => '> 3'
 			));
 			
 			// Will result in:
@@ -105,7 +104,7 @@ class MySQLQueryBuilder
 	
 	public function format($query, $values)
 	{
-		$this->values = $values;
+		$this->values = array_merge($values, array('table' => $this->table, 'primary_key' => $this->primary_key, 'prefix' => $this->prefix));
 		$query = preg_replace_callback('/%\(([^)]+)\)/', array($this, 'formatCallback'), $query);
 		return $query;
 	}
@@ -125,26 +124,48 @@ class MySQLQueryBuilder
 	
 	private function formatCallback($match)
 	{
-		$key = $match[1];
+		// Set and ensure key
+		$key = $value = $match[1];
+		
 		if ( strstr($key, '->') )
 		{
 			$pieces = explode('->', $key);
-			
-			switch ( $pieces[0] )
+			$key = $pieces[count($pieces) - 1];
+		}
+		
+		if ( ! in_array(substr($key, 0, 1), array('"', "'")) && ! in_array(substr($key, -1), array('"', "'")) )
+		{
+			if ( ! isset($this->values[$key]) )
 			{
-				case 'quote': $key = $this->quote($pieces[1]); break;
-				case 'value': $key = $this->qouteValue($pieces[1]); break;
-				case 'field': $key = $this->quoteField($pieces[1]); break;
-				default: throw new MySQLQBInvalidFormatModifierException($pieces[0]); break;
+				throw new MySQLQBFormatValueNotSpecifiedException($key);
+			}
+		
+			// Process value
+			$value = $this->values[$key];
+		}
+		else
+		{
+			$value = substr(substr($key, 1), 0, -1);
+		}
+		
+		if ( isset($pieces) && count($pieces) > 1 )
+		{
+			array_pop($pieces);
+			
+			foreach ( $pieces as $piece )
+			{
+				switch ( $piece )
+				{
+					case 'quote': $value = $this->quote($value); break;
+					case 'value': $value = $this->quoteValue($value); break;
+					case 'field': $value = $this->quoteField($value); break;
+					case 'this': $value = $this->$value; break;
+					default: throw new MySQLQBInvalidFormatModifierException($pieces); break;
+				}
 			}
 		}
 		
-		if ( ! isset($this->values[$key]) )
-		{
-			throw new MySQLQBFormatValueNotSpecifiedException($key);
-		}
-		
-		return $this->values[$key];
+		return $value;
 	}
 	
 	/*
@@ -470,7 +491,7 @@ class MySQLQueryBuilder
 			$qb->quoteValue('< 10');
 			> "< 10"
 			$qb->quoteValue('!= 0');
-			> "!= 0"		
+			> "!= 0"
 		
 		Parameters:
 			$value - The value to transform.
@@ -487,8 +508,13 @@ class MySQLQueryBuilder
 			return array_map(array($this, 'quoteValue'), $value);
 		}
 		
+		if ( empty($value) )
+		{
+			return ' = ""';
+		}
+		
 		// A simple equals statement, with no type specified
-		if ( ! in_array($value[0], array('=', '<', '>', '!')) )
+		if ( ! in_array($value[0], array('=', '<', '>', '!')) || substr($value, 0, 3) == 'IN()' )
 		{
 			return ' = ' . $this->quote($value);
 		}
@@ -506,6 +532,12 @@ class MySQLQueryBuilder
 			<QueryBuilder::quote>
 		
 		Adds quotes to the passed value if anything but numerical. If the value is numerical it is left unchanged.
+		
+		Examples:
+			$qb->quote('Hello world!');
+			-> '"Hello world!"'
+			$qb->quote(10);
+			-> '10'
 		
 		Parameters:
 			$value - The value to quote.
