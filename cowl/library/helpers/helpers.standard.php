@@ -63,7 +63,7 @@ function js()
 	{
 		foreach ( $scripts as $script )
 		{
-			printf('<script type="text/javascript" href="%s"></script>', $script);
+			printf('<script type="text/javascript" src="%s"></script>', $script);
 		}
 	}
 }
