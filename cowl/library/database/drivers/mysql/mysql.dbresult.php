@@ -101,7 +101,7 @@ class MySQLDBResult extends DBResult
 	public function fetchRow()
 	{
 		$this->fetch();
-		return $this->rows[$this->position++];
+		return isset($this->rows[$this->position]) ? $this->rows[$this->position++] : false;
 	}
 	
 	/*

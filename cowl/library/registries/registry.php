@@ -118,8 +118,13 @@ abstract class Registry
 			The value, or false if none was found.
 	*/
 	
-	public function get($value)
+	public function get($value = null)
 	{
+		if ( is_null($value) )
+		{
+			return $this->data;
+		}
+		
 		$namespaces = explode('.', $value);
 		
 		$current = &$this->data;

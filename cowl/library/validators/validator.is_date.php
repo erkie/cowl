@@ -2,11 +2,15 @@
 
 function validate_is_date($date)
 {
-	$time = strtotime($date);
+	$time = $date;
 	
 	if ( ! is_numeric($time) )
 	{
-		return false;
+		$time = strtotime($time);
+		if ( ! is_numeric($time) )
+		{
+			return false;
+		}
 	}
 	
 	$month = date('m', $time);

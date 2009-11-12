@@ -58,7 +58,7 @@ class Validator
 		
 		if ( ! call_user_func($funcname, $input, $arg) )
 		{
-			throw new ValidatorFailException($input);
+			throw new ValidatorFailException($funcname . ': "' . $input . '"');
 		}
 		
 		return true;

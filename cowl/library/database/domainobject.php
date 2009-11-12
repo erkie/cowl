@@ -26,6 +26,10 @@ abstract class DomainObject
 	// The values end up in this array efter they have been <DomainObject::set>
 	private $values = array();
 	
+	// Property: <DomainObject::$rest>
+	// Holds other values that a need a home, but don't have a place in <DomainObject::$members>. This is for queries that fetch more things than just this DomainCollections' values.
+	private $rest = array();
+	
 	// Property: <DomainObject::$validator>
 	// <Validator> for validating input.
 	private $validator;
@@ -33,6 +37,10 @@ abstract class DomainObject
 	// Property: <DomainObject::$id>
 	// Every qualified <DomainObject> should have a $id-property.
 	private $id;
+	
+	// Property: <DomainObject::$is_erronous>
+	// A flag set to true if the <DomainObject> did not exist.
+	private $is_erronous;
 	
 	/*
 		Constructor:
@@ -83,7 +91,14 @@ abstract class DomainObject
 	{
 		if ( ! isset($this->members[$name]) )
 		{
-			throw new DOMemberNotFoundException($name);
+			if ( $raw === false )
+			{
+				throw new DOMemberNotFoundException($name);
+			}
+			else
+			{
+				$this->rest[$name] = $value;
+			}
 		}
 		
 		if ( $raw || (! $raw && $this->validate($name, $value)) )
@@ -114,6 +129,8 @@ abstract class DomainObject
 		
 		Return the value of a member. If $name is "id", use <DomainObject::getID> to fetch the ID (this is so <DomainObject::__get> will behave correctly).
 		
+		This method will try to fetch from <DomainObject::$rest> first, before searching in it's values.
+		
 		Parameters:
 			string $name - The name of the member to fetch.
 		
@@ -126,6 +143,11 @@ abstract class DomainObject
 		if ( $name === 'id' )
 		{
 			return $this->getID();
+		}
+		
+		if ( isset($this->rest[$name]) )
+		{
+			return $this->rest[$name];
 		}
 		
 		if ( ! isset($this->members[$name]) )
@@ -196,6 +218,28 @@ abstract class DomainObject
 	public function fetch()
 	{
 		return $this->values;
+	}
+	
+	/*
+		Method:
+			<DomainObject::isErronous>
+		
+		Checks if this <DomainObject> has it's <DomainObject::is_erronous>-flag set.
+		
+		Returns:
+			<DomainObject::is_erronous>
+	*/
+	
+	public function isErronous()
+	{
+		return $this->is_erronous;
+	}
+	
+	// Method: <DomainObject::setError>
+	// Set this to an erronous object.
+	public function setError()
+	{
+		$this->is_erronous = true;
 	}
 	
 	/*

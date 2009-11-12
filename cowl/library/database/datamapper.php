@@ -384,7 +384,6 @@ abstract class DataMapper
 		$result = Current::db($this->driver)->execute($query);
 		
 		$object->setID($result->getID());
-		//echo '<pre>', $query, '</pre>';
 		
 		return $object;
 	}
@@ -441,8 +440,6 @@ abstract class DataMapper
 		
 		$query = $this->builder->buildDelete($id);
 		$result = Current::db($this->driver)->execute($query);
-		
-		//echo '<pre>', $query, '</pre>';
 	}
 	
 	/*
@@ -481,6 +478,34 @@ abstract class DataMapper
 	
 	/*
 		Method:
+			<DataMapper::query>
+		
+		Run a databasecentric query returning the results in a <DomainCollection>
+		
+		Examples:
+			$posts = $postmapper->query('
+				SELECT * FROM %(table) AS %(prefix)
+				
+				ORDER BY %(field->primary_key) DESC
+			');
+			
+			foreach ( $posts as $post )
+				$post;
+		
+		Parameters:
+			string $query - The query to be run on Current::db($this->driver);
+			array $data - An associative array of data that will be sent to <QueryBuilder::format>
+	*/
+	
+	public function query($query, $data = array())
+	{
+		$query = $this->builder->format($query, $data);
+		$result = Current::db($this->driver)->execute($query);
+		return new DomainCollection($result, $this);
+	}
+	
+	/*
+		Method:
 			<DataMapper::populateFromDBResult>
 		
 		Loops through $result's first row and inserts every field into the passed <DomainObject>.
@@ -495,7 +520,8 @@ abstract class DataMapper
 
 	public function populateFromDBResult(DomainObject $object, DBResult $result)
 	{
-		return $this->populateFromRow($object, $result->row());
+		$row = $result->row();
+		return $row ? $this->populateFromRow($object, $row) : (bool)$object->setError();
 	}
 	
 	/*
