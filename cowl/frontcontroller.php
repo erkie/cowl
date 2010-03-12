@@ -61,7 +61,7 @@ class FrontController
 		
 		Current::$plugins = new Plugins($plugins_dir);
 		
-		// Load default helper file
+		// Load default helper
 		Helpers::load('standard');
 	}
 	
