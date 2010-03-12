@@ -15,7 +15,9 @@
 			<?php include($this->template); ?>
 		</div>
 		
-		<p>Page (not really) rendered in <?php echo round(xdebug_time_index(), 4); ?> seconds</p> 
+		<?php if ( isset($_GET['clr'])) $_SESSION['times'] = array(); ?>
+		
+		<p>Page (not really) rendered in <?php $t = round(xdebug_time_index(), 4); echo $t; $_SESSION['times'][] = $t; ?> seconds. Mean is <?php echo round(array_sum($_SESSION['times']) / count($_SESSION['times']), 4); ?> (<?php echo count($_SESSION['times']); ?> times)</p> 
 		
 		<?php js(); ?>
 	</body>

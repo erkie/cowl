@@ -5,23 +5,24 @@ cowl/cache/*
 !cowl/cache/index.html
 
 # Commands, user styles, views
-cowl/app/front/*
-!cowl/app/front/shell.html.php
-!cowl/app/front/shell.json.php
-!cowl/app/front/shell.ajax.php
+app/front/*
+!app/front/shell.html.php
+!app/front/shell.json.php
+!app/front/shell.ajax.php
 
 # Models and objects
-cowl/app/back/*
-!cowl/app/back/index.html
+app/back/*
+!app/back/index.html
 
 # CSS files, except universal site.css
-cowl/app/static/css/*
-!cowl/app/static/css/site.css
+app/static/css/*
+!app/static/css/site.css
+!app/static/css/misc.css
 
-# Gfx
-cowl/app/static/gfx/*
-!cowl/app/static/gfx/index.html
+# Graphics
+app/static/gfx/*
+!app/static/gfx/index.html
 
 # Other files
-cowl/app/static/files/*
-!cowl/app/static/files/index.html
+app/static/files/*
+!app/static/files/index.html
