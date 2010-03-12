@@ -23,6 +23,8 @@ class Cowl
 {
 	const version = '1.0';
 	
+	private static $timers = array();
+	
 	public static function url()
 	{
 		$args = func_get_args();
@@ -33,5 +35,29 @@ class Cowl
 	{
 		header('Location: ' . $url);
 		exit($url);
+	}
+	
+	/*
+		Non-related methods
+	*/
+	
+	public static function timer($label)
+	{
+		self::$timers[$label] = microtime(true);
+	}
+	
+	public static function timerEnd($label)
+	{
+		self::$timers[$label] = microtime(true) - self::$timers[$label];
+	}
+	
+	public static function getTimer($label)
+	{
+		return self::$timers[$label];
+	}
+	
+	public static function getTimers()
+	{
+		return self::$timers;	
 	}
 }
