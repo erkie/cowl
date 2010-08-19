@@ -4,26 +4,3 @@
 cache/
 cache/*
 !cache/index.html
-
-# Commands, user styles, views
-app/front/*
-!app/front/shell.html.php
-!app/front/shell.json.php
-!app/front/shell.ajax.php
-
-# Models and objects
-app/back/*
-!app/back/index.html
-
-# CSS files, except universal site.css
-app/static/css/*
-!app/static/css/site.css
-!app/static/css/misc.css
-
-# Graphics
-app/static/gfx/*
-!app/static/gfx/index.html
-
-# Other files
-app/static/files/*
-!app/static/files/index.html
