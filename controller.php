@@ -9,6 +9,8 @@
 
 class Controller
 {
+	const SEPARATOR = '/';
+	
 	private static $MIMES = array(
 		'json' => 'text/json',
 		'css' => 'text/css',
@@ -131,7 +133,7 @@ class Controller
 			if ( is_dir(self::$commands_dir . $glued . DIRECTORY_SEPARATOR . 'main') )
 			{
 				$directories[] = 'main';
-				// Add junk to beginning of pieces so the
+				// Add junk to beginning of $pieces so
 				// "$args = array_slice($pieces, count($directories));"
 				// Won't remove one to many
 				array_unshift($pieces, 0);

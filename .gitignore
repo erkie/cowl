@@ -1,8 +1,9 @@
 .DS_Store
 
 # Cache
-cowl/cache/*
-!cowl/cache/index.html
+cache/
+cache/*
+!cache/index.html
 
 # Commands, user styles, views
 app/front/*
