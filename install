@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "*** Installing Cowl."
+
+echo "** Moving app-directory"
+# Move sample app directory
+cp -R app-SAMPLE/ ../app/
+
+echo "** Moving .htaccess"
+# Move .htaccess and index.php
+cp SAMPLE.htaccess ../.htaccess
+
+echo "** Moving index.php"
+cp index.php-SAMPLE ../index.php
+
+# Change RewriteBase / to the real base
+echo "# Please enter the base web path of your app (almost always /): "
+read BASE_PATH
+sed "s#RewriteBase /#RewriteBase $BASE_PATH#g" ../.htaccess > ../.htaccess.temp
+mv ../.htaccess.temp ../.htaccess
+
+# Make /cowl/cache writeable
+chmod 0777 ./cache
+
+echo "*** Done."
