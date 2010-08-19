@@ -1,9 +1,0 @@
-@load(static/css/misc.css);
-@load(static/css/random.css);
-
-ul = $cowl-color;
-
-.is-done {
-	opacity: .3;
-	font-size: 75%;
-}
