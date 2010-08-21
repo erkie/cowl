@@ -49,6 +49,7 @@ class Config extends Registry
 		$this->cache = new PHPFileCache('cowl.config', $cache_name);
 		if ( false === ($this->data = $this->cache->get()) ) // when working on this don't forget to turn of cacheing
 		{
+			$this->data = array();
 			$this->parseIniFile(self::$path . 'config.ini');
 			
 			// Any other files 
@@ -96,8 +97,13 @@ class Config extends Registry
 			$key - The key to find.
 	*/
 	
-	public function get($key)
+	public function get($key = '')
 	{
+		if ( empty($key) )
+		{
+			return $this->data;
+		}
+		
 		if ( ! isset($this->data[$key]) )
 		{
 			throw new ConfigKeyNotFoundException($key);
