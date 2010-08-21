@@ -197,6 +197,19 @@ abstract class Command
 		return 'command.' . implode('.', $pieces);
 	}
 	
+	/*
+		Method:
+			<Command::assign>
+		
+		Alias for <Command::$template::add>. See <Templater::add> for more details.
+	*/
+	
+	public function assign()
+	{
+		$args = func_get_args();
+		return call_user_func_array(array($this->template, 'add'), $args);
+	}
+	
 	public abstract function index();
 }
 
