@@ -52,7 +52,7 @@ function css()
 	Function:
 		<js>
 	
-	Print out <script></scripts> for all files atted to <Current::$request> info-array of the key "js".
+	Print out <script></scripts> for all files added to <Current::$request>-info-array of the key "js".
 */
 
 function js()
