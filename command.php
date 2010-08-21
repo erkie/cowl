@@ -109,6 +109,7 @@ abstract class Command
 		{
 			$method = 'index';
 		}
+		$argv['method'] = $method;
 		
 		// Set view to either the base-name of the class, which is default or the name of the method
 		if ( is_null($this->view) && $this->template->exists('view.' . $method . '.php') )
@@ -127,10 +128,14 @@ abstract class Command
 		catch ( TPLShellNotExistsException $e )
 		{
 			$this->template->setType('html');
+			$argv['response_type'] = 'html';
 		}
 		
 		// Set cache path, if the user wants to activate cacheing
 		$this->template->setCachePath($this->getCachePath(), 600);
+		
+		$this->template->add('argv', $argv);
+		Current::$request->setInfo('argv', $argv);
 		
 		Current::$plugins->hook('commandRun', $this, $method, $argv);
 		

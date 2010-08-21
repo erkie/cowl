@@ -63,8 +63,14 @@ function js()
 	{
 		foreach ( $scripts as $script )
 		{
-			printf('<script type="text/javascript" src="%s"></script>', $script);
+			printf('<script type="text/javascript" src="%s"></script>', Cowl::url($script));
 		}
+	}
+	
+	if ( $fire = Current::$request->getInfo('js_fire') )
+	{
+		$argv = Current::$request->getInfo('argv');
+		printf('<script type="text/javascript">Cowl.fire("%s", "%s")</script>', strtolower(implode('.', $argv['pieces'])), $argv['method']);
 	}
 }
 
