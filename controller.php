@@ -180,6 +180,7 @@ class Controller
 		
 		require($directory . $command_name);
 		$return['directory'] = $directory;
+		$return['app_directory'] = $directory == self::$commands_dir ? '' : substr($directory, strlen(self::$commands_dir));
 		$return['command'] = $command_name;
 		$return['response_type'] = $response_type;
 		$return['pieces'] = $dir_pieces;
