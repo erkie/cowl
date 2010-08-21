@@ -262,6 +262,8 @@ abstract class DomainObject
 		
 		foreach ( $rules as $rule => $arg )
 		{
+			// Ignore default rules, as this is not a validation clause
+			if ( $rule == 'default' ) continue;
 			$this->validator->validate($input, $rule, $arg);
 		}
 		
