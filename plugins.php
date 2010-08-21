@@ -1,7 +1,5 @@
 <?php
 
-include('plugin.php');
-
 /*
 	Class:
 		<Plugins>
