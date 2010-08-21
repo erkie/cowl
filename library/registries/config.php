@@ -47,9 +47,17 @@ class Config extends Registry
 		$cache_name = self::$path . 'config.ini';
 		
 		$this->cache = new PHPFileCache('cowl.config', $cache_name);
-		if ( false === ($this->data = $this->cache->get()) )
+		if ( false === ($this->data = $this->cache->get()) ) // when working on this don't forget to turn of cacheing
 		{
 			$this->parseIniFile(self::$path . 'config.ini');
+			
+			// Any other files 
+			$other = $this->get('config.other');
+			if ( is_array($other) )
+			{
+				array_walk($other, array($this, 'parseIniFile'));
+			}
+			
 			$this->cache->update($this->data);
 		}
 	}
@@ -63,14 +71,19 @@ class Config extends Registry
 	
 	private function parseIniFile($filename)
 	{
+		if ( ! file_exists($filename) )
+		{
+			return false;
+		}
+		
 		$arr = parse_ini_file($filename);
-		$base = $arr['paths.base'];
+		$base = isset($arr['paths.base']) ? $arr['paths.base'] : $this->data['paths.base'];
 		
 		foreach ( $arr as $key => $value )
 		{
 			$arr[$key] = str_replace('~', $base, $value);
 		}
-		$this->data = $arr;
+		$this->data = array_merge($this->data, $arr);
 	}
 	
 	/*
