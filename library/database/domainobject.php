@@ -62,12 +62,12 @@ abstract class DomainObject
 		// Initialize members
 		foreach ( $this->members as $name => $rules )
 		{
-			if ( isset($rules['default']) )
+			/*if ( isset($rules['default']) )
 			{
 				$this->values[$name] = $rules['default'];
 				unset($rules['default']);
 				$this->members[$name] = $rules;
-			}
+			}*/
 		}
 		
 		$this->validator = new Validator();
