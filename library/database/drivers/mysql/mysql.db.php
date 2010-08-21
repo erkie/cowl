@@ -13,6 +13,10 @@ class MySQLDBQueryException extends Exception {}
 
 class MySQLDB
 {
+	// Property: <DataMapper::$output_query>
+	// Output the current query using <var_dump>. Debug-flag, will be set to false after use.
+	public $output_query = false;
+
 	// Property: <DB::$conn>
 	// Holds the connection ID returned by mysql_query.
 	private $conn;
@@ -108,7 +112,14 @@ class MySQLDB
 	
 	private function query($query, $args)
 	{
-		$ret = mysql_query(vsprintf($query, self::sanitize($args)));
+		$query = vsprintf($query, self::sanitize($args));
+		if ( $this->output_query )
+		{
+			var_dump($query);
+			$this->output_query = false;
+		}
+		
+		$ret = mysql_query($query);
 		if ( ! $ret )
 		{
 			throw new MySQLDBQueryException(mysql_error());
