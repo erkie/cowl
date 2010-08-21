@@ -152,7 +152,7 @@ abstract class Plugin
 	public function postRun() {}
 	
 	// Command-related hooks
-	public function commandRun($method, $args) {}
+	public function commandRun(Command $command, $method, $args) {}
 	
 	// ORM-related hooks
 	public function dbPopulate(DataMapper $mapper, DomainObject $object) {}
