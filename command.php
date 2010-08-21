@@ -25,6 +25,10 @@ abstract class Command
 	// The argv passed to <Command::run>
 	protected $argv;
 	
+	// Property: <Command::$js>
+	// Holds an array of JS-files for the command.
+	protected $js = array();
+	
 	// Property: <Command::$view>
 	// The name of the view to include as template.
 	private $view;
@@ -128,7 +132,7 @@ abstract class Command
 		// Set cache path, if the user wants to activate cacheing
 		$this->template->setCachePath($this->getCachePath(), 600);
 		
-		Current::$plugins->hook('commandRun', $method, $argv);
+		Current::$plugins->hook('commandRun', $this, $method, $argv);
 		
 		// _This_ is where all the magic happens
 		$ret = call_user_func_array(array($this, $method), $args);
@@ -196,6 +200,10 @@ abstract class Command
 
 		return 'command.' . implode('.', $pieces);
 	}
+	
+	// Method: <Command::getJS>
+	// Returns <Command::$js>
+	public function getJS() { return $this->js; }
 	
 	/*
 		Method:

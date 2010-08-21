@@ -74,7 +74,7 @@ class CSS extends Plugin
 		}
 		
 		// Append the URL for the site-specific CSS-file to the <Request> registry object.
-		Current::$request->setInfo('css', array($this->url_dir . 'site.css'));
+		Current::$request->setInfo('css[]', $this->url_dir . 'site.css');
 	}
 	
 	/*
@@ -113,7 +113,7 @@ class CSS extends Plugin
 			}
 			
 			// Add to current request
-			Current::$request->setInfo('css', array($this->url_dir . $cache_dir . $name . '.css'));
+			Current::$request->setInfo('css[]', $this->url_dir . $cache_dir . $name . '.css');
 		}
 	}
 }

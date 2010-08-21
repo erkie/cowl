@@ -44,15 +44,23 @@ class Request extends Registry
 		
 		Parameters:
 			$key - The key to set
-			$value = The value
+			$value - The value
 	*/
 	
 	public function setInfo($key, $value)
 	{
-		if ( $this->has($key) && is_array($value) )
+		// Check for array appending
+		if ( substr($key, -2) == '[]' )
 		{
-			$old = $this->getInfo($key);
-			$value = array_merge($old, $value);
+			$key = substr($key, 0, -2);
+			// Ensure that existing key exists
+			if ( ! $this->getInfo($key) )
+			{
+				$this->setInfo($key, array());
+			}
+			$old_value = $this->getInfo($key);
+			$old_value[] = $value;
+			$value = $old_value;
 		}
 		$this->request_data[$key] = $value;
 	}
