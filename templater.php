@@ -41,7 +41,7 @@ class Templater
 	protected $cache_active = false;
 	
 	// Property: <Templater::$base_dir>
-	// Base directory for all templates.
+	// Base directory for all templates. Including shells and views.
 	protected static $base_dir = 'templates/';
 		
 	/*
@@ -53,18 +53,15 @@ class Templater
 		Parameters:
 			mixed $key - If $key is an array it will be merged into the <Templater::$vars>-array, else $key is the name of the variable assosciated with the $value inside the template.
 			mixed $value - The value.
+		
+		Returns:
+			Returns the $this-instance for chaining commands.
 	*/
 	
 	public function add($key, $value = null)
 	{
-		if ( is_array($key) )
-		{
-			$this->vars = array_merge($this->vars, $key);
-		}
-		else
-		{
-			$this->vars[$key] = $value;
-		}
+		$this->vars[$key] = is_array($key) ? array_merge($this->vars, $key) : $value;
+		return $this;
 	}
 	
 	/*
