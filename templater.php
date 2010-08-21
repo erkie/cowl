@@ -60,7 +60,14 @@ class Templater
 	
 	public function add($key, $value = null)
 	{
-		$this->vars[$key] = is_array($key) ? array_merge($this->vars, $key) : $value;
+		if ( is_array($key) )
+		{
+			$this->vars = array_merge($this->vars, $key);
+		}
+		else
+		{
+			$this->vars[$key] = $value;
+		}
 		return $this;
 	}
 	
