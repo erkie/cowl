@@ -1,4 +1,4 @@
-@load(static/css/misc.css);
+@load(cowl/static/css/misc.css);
 
 body {
 	font: 14pt/1.2 Helvetica, Arial, sans-serif;

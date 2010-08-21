@@ -36,7 +36,7 @@ class CSS extends Plugin
 	public function __construct()
 	{
 		list($dir, $url_dir, $cache, $force_update)
-			= Current::$config->gets('paths.app', 'paths.urls.css', 'plugins.css.cache', 'plugins.css.force_update');
+			= Current::$config->gets('paths.top', 'paths.urls.css', 'plugins.css.cache', 'plugins.css.force_update');
 		
 		CSSCompiler::setDir($dir);
 		
