@@ -20,6 +20,7 @@ sed "s#RewriteBase /#RewriteBase $BASE_PATH#g" ../.htaccess > ../.htaccess.temp
 mv ../.htaccess.temp ../.htaccess
 
 # Make /cowl/cache writeable
+mkdir cache
 chmod 0777 ./cache
 
 echo "*** Done."
