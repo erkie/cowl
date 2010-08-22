@@ -228,7 +228,7 @@ class Templater
 				$data[$key] = $this->toJSON($value);
 			}
 		}
-		return json_encode($data);
+		return $data;
 	}
 	
 	// Method: <Templater::setDir>
