@@ -269,4 +269,9 @@ abstract class DomainObject
 		
 		return true;
 	}
+	
+	public function getData()
+	{
+		return array_merge($this->values, $this->rest);
+	}
 }

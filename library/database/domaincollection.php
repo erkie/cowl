@@ -123,4 +123,21 @@ class DomainCollection implements Iterator, Countable
 		}
 		return $this->instances[$index];
 	}
+	
+	/*
+		Method:
+			<DomainCollection::getData>
+		
+		Returns the data of all <DomainObject>:s contained as an array.
+	*/
+	
+	public function getData()
+	{
+		$ret = array();
+		foreach ( $this as $key => $value )
+		{
+			$ret[$key] = $value->getData();
+		}
+		return $ret;
+	}
 }

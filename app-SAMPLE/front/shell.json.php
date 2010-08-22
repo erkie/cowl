@@ -1,1 +1,1 @@
-<?php echo json_encode($this->vars); ?>
+<?php echo $this->toJSON($this->vars); ?>

@@ -198,6 +198,39 @@ class Templater
 		$this->cache = new Cache($this->cache_path[0], $this->cache_path[1]);
 	}
 	
+	/*
+		Method:
+			<Templater::toJSON>
+		
+		Method for converting members to JSON-data. Because json_encode does not properly encode <DomainObject>s.
+		
+		Parameters:
+			$data - The array to convert, will recursively convert data.
+		
+		Returns:
+			The JSON-data
+	*/
+	
+	public function toJSON($data)
+	{
+		foreach ( $data as $key => $value )
+		{
+			if ( $value instanceof DomainCollection )
+			{
+				$data[$key] = $value->getData();
+			}
+			else if ( $value instanceof DomainObject )
+			{
+				$data[$key] = $value->getData();
+			}
+			else if ( is_array($value) )
+			{
+				$data[$key] = $this->toJSON($value);
+			}
+		}
+		return json_encode($data);
+	}
+	
 	// Method: <Templater::setDir>
 	// Set the directory in which templates are contained.
 	public function setDir($dir)
