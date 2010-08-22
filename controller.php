@@ -105,7 +105,7 @@ class Controller
 		}
 		else
 		{
-			$response_type = self::$default_type;
+			$response_type = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'json' : self::$default_type;
 			$pieces = explode('/', trim($this->path, '/'));
 		}
 		
