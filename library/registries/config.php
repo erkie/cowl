@@ -84,7 +84,18 @@ class Config extends Registry
 		{
 			$arr[$key] = str_replace('~', $base, $value);
 		}
-		$this->data = array_merge($this->data, $arr);
+		
+		foreach ( $arr as $key => $value )
+		{
+			if ( isset($this->data[$key]) && is_array($this->data[$key]) )
+			{
+				$this->data[$key] = array_merge($this->data[$key], $value);
+			}
+			else
+			{
+				$this->data[$key] = $value;
+			}
+		}
 	}
 	
 	/*
