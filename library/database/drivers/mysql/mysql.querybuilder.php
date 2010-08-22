@@ -78,6 +78,7 @@ class MySQLQueryBuilder
 		* quote: Will be modified by <QueryBuilder::quote>
 		* value: Will be modified by <QueryBuilder::quouteValue>
 		* field: Will be modified by <QueryBuilder::quoteField>
+		* string: Will be quoted as a string
 		
 		Examples:
 			$qb->format('
@@ -159,8 +160,9 @@ class MySQLQueryBuilder
 					case 'quote': $value = $this->quote($value); break;
 					case 'value': $value = $this->quoteValue($value); break;
 					case 'field': $value = $this->quoteField($value); break;
+					case 'string': $value = $value; break;
 					case 'this': $value = $this->$value; break;
-					default: throw new MySQLQBInvalidFormatModifierException($pieces); break;
+					default: throw new MySQLQBInvalidFormatModifierException(implode(' ', $pieces)); break;
 				}
 			}
 		}
