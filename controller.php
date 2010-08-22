@@ -16,6 +16,7 @@ class Controller
 		'css' => 'text/css',
 		'js' => 'text/x-javascript',
 		'jpg' => 'image/jpeg',
+		'jpeg' => 'images/jpeg',
 		'gif' => 'image/gif',
 		'png' => 'image/png',
 		'bmp' => 'image/bmp',
@@ -93,7 +94,7 @@ class Controller
 		{
 			$period = strrpos($this->path, '.');
 			$path = substr($this->path, 0, $period);
-			$response_type = substr($this->path, $period + 1);
+			$response_type = strtolower(substr($this->path, $period + 1));
 			
 			if ( ! isset(self::$MIMES[$response_type]) )
 			{
