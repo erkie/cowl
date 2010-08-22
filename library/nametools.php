@@ -11,4 +11,11 @@ class NameTools
 		$name = trim($name, '-');
 		return $name;
 	}
+	
+	public static function URLSafeFilename($name)
+	{
+		$parts = explode('/', $name);
+		$parts = array_map('rawurlencode', $parts);
+		return implode('/', $parts);		
+	}
 }
