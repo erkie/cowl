@@ -42,7 +42,7 @@ var Cowl = {
 			(function) callback - Optional callback that is called when everything is done
 	*/
 	
-	loadToPage: function(url, callback) {
+	load: function(url, callback) {
 		var req = new Request.JSON({
 			onSuccess: function(data) {
 				Cowl.templateReplace(data);
