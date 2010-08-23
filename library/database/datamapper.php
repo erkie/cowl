@@ -545,6 +545,7 @@ abstract class DataMapper
 			if ( $field == 'id' ) $object->setID($value);
 			else $object->setRaw($field, $value);
 		}
+		$object->initialize();
 		return $object;
 	}
 	

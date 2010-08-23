@@ -59,17 +59,6 @@ abstract class DomainObject
 			$this->setID($id);
 		}
 		
-		// Initialize members
-		foreach ( $this->members as $name => $rules )
-		{
-			/*if ( isset($rules['default']) )
-			{
-				$this->values[$name] = $rules['default'];
-				unset($rules['default']);
-				$this->members[$name] = $rules;
-			}*/
-		}
-		
 		$this->validator = new Validator();
 	}
 	
@@ -270,8 +259,21 @@ abstract class DomainObject
 		return true;
 	}
 	
+	// Method: <DomainObject::getData>
+	// Returns the data of the current object. That means a merge of <DomainObject::$values> and <DomainObject::$rest>
 	public function getData()
 	{
 		return array_merge($this->values, $this->rest);
 	}
+	
+	/*
+		Method:
+			<DomainObject::initialize>
+		
+		A method that is called when the object is initialized. For example, will be called when populated from the database.
+		
+		Feel free to overwrite in your sub-class.
+	*/
+	
+	public function initialize() {}
 }
