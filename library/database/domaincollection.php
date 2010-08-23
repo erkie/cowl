@@ -126,6 +126,33 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
+			<DomainCollection::indexOf>
+		
+		Searches for the index of the passed <DomainObject>.
+		
+		Parameters:
+			DomainObject $object - The object to search for
+		
+		Returns:
+			The index of $object, else false.
+	*/
+	
+	public function indexOf(DomainObject $object)
+	{
+		$i = 0;
+		foreach ( $this as $key => $o )
+		{
+			if ( $object == $o )
+			{
+				return $i;
+			}
+			$i++;
+		}
+		return false;
+	}
+	
+	/*
+		Method:
 			<DomainCollection::getData>
 		
 		Returns the data of all <DomainObject>:s contained as an array.
