@@ -145,7 +145,7 @@ class Controller
 			{
 				$directory = self::$commands_dir;
 				$command_name = 'command.' . $pieces[0] . '.php';
-				$dir_pieces = array();
+				$dir_pieces = array($pieces[0]);
 				
 				if ( file_exists($directory . $command_name) )
 				{
