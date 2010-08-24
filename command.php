@@ -95,7 +95,7 @@ abstract class Command
 			$redirect = call_user_func_array(array($this, 'initialize'), $args);
 			if ( is_array($redirect) )
 			{
-				$url = call_user_func_array('Cowl::url', $redirect);
+				$url = Cowl::url($redirect);
 				Cowl::redirect($url);
 			}
 		}
@@ -145,7 +145,7 @@ abstract class Command
 		// If an array is returned it is used as pieces for a <Cowl::url> redirect
 		if ( is_array($ret) )
 		{
-			$url = call_user_func_array('Cowl::url', $ret);			
+			$url = Cowl::url($ret);		
 			Cowl::redirect($url);
 		}
 		

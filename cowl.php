@@ -51,15 +51,16 @@ class Cowl
 			echo Cowl::url();
 		
 		Parameters:
+			(optional) $url - An array of pieces, if an array is passed all pieces will be ignored.
 			many mixed pieces - The pieces to be turned into a URL
 		
 		Returns:
 			The url string.
 	*/
 	
-	public static function url()
+	public static function url($url = null)
 	{
-		$args = func_get_args();
+		$args = is_array($url) ? $url : func_get_args();
 		return COWL_BASE . implode('/', $args);
 	}
 	
@@ -75,6 +76,10 @@ class Cowl
 	
 	public static function redirect($url)
 	{
+		if ( isset($_SERVER['HTTP_X_REQUESTED_WITH']) )
+		{
+			$url .= (strstr('?', $url) ? '&' : '?') . 'COWL_was_requested_with=' . $_SERVER['HTTP_X_REQUESTED_WITH'];
+		}
 		header('Location: ' . $url);
 		exit($url);
 	}
