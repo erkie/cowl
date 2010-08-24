@@ -31,6 +31,10 @@ var Cowl = {
 		this.instances[command] = instance;
 	},
 	
+	url: function() {
+		return COWL_BASE + $A(arguments).join('/');
+	},
+	
 	/*
 		Method:
 			<Cowl.loadToPage>
@@ -47,7 +51,7 @@ var Cowl = {
 			onSuccess: function(data) {
 				Cowl.templateReplace(data);
 				if ( typeof callback == 'function' )
-					callback();
+					callback(data);
 			}
 		});
 		req.get(url);
@@ -77,3 +81,46 @@ var Cowl = {
 		});
 	}
 };
+
+Element.implement({
+	isVisible: function() {
+		try {
+			if (this.offsetWidth === 0 || this.offsetHeight === 0)
+				return false;
+			var height = document.documentElement.clientHeight,
+				rects = this.getClientRects(),
+				on_top = function(r) {
+					var leftDistance = Math.floor((r.right - r.left) / 10);
+					var topDistance = Math.floor((r.bottom - r.top) / 10);
+					for (var x = Math.floor(r.left), x_max = Math.ceil(r.right); x <= x_max; x += leftDistance )
+						for (var y = Math.floor(r.top), y_max = Math.ceil(r.bottom); y <= y_max; y += topDistance ) {
+							var el = document.elementFromPoint(x, y);
+							if ( el && el.is(this) )
+								return true;
+						}
+					return false;
+			};
+			for (var i = 0, l = rects.length; i < l; i++) {
+				var r = rects[i],
+					in_viewport = r.top > 0 ? r.top <= height : (r.bottom > 0 && r.bottom <= height);
+				if (in_viewport && on_top(r)) return true;
+			}
+			return false;
+		} catch ( e ) {
+			return false;
+		}
+	},
+	
+	is: function(test) {
+		if ( typeof test == "string" ) {
+			return !!(this.match(test) || this.getParent(test));
+		} else {
+			if ( this === test ) return true;
+			var top = test;
+			while ( top.getParent && top !== this ) {
+				top = top.getParent();
+			}
+			return !!top;
+		}
+	}
+});
