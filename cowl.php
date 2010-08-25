@@ -10,7 +10,7 @@ define('COWL_CACHE_DIR', COWL_DIR . 'cache' . DIRECTORY_SEPARATOR);
 
 // Constant: <COWL_BASE>
 // The root of the URL. Will almost always be '/' in production.
-define('COWL_BASE', dirname($_SERVER['SCRIPT_NAME']) . '/');
+define('COWL_BASE', trim(dirname($_SERVER['SCRIPT_NAME']) . '/', '/') . '/');
 
 /*
 	Class:
