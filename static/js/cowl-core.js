@@ -31,8 +31,23 @@ var Cowl = {
 		this.instances[command] = instance;
 	},
 	
-	url: function() {
-		return COWL_BASE + $A(arguments).join('/');
+	/*
+		Method:
+			<Cowl.url>
+		
+		Works exactly as PHP <Cowl::url>. Pass each piece as an argument and it will be joined with a '/'. The project <BASE_PATH> will be applied to the url.
+		
+		Parameters:
+			(array) arr - Optional array to use
+			mixed many pieces - If arr is not an array, the arguments-array is used.
+		
+		Returns:
+			string - The url
+	*/
+	
+	url: function(arr) {
+		arr = $type(arr) == 'array' ? arr : arguments;
+		return COWL_BASE + $A(arr).join('/');
 	},
 	
 	/*
