@@ -46,8 +46,8 @@ var Cowl = {
 	*/
 	
 	url: function(arr) {
-		arr = $type(arr) == 'array' ? arr : arguments;
-		return COWL_BASE + $A(arr).join('/');
+		var data = $type(arr) == 'array' ? arr : arguments;
+		return COWL_BASE + $A(data).join('/');
 	},
 	
 	/*
