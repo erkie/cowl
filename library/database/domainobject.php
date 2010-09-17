@@ -89,8 +89,7 @@ abstract class DomainObject
 				$this->rest[$name] = $value;
 			}
 		}
-		
-		if ( $raw || (! $raw && $this->validate($name, $value)) )
+		elseif ( $raw || (! $raw && $this->validate($name, $value)) )
 		{
 			$this->values[$name] = $value;
 		}
