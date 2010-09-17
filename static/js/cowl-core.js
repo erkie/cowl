@@ -66,7 +66,7 @@ var Cowl = {
 			onSuccess: function(data) {
 				Cowl.templateReplace(data);
 				if ( typeof callback == 'function' )
-					callback(data);
+					callback(data, req);
 			}
 		});
 		req.get(url);
