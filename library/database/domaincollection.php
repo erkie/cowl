@@ -153,6 +153,34 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
+			<DomainCollection::combine>
+		
+		Combine this <DomainCollection> with another iterable object (or array).
+		
+		Parameters:
+			$res - The other iterable object (or array) to combine with
+		
+		Returns:
+			The array containing $this and $res.
+	*/
+	
+	public function combine($res)
+	{
+		$new = array();
+		foreach ( $this as $value )
+		{
+			$new[] = $value;
+		}
+		
+		foreach ( $res as $value )
+		{
+			$new[] = $value;
+		}
+		return $new;
+	}
+	
+	/*
+		Method:
 			<DomainCollection::getData>
 		
 		Returns the data of all <DomainObject>:s contained as an array.
