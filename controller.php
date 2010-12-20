@@ -109,6 +109,8 @@ class Controller
 			$pieces = explode('/', trim($this->path, '/'));
 		}
 		
+		$original_pieces = $pieces;
+		
 		// No command? Go to main
 		if ( ! count($pieces) || empty($pieces[0]) )
 		{
@@ -185,6 +187,7 @@ class Controller
 		$return['command'] = $command_name;
 		$return['response_type'] = $response_type;
 		$return['pieces'] = $dir_pieces;
+		$return['original_request'] = $original_pieces;
 		
 		return $return;
 	}
