@@ -132,7 +132,7 @@ Element.implement({
 		} else {
 			if ( this === test ) return true;
 			var top = test;
-			while ( top.getParent && top !== this ) {
+			while ( top && top.getParent && top !== this ) {
 				top = top.getParent();
 			}
 			return !!top;
