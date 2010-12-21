@@ -9,6 +9,7 @@
 var Cowl = {
 	commands: {},
 	instances: {},
+	templateCallbacks: [],
 	
 	Command: function(name, props) {
 		Cowl.commands[name.toLowerCase()] = new Class(props);
@@ -52,7 +53,7 @@ var Cowl = {
 	
 	/*
 		Method:
-			<Cowl.loadToPage>
+			<Cowl.load>
 		
 		Loads a URL and with the JSON from results searches for elements with the attribute tpl-name and replaces the contents of them with it.
 		
@@ -94,6 +95,23 @@ var Cowl = {
 			if ( value )
 				element.set(element.get('tpl-attribute') || 'text', value);
 		});
+		
+		for ( var i = 0, callback; callback = this.templateCallbacks[i]; i++ )
+			callback(data);
+	},
+	
+	/*
+		Method:
+			<Cowl.registerTemplateCallback>
+		
+		Register a callback to be called when <Cowl.templateReplace> is called.
+		
+		Parameters:
+			(function) callback - The callback to call. A data-parameter will be passed to the callback upon execution.
+	*/
+	
+	registerTemplateCallback: function(callback) {
+		this.templateCallbacks.push(callback);
 	}
 };
 
