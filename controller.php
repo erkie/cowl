@@ -20,7 +20,8 @@ class Controller
 		'gif' => 'image/gif',
 		'png' => 'image/png',
 		'bmp' => 'image/bmp',
-		'html' => 'text/html'
+		'html' => 'text/html',
+		'rss' => 'application/rss+xml'
 	);
 	
 	// Property: <Controller::$path>
