@@ -262,7 +262,7 @@ abstract class DomainObject
 	// Returns the data of the current object. That means a merge of <DomainObject::$values> and <DomainObject::$rest>
 	public function getData()
 	{
-		return array_merge($this->values, $this->rest);
+		return array_merge($this->values, $this->rest, array('id' => $this->getID()));
 	}
 	
 	/*
