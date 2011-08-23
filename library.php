@@ -5,7 +5,7 @@ class LibraryAlreadyExistsException extends Exception {}
 
 /*
 	Class:
-		<Library>
+		Library
 	
 	Keeps track and loads libraries.
 */
@@ -18,7 +18,7 @@ class Library
 	
 	/*
 		Method:
-			<Library::load>
+			Library::load
 		
 		Loads all libraries. If they are not found in <Library::$path> a <LibraryNotFoundException> is thrown. If it already has been included, a <LibraryAlreadyExistsException> is thrown.
 		
@@ -48,7 +48,7 @@ class Library
 	
 	/*
 		Method:
-			<Library::loadInstance>
+			Library::loadInstance
 		
 		Load $library and return an instance of that class.
 		
@@ -74,7 +74,7 @@ class Library
 	
 	/*
 		Method:
-			<Library::setPath>
+			Library::setPath
 
 		Set the path in which libraries are loaded from.
 		

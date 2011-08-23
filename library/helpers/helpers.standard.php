@@ -9,7 +9,7 @@
 
 /*
 	Function:
-		<url>
+		url
 	
 	Print out a URL without you having to worry about the base path. See documentation for <Cowl::url> for more information.
 	
@@ -30,7 +30,7 @@ function url()
 	
 /*
 	Function:
-		<css>
+		css
 	
 	Print out <link />s to all CSS files added to <Current::$request> info-array of the key "css".
 */
@@ -50,7 +50,7 @@ function css()
 
 /*
 	Function:
-		<js>
+		js
 	
 	Print out <script></scripts> for all files added to <Current::$request>-info-array of the key "js".
 */
@@ -76,7 +76,7 @@ function js()
 
 /*
 	Function:
-		<only_if>
+		only_if
 	
 	Print out $if_true only if $test is true, else print out $if_false.
 	
@@ -93,7 +93,7 @@ function only_if($test, $if_true, $if_false = '')
 
 /*
 	Function:
-		<to_options>
+		to_options
 	
 	Create HTML options from a <DomainCollection> using specified keys for value="" and text of the <option></option>.
 	
@@ -130,7 +130,7 @@ function to_options(DomainCollection $collection, $key_value, $key_text, $select
 
 /*
 	Function:
-		<fimplode>
+		fimplode
 	
 	Formatted implode. Implode an array of associative of arrays, replacing instances
 	of %key; with the value of the key. If the passed array is not associative, the variables
@@ -219,3 +219,37 @@ function fimplode($format_string, $arr, $format_end = '')
 	return $string;
 }
 
+/*
+	Function:
+		flash
+	
+	Output message defined by previous pageview. See
+*/
+
+function flash()
+{
+	$classes = array(
+		'flash' => 'flash',
+		'flashError' => 'error',
+		'flashSuccess' => 'success',
+		'flashNotice' => 'notice'
+	);
+	
+	foreach ( $classes as $key => $class )
+	{
+		$messages = Current::$request->getInfo($key);
+	
+		if ( ! is_array($messages) || ! count($messages) )
+			continue;
+	
+		printf('<ul id="flash-%s" class="cowl-flash">', $class);
+		foreach ( $messages as $message )
+		{
+			printf('<li>%s</li>', $message);
+		}
+		printf('</ul>');
+		
+		// Remove the message from the flash as it has now been displayed
+		Current::$request->setInfo($key, false);
+	}
+}

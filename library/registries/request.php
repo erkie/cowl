@@ -15,6 +15,7 @@ class Request extends Registry
 	
 	// Property: <Request::$request_data>
 	// The data about the request.
+	protected $request_data = array();
 	
 	// Method: <Request::instance>
 	// See <Registry::instance>
@@ -40,7 +41,21 @@ class Request extends Registry
 		Method:
 			<Request::setInfo>
 		
-		Set information about the current request.
+		Set information about the current request. Used to set misc. information that is not
+		sent as parameters from the client. For example CSS stylesheets and JS files.
+		
+		Examples:
+			// Set simple key-value data
+			$request = Request::getInstance();
+			$request->setInfo('username', 'bob');
+			
+			$request->getInfo('username'); // -> bob
+			
+			// It can also be used to set several values on an object
+			$request->setInfo('css[]', 'one.css');
+			$request->setInfo('css[], 'two.css');
+			
+			$request->getInfo('css'); // -> array('one.css', 'two.css');
 		
 		Parameters:
 			$key - The key to set
@@ -53,11 +68,13 @@ class Request extends Registry
 		if ( substr($key, -2) == '[]' )
 		{
 			$key = substr($key, 0, -2);
+			
 			// Ensure that existing key exists
 			if ( ! $this->getInfo($key) )
 			{
 				$this->setInfo($key, array());
 			}
+			
 			$old_value = $this->getInfo($key);
 			$old_value[] = $value;
 			$value = $old_value;

@@ -57,6 +57,7 @@ abstract class Command
 		Runs a method of the current class from the specified $args. The first element of the $args['argv'] should be the name of the class (just as in CLI).
 		
 		Examples:
+			// TODO: This example is outdated.
 			> // Argument array
 			> $args[-3] - The path to the command
 			> $args[-2] - The filename of the command
@@ -139,18 +140,70 @@ abstract class Command
 		
 		Current::$plugins->hook('commandRun', $this, $method, $argv);
 		
+		// Prepare some stuff before firing the command
+		$this->requestBegan();
+		
 		// _This_ is where all the magic happens
 		$ret = call_user_func_array(array($this, $method), $args);
 		
 		// If an array is returned it is used as pieces for a <Cowl::url> redirect
 		if ( is_array($ret) )
 		{
+			$this->requestEnded();
+			
 			$url = Cowl::url($ret);		
 			Cowl::redirect($url);
 		}
 		
 		// Render the template
 		$this->template->render($this->view);
+		
+		$this->requestEnded();
+	}
+	
+	/*
+		Method:
+			Command::requestBegan
+		
+		Prepare some stuff before a command is fired.
+	*/
+	
+	private function requestBegan()
+	{
+		if ( isset($_SESSION['__cowl'], $_SESSION['__cowl']['flash']) )
+		{
+			$info = $_SESSION['__cowl']['flash'];
+			
+			Current::$request->setInfo('flash', $info['flash']);
+			Current::$request->setInfo('flashError', $info['error']);
+			Current::$request->setInfo('flashSuccess', $info['success']);
+			Current::$request->setInfo('flashNotice', $info['notice']);
+		}
+	}
+	
+	/*
+		Method:
+			Command::requestEnded
+		
+		Clean-up and other actions for when the request is finished. Be it redirect or after a template render.
+	*/
+	
+	private function requestEnded()
+	{
+		if ( ! isset($_SESSION['__cowl']) )
+			$_SESSION['__cowl'] = array();
+		
+		$flash = Current::$request->getInfo('flash');
+		$error = Current::$request->getInfo('flashError');
+		$notice = Current::$request->getInfo('flashNotice');
+		$success = Current::$request->getInfo('flashSuccess');
+		
+		$_SESSION['__cowl']['flash'] = array(
+			'flash' => $flash,
+			'error' => $error,
+			'notice' => $notice,
+			'success' => $success
+		);
 	}
 	
 	/*
@@ -221,6 +274,67 @@ abstract class Command
 	{
 		$args = func_get_args();
 		return call_user_func_array(array($this->template, 'add'), $args);
+	}
+	
+	/*
+		Method:
+			Command::flash
+		
+		Flash a message on the next renderinf of a template. Used for messages on a successful POST request.
+		Use the standard helper method <flash> to output these flashes. There are several types of flashes:
+		
+			- flash 
+			- flashError
+			- flashNotice
+			- flashSuccess
+		
+		For information about them see each method in the <Command> class.
+		
+		Parameters:
+			(string) $message - The message to flash
+	*/
+	
+	public function flash($message)
+	{
+		Current::$request->setInfo('flash[]', $message);
+	}
+	
+	/*
+		Method:
+			Command::flashError
+		
+		Flash a message with an error class. For more information see: <Command::flash>
+	*/
+	
+	public function flashError($message)
+	{
+		Current::$request->setInfo('flashError[]', $message);
+	}
+	
+	
+	/*
+		Method:
+			Command::flashNotice
+		
+		Flash a message with a notice class. For more information see: <Command::flash>
+	*/
+	
+	public function flashNotice($message)
+	{
+		Current::$request->setInfo('flashNotice[]', $message);
+	}
+	
+	
+	/*
+		Method:
+			Command::flashSuccess
+		
+		Flash a message with an success class. For more information see: <Command::flash>
+	*/
+	
+	public function flashSuccess($message)
+	{
+		Current::$request->setInfo('flashSuccess[]', $message);
 	}
 	
 	public abstract function index();

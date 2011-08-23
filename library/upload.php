@@ -8,10 +8,10 @@ class Upload
 	}
 }
 
-Library::load('Upload');
+Library::load('upload');
 
-$uploader = new Upload($_FILES['avatar']);
+$uploader = new Upload();
 $uploader->setRules(array(
 	'size' => 10
 ));
-$uploader->upload();
+$uploader->upload('avatar');

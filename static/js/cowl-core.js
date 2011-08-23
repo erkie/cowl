@@ -1,7 +1,7 @@
 
 /*
 	Object:
-		<Cowl>
+		Cowl
 	
 	Contains anything and everything for a site in Cowl.
 */
@@ -34,7 +34,7 @@ var Cowl = {
 	
 	/*
 		Method:
-			<Cowl.url>
+			Cowl.url
 		
 		Works exactly as PHP <Cowl::url>. Pass each piece as an argument and it will be joined with a '/'. The project <BASE_PATH> will be applied to the url.
 		
@@ -53,7 +53,7 @@ var Cowl = {
 	
 	/*
 		Method:
-			<Cowl.load>
+			Cowl.load
 		
 		Loads a URL and with the JSON from results searches for elements with the attribute tpl-name and replaces the contents of them with it.
 		
@@ -75,7 +75,7 @@ var Cowl = {
 	
 	/*
 		Method:
-			<Cowl.templateReplace>
+			Cowl.templateReplace
 		
 		Replaces the contents of elements on the current page with the attribute tpl-name with their respective entry in data.
 		
@@ -102,7 +102,7 @@ var Cowl = {
 	
 	/*
 		Method:
-			<Cowl.registerTemplateCallback>
+			Cowl.registerTemplateCallback
 		
 		Register a callback to be called when <Cowl.templateReplace> is called.
 		

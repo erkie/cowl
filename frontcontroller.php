@@ -38,11 +38,14 @@ class FrontController
 	
 	public function __construct()
 	{
+		session_start();
+		
 		Cache::setDir(COWL_CACHE_DIR);
 		Current::initialize(COWL_DIR);
 		
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		
+		// Get and set all directories for various things.
 		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir, $helpers_dir, $drivers_dir) = 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',

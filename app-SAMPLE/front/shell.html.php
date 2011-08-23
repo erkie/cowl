@@ -11,7 +11,7 @@
 		<div id="wrapper">
 			<h1><a href="<?php url(); ?>">Cowl</a></h1>
 			
-			<?php if ( isset($message) ): ?><p id="cowl-message"><?php echo $message; ?></p><?php endif; ?>
+			<?php flash(); ?>
 			
 			<?php include($this->template); ?>
 		</div>

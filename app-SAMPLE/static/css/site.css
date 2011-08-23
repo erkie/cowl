@@ -5,3 +5,49 @@ body {
 }
 
 a = $underlined;
+
+.cowl-flash = $normalize;
+
+ul.cowl-flash {
+    border: 1px solid #ccc;
+    border-bottom: none;
+    color: #333;
+    background: #e1e1e1;
+    font-size: 12pt;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+    .cowl-flash li {
+        margin-top: 5px;
+        border-bottom: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+#flash-success {
+    color: green;
+    background: #9AE33B;
+}
+
+#flash-success, #flash-success li {
+    border-color: #59C566;
+}
+
+#flash-error {
+    background: pink;
+    color: maroon;
+}
+
+#flash-error, #flash-error li {
+    border-color: #ff1111;
+}
+
+#flash-notice {
+    background: lightblue;
+    color: navy;
+}
+
+#flash-notice, #flash-notice li {
+    border-color: #2222ff;
+}

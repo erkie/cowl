@@ -5,6 +5,7 @@ class MainCommand extends Command
 	public function index()
 	{
 		$this->template->add('title', 'Hello');
-		$this->template->add('message', 'Welcome, to Cowl.');
+		
+		$this->flash('Welcome to the wonderful world of Cowl.');
 	}
 }

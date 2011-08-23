@@ -8,7 +8,7 @@
 	
 	Examples:
 		$pager = new Pager($mapper, 1, 10);
-		$results $mapper->by('id')->find('all');
+		$results = $mapper->by('id')->find('all');
 		
 		// Results now contain only 10 results beginning at 1
 */
