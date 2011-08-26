@@ -21,7 +21,8 @@ class Controller
 		'png' => 'image/png',
 		'bmp' => 'image/bmp',
 		'html' => 'text/html',
-		'rss' => 'application/rss+xml'
+		'rss' => 'application/rss+xml',
+		'partial' => 'text/html'
 	);
 	
 	// Property: <Controller::$path>
@@ -91,7 +92,7 @@ class Controller
 		$is_error = false;
 		
 		// If a file-ending is specified in the URL
-		if ( preg_match('/\.[A-Za-z0-9]{2,4}$/', $this->path) )
+		if ( preg_match('/\.[A-Za-z0-9]+$/', $this->path) )
 		{
 			$period = strrpos($this->path, '.');
 			$path = substr($this->path, 0, $period);
