@@ -9,6 +9,25 @@
 
 /*
 	Function:
+		p
+	
+	Print out something HTML safely. Used as printf, but the printed string is HTML safe.
+	
+	Parameters:
+		$str - The string to print out
+		$argN - Format data for <vsprintf>
+*/
+
+function p($str = '')
+{
+	$args = func_get_args();
+	$args = array_slice($args, 1);
+	
+	echo htmlentities(vsprintf($str, $args));
+}
+
+/*
+	Function:
 		url
 	
 	Print out a URL without you having to worry about the base path. See documentation for <Cowl::url> for more information.
