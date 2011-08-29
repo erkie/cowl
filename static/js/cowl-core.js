@@ -112,6 +112,38 @@ var Cowl = {
 	
 	registerTemplateCallback: function(callback) {
 		this.templateCallbacks.push(callback);
+	},
+	
+	/*
+		Method:
+			post
+		
+		Redirect the page in a POST request, instead of the normal GET request that simply
+		changing document.location would do.
+		
+		Parameters:
+			(string) url - The URL to send the POST request to
+			(object) parameters - The parameters to be send in the POST request
+			(object) formParamters - Extra parameters set on the new form, optional
+	*/
+	post: function(url, parameters, formParameters) {
+		formParameters = formParameters || {};
+		
+	    // The rest of this code assumes you are not using a library.
+	    // It can be made less wordy if you use one.
+	    var form = new Element('form[method=post]', Object.merge(formParameters, {
+			action: url
+		}));
+
+		Object.each(parameters, function(value, key) {
+			var hiddenField = new Element('input[type=hidden]', {
+				name: key,
+				value: value
+			}).inject(form);
+	    });
+
+		form.inject(document.body);
+	    form.submit();
 	}
 };
 
