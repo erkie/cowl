@@ -143,6 +143,33 @@ abstract class Registry
 	
 	/*
 		Method:
+			getOr
+		
+		Attempt to fetch a value from the store, if it doesn't exist, just 
+		return a default value. A fail-gracefully version of <Registry::get>
+		
+		Parameters:
+			(string) $key - The key to get
+			(optional) $default_value - The default value to return if key is not present.
+										Defaults to an empty string.
+		
+		Returns:
+			The requested value, or the default value.
+	*/
+	
+	public function getOr($key, $default_value = '')
+	{
+		try {
+			return $this->get($key);
+		}
+		catch ( RegistryMemberNotFoundException $e )
+		{}
+		
+		return $default_value;
+	}
+	
+	/*
+		Method:
 			<Registry::gets>
 		
 		Works like <Registry::get> accept it can take several values to be found, returning them in the order of appearence in the argument list.
