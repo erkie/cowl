@@ -124,6 +124,7 @@ abstract class DataMapper
 			<DataMapper::populate>
 		
 		Populates a <DomainObject> based upon defined fields in the $object.
+		If no entry is found the object will be set as erroneous.
 		
 		(begin code)
 		
@@ -509,6 +510,7 @@ abstract class DataMapper
 			<DataMapper::populateFromDBResult>
 		
 		Loops through $result's first row and inserts every field into the passed <DomainObject>.
+		Will set the object as erroneous if the row is empty.
 		
 		Parameters:
 			DomainObject $object - The object to populate.
