@@ -549,7 +549,7 @@ class MySQLQueryBuilder
 	*/
 	
 	public function quote($value)
-	{		
-		return (is_numeric($value)) ? $value : sprintf('"%s"', $value);
+	{
+		return (is_numeric($value)) ? $value : sprintf('"%s"', mysql_real_escape_string($value));
 	}
 }
