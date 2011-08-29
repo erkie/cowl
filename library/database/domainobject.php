@@ -38,9 +38,9 @@ abstract class DomainObject
 	// Every qualified <DomainObject> should have a $id-property.
 	private $id;
 	
-	// Property: <DomainObject::$is_erronous>
+	// Property: <DomainObject::$is_erroneous>
 	// A flag set to true if the <DomainObject> did not exist.
-	private $is_erronous;
+	private $is_erroneous;
 	
 	/*
 		Constructor:
@@ -188,7 +188,7 @@ abstract class DomainObject
 	{
 		if ( ! is_numeric($id) )
 		{
-			throw new DOFaultyIDException($id);
+			throw new DOFaultyIDException();
 		}
 		
 		$this->id = $id;
@@ -210,24 +210,24 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::isErronous>
+			<DomainObject::isErroneous>
 		
-		Checks if this <DomainObject> has it's <DomainObject::is_erronous>-flag set.
+		Checks if this <DomainObject> has it's <DomainObject::is_erroneous>-flag set.
 		
 		Returns:
-			<DomainObject::is_erronous>
+			<DomainObject::is_erroneous>
 	*/
 	
-	public function isErronous()
+	public function isErroneous()
 	{
-		return $this->is_erronous;
+		return $this->is_erroneous;
 	}
 	
 	// Method: <DomainObject::setError>
 	// Set this to an erronous object.
 	public function setError()
 	{
-		$this->is_erronous = true;
+		$this->is_erroneous = true;
 	}
 	
 	/*
