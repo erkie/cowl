@@ -13,29 +13,28 @@ include('phpfilecache.php');
 
 class Cache
 {
-	// Property: <Cache::$file>
+	// Property: Cache::$file
 	// The path to the file in <Cache::$cache_dir>
 	protected $file;
 	
-	// Property: <Cache::$extension>
+	// Property: Cache::$extension
 	// The extension of the file. _Very_ optional. You, the user, should not be bothered with the extension, just the contents.
 	protected $extension;
 	
-	// Property: <Cache::$cache_time>
+	// Property: Cache::$cache_time
 	// How many seconds should the file be cached.
 	protected $cache_time;
 	
-	// Proprety: <Cache::$exists>
+	// Proprety: Cache::$exists
 	// Boolean value set to true if the cached file exists, else false.
 	protected $exists;
 	
-	// Property: <Cache::$cache_dir>
+	// Property: Cache::$cache_dir
 	// The path of the cache itself. Declared static so it is available over all instances.
 	protected static $cache_dir = 'cache/';
 	
 	/*
-		Constructor:
-			<Cache::__construct>
+		Constructor
 		
 		Set filename and cache time.
 		
@@ -52,7 +51,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::setDir>
+			Cache::setDir
 		
 		Set the directory in which cached files are contained.
 		
@@ -67,7 +66,7 @@ class Cache
 
 	/*
 		Method:
-			<Cache::setFile>
+			Cache::setFile
 		
 		Set the name of the cached file.
 		
@@ -93,7 +92,7 @@ class Cache
 		$this->file .= $this->extension;
 	}
 	
-	// Method: <Cache::getFile>
+	// Method: Cache::getFile
 	// Returns: The filename of the cache, <Cache::$file>
 	public function getFile()
 	{
@@ -102,7 +101,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::setExtension>
+			Cache::setExtension
 		
 		Set the extension of the cached files filename. Totally unnecessary.
 		
@@ -118,7 +117,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::get>
+			Cache::get
 		
 		Returns the contents of the file in cache. Returns false if either the file is outdated, or doesn't exist.
 		
@@ -138,7 +137,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::update>
+			Cache::update
 		
 		Update the contents of the cache. This can be done by replacing the contents, or even appending the contents to the end.
 		
@@ -160,7 +159,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::createFile>
+			Cache::createFile
 		
 		Create a file in the <Cache::$cache_dir>.
 		
@@ -182,7 +181,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::doesExist>
+			Cache::doesExist
 		
 		Checks wether the cache file exists. Because HDD lookups can be slow, the call to file_exists is only invoked if <Cache::$exists> is not set.
 		
@@ -201,7 +200,7 @@ class Cache
 	
 	/*
 		Method:
-			<Cache::isOutDated>
+			Cache::isOutDated
 		
 		Checks if the file in cache is outdated.
 		

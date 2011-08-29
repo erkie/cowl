@@ -51,21 +51,44 @@ class CSS extends Plugin
 		Method:
 			<CSS::loadSiteCSS>
 		
-		Create one of the two compiled CSS files. The site.css is the core CSS file, containing rules for the site, which are used on every page.
+		Add the site-wide css file to the request. Called /css/site.css
 	*/
 	
 	public function loadSiteCSS()
 	{
 		$filename = Current::$config->get('plugins.css.base_css');
 		
-		// Add .css extension to cached file, so it can be requested by a browser
-		$cache = new FileCache($this->cache . '.site', $filename);
+		// Append the URL for the site-specific CSS-file to the <Request> registry object.
+		Current::$request->setInfo('css[]', $this->url_dir . 'site.css');
+	}
+	
+	
+	/*
+		Method:
+			<CSS::preStaticServer>
+		
+		This hook will be called when a CSS file has been requested
+		
+		Parameters:
+			$args - The $argv array of the request.
+	*/
+	
+	public function preStaticServe(StaticServer $server)
+	{
+		// If the type isn't css we don't touch it
+		if ( $server->getType() != 'css' )
+			return;
+		
+		$path = $server->getPath();
+		$cache_path = $this->cache . '.' . preg_replace('#\W#', '', $path);
+		
+		// Compile and cache CSS file.
+		$cache = new FileCache($cache_path, $path);
 		$cache->setExtension('css');
 		
-		// Update cache
 		if ( $cache->isOutDated() || $this->force_update )
 		{
-			$contents = file_get_contents($filename);
+			$contents = file_get_contents($path);
 			
 			$compiler = new CSSCompiler($contents);
 			$updated = $compiler->compile();
@@ -73,47 +96,7 @@ class CSS extends Plugin
 			$cache->update($updated);
 		}
 		
-		// Append the URL for the site-specific CSS-file to the <Request> registry object.
-		Current::$request->setInfo('css[]', $this->url_dir . 'site.css');
-	}
-	
-	/*
-		Method:
-			<CSS::postPathParse>
-		
-		This is a hook, meant to be called when the requested command has been determined. If the package directory contains a commandname.css-file, it will be compiled and added to this request.
-		
-		Parameters:
-			$args - The $argv array of the request.
-	*/
-	
-	public function postPathParse($args)
-	{
-		// Get supposed style file
-		$name = explode('.', $args['command']);
-		$name = $name[1];
-		$file = $args['directory'] . $name . '.css';
-		
-		if ( file_exists($file) )
-		{
-			// Make cache name, which is dependent on the command
-			$cache_dir = str_replace(Current::$config->get('paths.commands'), '', $args['directory']);
-			$cache_name = $this->cache . '.' . $cache_dir . $name;
-			
-			$cache = new Cache($cache_name, $_SERVER['REQUEST_TIME'] - filemtime($file));
-			$cache->setExtension('css');
-			
-			if ( $cache->isOutDated() || $this->force_update )
-			{
-				$contents = file_get_contents($file);
-				$compiler = new CSSCompiler($contents);
-				$updated = $compiler->compile();
-				
-				$cache->update($updated);
-			}
-			
-			// Add to current request
-			Current::$request->setInfo('css[]', $this->url_dir . $cache_dir . $name . '.css');
-		}
+		// Change the path to be the cached file instead
+		$server->setPath($cache->getFile());
 	}
 }

@@ -16,7 +16,7 @@ class Routing extends Plugin
 		Parse routes from config.ini and reroute <Controller::$path> if necessary.
 	*/
 	
-	public function prePathParse($controller)
+	public function prePathParse($controller, $server)
 	{
 		try {
 			$routes = Current::$config->get('plugins.routing.route');
@@ -26,6 +26,7 @@ class Routing extends Plugin
 			{
 				$path = preg_replace($routes, $replaces, $controller->getPath());
 				$controller->setPath($path);
+				$server->setPath($path);
 			}
 		} catch ( RegistryException $e ) {}
 	}

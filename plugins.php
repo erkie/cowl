@@ -147,9 +147,12 @@ class Plugins
 abstract class Plugin
 {
 	// FrontController-related hooks
-	public function prePathParse(Controller $controller) {}
+	public function prePathParse(Controller $controller, StaticServer $server) {}
 	public function postPathParse($args) {}
 	public function postRun() {}
+	
+	public function preStaticServe(StaticServer $server) {}
+	public function postStaticServe(StaticServer $server) {}
 	
 	// Command-related hooks
 	public function commandRun(Command $command, $method, $args) {}

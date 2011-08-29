@@ -5,6 +5,7 @@ require('cowl.php');
 set_include_path(COWL_DIR . PATH_SEPARATOR . get_include_path());
 
 require('controller.php');
+require('staticserver.php');
 require('command.php');
 require('current.php');
 require('plugins.php');
@@ -46,14 +47,16 @@ class FrontController
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		
 		// Get and set all directories for various things.
-		list($commands_dir, $plugins_dir, $model_dir, $validators_dir, $library_dir, $view_dir, $helpers_dir, $drivers_dir) = 
+		list(
+			$commands_dir, $plugins_dir, $model_dir,
+			$validators_dir, $library_dir, $view_dir,
+			$helpers_dir, $drivers_dir, $app_dir)
+		= 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
-				'paths.helpers', 'paths.drivers');
+				'paths.helpers', 'paths.drivers', 'paths.app');
 		
 		Controller::setDir($commands_dir);	
-		$this->controller = new Controller($this->path);
-		
 		DataMapper::setMappersDir($model_dir);
 		DataMapper::setObjectsDir($model_dir);
 		Validator::setPath($validators_dir);
@@ -61,6 +64,7 @@ class FrontController
 		Library::setPath($library_dir);	
 		Helpers::setPath($helpers_dir);
 		Database::setPath($drivers_dir);
+		StaticServer::setDir($app_dir);
 		
 		Current::$plugins = new Plugins($plugins_dir);
 		
@@ -76,8 +80,23 @@ class FrontController
 	*/
 	
 	public function execute()
-	{
-		Current::$plugins->hook('prePathParse', $this->controller);
+	{	
+		$this->controller = new Controller($this->path);
+		$this->static_server = new StaticServer($this->path);
+		
+		Current::$plugins->hook('prePathParse', $this->controller, $this->static_server);
+		
+		if ( $this->static_server->isFile() )
+		{
+			Current::$plugins->hook('preStaticServe', $this->static_server);
+			
+			// Output the file
+			$this->static_server->render();
+			
+			Current::$plugins->hook('postStaticServe', $this->static_server);
+			
+			exit;
+		}
 		
 		// Parse arguments from path and call appropriate command
 		$args = $this->controller->parse();
