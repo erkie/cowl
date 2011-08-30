@@ -36,7 +36,7 @@ abstract class DomainObject
 	
 	// Property: <DomainObject::$id>
 	// Every qualified <DomainObject> should have a $id-property.
-	private $id;
+	private $id = false;
 	
 	// Property: <DomainObject::$is_erroneous>
 	// A flag set to true if the <DomainObject> did not exist.
@@ -143,7 +143,7 @@ abstract class DomainObject
 			throw new DOMemberNotFoundException($name);
 		}
 		
-		return $this->values[$name];
+		return isset($this->values[$name]) ? $this->values[$name] : '';
 	}
 	
 	/*

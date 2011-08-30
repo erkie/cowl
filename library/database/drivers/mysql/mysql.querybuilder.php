@@ -185,13 +185,17 @@ class MySQLQueryBuilder
 		$query = sprintf('SELECT * FROM `%s` as %s', $this->table, $this->prefix) . PHP_EOL;
 		$query .= 'WHERE ';
 		
-		if ( ! $object->getID() )
+		if ( $object->getID() === false )
 		{
-			foreach ( $object->fetch() as $key => $value )
+			$pairs = $object->fetch();
+			if ( count($pairs) )
 			{
-				$query .= sprintf('%s.`%s` = %s AND', $this->prefix, $key, $this->quote($value)) . PHP_EOL;
+				foreach ( $object->fetch() as $key => $value )
+				{
+					$query .= sprintf('%s.`%s` = %s AND', $this->prefix, $key, $this->quote($value)) . PHP_EOL;
+				}
+				$query = substr($query, 0, -strlen(' AND' . PHP_EOL));
 			}
-			$query = substr($query, 0, -strlen(' AND' . PHP_EOL));
 		}
 		else
 		{
