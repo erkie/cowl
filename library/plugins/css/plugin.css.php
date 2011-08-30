@@ -4,7 +4,7 @@ include('csscompiler.php');
 
 /*
 	Class:
-		<CSS>
+		CSS
 	
 	The goal of this plugin is to minimize the amount of needed requests for CSS-files. The goal is to keep the number of requests down to 2.
 	
@@ -13,22 +13,21 @@ include('csscompiler.php');
 
 class CSS extends Plugin
 {
-	// Property: <CSS::$cache>
+	// Property: CSS::$cache
 	// The path to the cache, used in <Cache>-objects. Will always hold the value of <paths.css.cache>
 	private $cache;
 	
-	// Property: <CSS::$url_dir>
+	// Property: CSS::$url_dir
 	// The directory for which requests are pointed to. Will always hold the value of <paths.urls.css>
 	private $url_dir;
 	
-	// Property: <CSS::$force_update>
+	// Property: CSS::$force_update
 	// A boolean value set to true if CSS files should be updated on every request, nifty for development enivroments. Holds the value of <plugins.css.force_update>.
 	// However, if set to false, the compiled CSS file will still be updated if the source CSS is updated, but if any dependency is updated, it will not get updated.
 	private $force_update;
 	
 	/*
-		Constructor:
-			<CSS::__construct>
+		Constructor
 		
 		Initialize everything. Will also call <CSS::loadSiteCSS>.
 	*/
@@ -49,7 +48,7 @@ class CSS extends Plugin
 	
 	/*
 		Method:
-			<CSS::loadSiteCSS>
+			CSS::loadSiteCSS
 		
 		Add the site-wide css file to the request. Called /css/site.css
 	*/
@@ -65,7 +64,7 @@ class CSS extends Plugin
 	
 	/*
 		Method:
-			<CSS::preStaticServer>
+			CSS::preStaticServe
 		
 		This hook will be called when a CSS file has been requested
 		
