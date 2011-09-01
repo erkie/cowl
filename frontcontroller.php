@@ -50,17 +50,20 @@ class FrontController
 		list(
 			$commands_dir, $plugins_dir, $model_dir,
 			$validators_dir, $library_dir, $view_dir,
-			$helpers_dir, $drivers_dir, $app_dir)
+			$helpers_dir, $drivers_dir, $app_dir,
+			$view_shell_dir)
 		= 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
-				'paths.helpers', 'paths.drivers', 'paths.app');
+				'paths.helpers', 'paths.drivers', 'paths.app',
+				'paths.shells');
 		
 		Controller::setDir($commands_dir);	
 		DataMapper::setMappersDir($model_dir);
 		DataMapper::setObjectsDir($model_dir);
 		Validator::setPath($validators_dir);
 		Templater::setBaseDir($view_dir);
+		Templater::setShellDir($view_shell_dir);
 		Library::setPath($library_dir);	
 		Helpers::setPath($helpers_dir);
 		Database::setPath($drivers_dir);

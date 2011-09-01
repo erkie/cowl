@@ -41,8 +41,12 @@ class Templater
 	protected $cache_active = false;
 	
 	// Property: <Templater::$base_dir>
-	// Base directory for all templates. Including shells and views.
+	// Base directory for all templates. See <Templater::$shell_dir> for the shells.
 	protected static $base_dir = 'templates/';
+	
+	// Property: <Templater::$shell_dir>
+	// Path to where all layout files are, called shells.
+	protected static $shell_dir = 'templates/shells/';
 		
 	/*
 		Method:
@@ -161,7 +165,7 @@ class Templater
 	
 	public function setType($type)
 	{
-		$name = self::$base_dir . 'shell.' . $type . '.php';
+		$name = self::$shell_dir . 'shell.' . $type . '.php';
 		if ( ! file_exists($name) )
 		{
 			throw new TPLShellNotExistsException($name);
@@ -243,5 +247,12 @@ class Templater
 	public static function setBaseDir($dir)
 	{
 		self::$base_dir = $dir;
+	}
+	
+	// Method: <Templater::setShellDir>
+	// Set the <Templater::$shell_dir>.
+	public static function setShellDir($dir)
+	{
+		self::$shell_dir = $dir;
 	}
 }
