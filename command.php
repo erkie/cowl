@@ -37,10 +37,12 @@ abstract class Command
 		Constructor:
 			<Command::__construct>
 		
-		This method is declared final because it should not be overwritten. If you want to initialize objects or variables before an action is run, use the <Command::initialize> method instead.
+		This method should ONLY be overwritten by abstract base classes.
+		
+		If you want to initialize objects or variables before an action is run, use the <Command::initialize> method instead.
 	*/
 	
-	public final function __construct()
+	public function __construct()
 	{
 		foreach ( $this->objects as $map )
 		{
