@@ -188,7 +188,12 @@ abstract class Registry
 	public function gets()
 	{
 		$args = func_get_args();
-		return array_map(array($this, 'get'), $args);
+		$ret = array();
+		foreach ( $args as $arg )
+		{
+			$ret[] = $this->get($arg);
+		}
+		return $ret;
 	}
 	
 	/*
