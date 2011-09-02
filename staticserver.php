@@ -33,6 +33,8 @@ class StaticServer
 		'rss' => 'application/rss+xml',
 		'partial' => 'text/html'
 	);
+
+	static protected $BAD = array('php', 'phtml', 'ini', 'sql');
 	
 	// Property: StaticServer::$path
 	// The path to (possible) serve
@@ -67,6 +69,12 @@ class StaticServer
 	
 	private function parsePath()
 	{
+		if ( empty($this->path) || (! strstr($this->path, 'gfx') && ! strstr($this->path, 'css')) )
+		{
+			$this->is_file = false;
+			return;
+		}
+
 		// Check to see if it really exists
 		if ( file_exists($this->path) )
 		{
@@ -84,7 +92,7 @@ class StaticServer
 		$this->type = strtolower(end(explode('.', $this->path)));
 		
 		// Bad filetype!
-		if ( ! isset(self::$MIMES[$this->type]) )
+		if ( in_array($this->type, self::$BAD) )
 		{
 			$this->is_file = false;
 		}
@@ -119,8 +127,10 @@ class StaticServer
 		// Sanity check to see that render hasn't been called when there was no file
 		if ( ! $this->is_file )
 			return;
-		
-		header('Content-type: ' . self::$MIMES[$this->type]);
+
+		$mime = isset(self::$MIMES[$this->type]) ? self::$MIMES[$this->type] : 'text/html';
+	
+		header('Content-type: ' . $mime);
 		readfile($this->path);
 	}
 	
