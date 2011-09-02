@@ -151,11 +151,13 @@ abstract class DataMapper
 	
 	public function populate(DomainObject $object)
 	{
+		$db = Current::db($this->driver);
+		
 		Current::$plugins->hook('dbPopulate', $this, $object);
 		
 		$query = $this->builder->buildFindObject($object);
 		
-		$result = Current::db($this->driver)->execute($query);
+		$result = $db->execute($query);
 		$this->populateFromDBResult($object, $result);
 		
 		return $object;
@@ -198,6 +200,8 @@ abstract class DataMapper
 	
 	public function find($args = null, $order = '', $offset = null, $amount = null)
 	{
+		$db = Current::db($this->driver);
+		
 		$func_args = func_get_args();
 		Current::$plugins->hook('dbFind', $this, $func_args);
 		
@@ -217,7 +221,7 @@ abstract class DataMapper
 		}
 		
 		$query = $this->builder->buildFind($args, $order, $offset, $amount);
-		$result = Current::db($this->driver)->execute($query);
+		$result = $db->execute($query);
 		
 		return new DomainCollection($result, $this);
 	}
@@ -379,10 +383,12 @@ abstract class DataMapper
 	
 	public function insert(DomainObject $object)
 	{
+		$db = Current::db($this->driver);
+		
 		Current::$plugins->hook('dbInsert', $this, $object);
 		
 		$query = $this->builder->buildInsert($object);
-		$result = Current::db($this->driver)->execute($query);
+		$result = $db->execute($query);
 		
 		$object->setID($result->getID());
 		
@@ -404,10 +410,12 @@ abstract class DataMapper
 	
 	public function update(DomainObject $object)
 	{
+		$db = Current::db($this->driver);
+		
 		Current::$plugins->hook('dbUpdate', $this, $object);
 		
 		$query = $this->builder->buildUpdate($object);
-		$result = Current::db($this->driver)->execute($query);
+		$result = $db->execute($query);
 
 		return $object;
 	}
@@ -437,10 +445,12 @@ abstract class DataMapper
 	
 	public function remove($id)
 	{
+		$db = Current::db($this->driver);
+		
 		Current::$plugins->hook('dbRemove', $this, $id);
 		
 		$query = $this->builder->buildDelete($id);
-		$result = Current::db($this->driver)->execute($query);
+		$result = $db->execute($query);
 	}
 	
 	/*
@@ -473,8 +483,10 @@ abstract class DataMapper
 			$amount = $this->state['amount'];
 		}
 		
+		$db = Current::db($this->driver);
+		
 		$query = $this->builder->buildCount($args, $order, $offset, $amount);
-		return end(Current::db($this->driver)->execute($query)->row());
+		return end($db->execute($query)->row());
 	}
 	
 	/*
@@ -500,8 +512,10 @@ abstract class DataMapper
 	
 	public function query($query, $data = array())
 	{
+		$db = Current::db($this->driver);
+		
 		$query = $this->builder->format($query, $data);
-		$result = Current::db($this->driver)->execute($query);
+		$result = $db->execute($query);
 		return new DomainCollection($result, $this);
 	}
 	
