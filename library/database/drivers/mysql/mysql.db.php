@@ -112,7 +112,7 @@ class MySQLDB
 	
 	private function query($query, $args)
 	{
-		$query = vsprintf($query, self::sanitize($args));
+		$query = $query;
 		if ( $this->output_query )
 		{
 			var_dump($query);
