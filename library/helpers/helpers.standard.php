@@ -273,12 +273,12 @@ function flash()
 		if ( ! is_array($messages) || ! count($messages) )
 			continue;
 	
-		printf('<ul id="flash-%s" class="cowl-flash">', $class);
+		printf('<div class="cowl-flash-container cowl-flash-%s"><ul id="flash-%s" class="cowl-flash">', $class, $class);
 		foreach ( $messages as $message )
 		{
 			printf('<li>%s</li>', $message);
 		}
-		printf('</ul>');
+		printf('</ul></div>');
 		
 		// Remove the message from the flash as it has now been displayed
 		Current::$request->setInfo($key, false);
