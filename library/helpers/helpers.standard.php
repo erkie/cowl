@@ -26,7 +26,7 @@ function p($str = '')
 	if ( ! count($args) )
 		$html = $str;
 	else
-		$html = vsprintf($str);
+		$html = vsprintf($str, $args);
 	
 	echo htmlentities($html);
 }
