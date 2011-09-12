@@ -24,6 +24,10 @@ class Templater
 	// The name of the template that this instance will use.
 	protected $template;
 	
+	// Property: <Templater::$type>
+	// The response type of the template. Used for <Templater::$shell>.
+	protected $type;
+	
 	// Property: <Templater::$shell>
 	// The shell template in which the template will be included by. Used for different response types, HTML, JSON, XML, etc.
 	protected $shell;
@@ -171,6 +175,20 @@ class Templater
 			throw new TPLShellNotExistsException($name);
 		}
 		$this->shell = $name;
+		$this->type = $type;
+	}
+	
+	/*
+		Method:
+			<Templater::getType>
+		
+		Returns:
+			The current response type, <Templater::$type>
+	*/
+	
+	public function getType()
+	{
+		return $this->type;
 	}
 	
 	/*
@@ -221,11 +239,11 @@ class Templater
 		{
 			if ( $value instanceof DomainCollection )
 			{
-				$data[$key] = $value->getData();
+				$data[$key] = $value->getPublicData();
 			}
 			else if ( $value instanceof DomainObject )
 			{
-				$data[$key] = $value->getData();
+				$data[$key] = $value->getPublicData();
 			}
 			else if ( is_array($value) )
 			{
