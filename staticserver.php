@@ -31,7 +31,9 @@ class StaticServer
 		'bmp' => 'image/bmp',
 		'html' => 'text/html',
 		'rss' => 'application/rss+xml',
-		'partial' => 'text/html'
+		'partial' => 'text/html',
+		'otf' => 'font/opentype',
+		'ttf' => 'font/ttf'
 	);
 
 	static protected $BAD = array('php', 'phtml', 'ini', 'sql');
