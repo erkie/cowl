@@ -95,6 +95,58 @@ class Pager extends Plugin
 	
 	/*
 		Method:
+			<Pager::hasPrev>
+		
+		Returns:
+			Wether there are previous entries from the current page
+	*/
+	
+	public function hasPrev()
+	{
+		return $this->page > 1;
+	}
+	
+	/*
+		Method:
+			<Pager::hasNext>
+		
+		Returns:
+			Wether there are more pages after the current page
+	*/
+	
+	public function hasNext()
+	{
+		return $this->page < $this->pages;
+	}
+	
+	/*
+		Method:
+			<Pager::nextPage>
+		
+		Returns:
+			The next page's index.
+	*/
+	
+	public function nextPage()
+	{
+		return $this->page + 1;
+	}
+	
+	/*
+		Method:
+			<Pager::prevPage>
+		
+		Returns:
+			The previous page's index.
+	*/
+	
+	public function prevPage()
+	{
+		return $this->page - 1;
+	}
+	
+	/*
+		Method:
 			<Pager::html>
 		
 		Create and return the page navigation HTML.
@@ -125,7 +177,7 @@ class Pager extends Plugin
 		if ( $this->page > 1 )
 		{
 			$url[$page_index] = $this->page - 1;
-			$html .= sprintf('<a href="%s">&laquo;</a>', call_user_func_array('Cowl::url', $url));
+			$html .= sprintf('<a href="%s">&laquo;</a>', Cowl::url($url));
 		}
 		else
 		{
@@ -141,13 +193,13 @@ class Pager extends Plugin
 			}
 			
 			$url[$page_index] = $i;
-			$html .= sprintf(' <a href="%s">%s</a>', call_user_func_array('Cowl::url', $url), $i);
+			$html .= sprintf(' <a href="%s">%s</a>', Cowl::url($url), $i);
 		}
 		
 		if ( $this->page < $this->pages )
 		{
 			$url[$page_index] = $this->page + 1;
-			$html .= sprintf(' <a href="%s">&raquo;</a>', call_user_func_array('Cowl::url', $url));
+			$html .= sprintf(' <a href="%s">&raquo;</a>', Cowl::url($url));
 		}
 		else
 		{

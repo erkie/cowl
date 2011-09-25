@@ -126,6 +126,33 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
+			<DomainCollection::first>
+		
+		Convenience method for getting the first object contained.
+		
+		Returns:
+			The first <DomainObject> in this collection.
+	*/
+	
+	public function first()
+	{
+		return $this->get(0);
+	}
+	
+	/*
+		Method:
+			<DomainCollection::last>
+		
+		Same as <DomainCollection::first>, but for the last element.
+	*/
+	
+	public function last()
+	{
+		return $this->get($this->count()-1);
+	}
+	
+	/*
+		Method:
 			<DomainCollection::indexOf>
 		
 		Searches for the index of the passed <DomainObject>.
@@ -192,6 +219,24 @@ class DomainCollection implements Iterator, Countable
 		foreach ( $this as $key => $value )
 		{
 			$ret[$key] = $value->getData();
+		}
+		return $ret;
+	}
+	
+	/*
+		Method:
+			<DomainCollection::getPublicData>
+		
+		Returns all public data from a DomainObject. See <DomainObject::getPublicData> for more
+		information about whats public.
+	*/
+	
+	public function getPublicData()
+	{
+		$ret = array();
+		foreach ( $this as $key => $value )
+		{
+			$ret[$key] = $value->getPublicData();
 		}
 		return $ret;
 	}

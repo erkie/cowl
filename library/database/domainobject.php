@@ -22,6 +22,18 @@ abstract class DomainObject
 	
 	protected $members = array();
 	
+	/*
+		Property:
+			<DomainObject::$expose>
+		
+		Data members to be considered public. A flat numeric array.
+		
+		An empty array means no public data, which is default. This is for security reasons. It
+		can also include members added to the <DomainObject::$rest>.
+	*/
+	
+	protected $expose = array();
+	
 	// Property: <DomainObject::$values>
 	// The values end up in this array efter they have been <DomainObject::set>
 	private $values = array();
@@ -263,6 +275,29 @@ abstract class DomainObject
 	public function getData()
 	{
 		return array_merge($this->values, $this->rest, array('id' => $this->getID()));
+	}
+	
+	/*
+		Method:
+			<DomainObject::getPublicData>
+		
+		Same as <DomainObject::getData>, but only return data that is considered public. This is set via the
+		<DomainObject::$exposed>
+	*/
+	
+	public function getPublicData()
+	{
+		$ret = array();
+		foreach ( $this->expose as $key )
+		{
+			if ( isset($this->values[$key]) )
+				$ret[$key] = $this->values[$key];
+			elseif ( isset($this->rest[$key]) )
+				$ret[$key] = $this->rest[$key];
+			elseif ( $key == 'id' )
+				$ret['id'] = $this->getID();
+		}
+		return $ret;
 	}
 	
 	/*

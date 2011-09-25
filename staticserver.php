@@ -25,13 +25,15 @@ class StaticServer
 		'css' => 'text/css',
 		'js' => 'text/x-javascript',
 		'jpg' => 'image/jpeg',
-		'jpeg' => 'images/jpeg',
+		'jpeg' => 'image/jpeg',
 		'gif' => 'image/gif',
 		'png' => 'image/png',
 		'bmp' => 'image/bmp',
 		'html' => 'text/html',
 		'rss' => 'application/rss+xml',
-		'partial' => 'text/html'
+		'partial' => 'text/html',
+		'otf' => 'font/opentype',
+		'ttf' => 'font/ttf'
 	);
 
 	static protected $BAD = array('php', 'phtml', 'ini', 'sql');
@@ -127,10 +129,32 @@ class StaticServer
 		// Sanity check to see that render hasn't been called when there was no file
 		if ( ! $this->is_file )
 			return;
-
+		
+		header('Cache-Control: private');
+		header('Pragma: private');
+		
+		header('Expires: ' . date(DATE_RFC2822, (time() + 60 * 60 * 24 * 365)));
+		
 		$mime = isset(self::$MIMES[$this->type]) ? self::$MIMES[$this->type] : 'text/html';
-	
+		$mod_time = (int)filemtime($this->path);
+		
 		header('Content-type: ' . $mime);
+		$last_modified = filemtime($this->path);
+		
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $last_modified) . ' GMT');
+		
+		$etag = 'ci-' . dechex(crc32($this->path . $last_modified));
+		
+		header('ETag: "' . $etag . '"');
+		
+		if ( isset($_SERVER['HTTP_IF_NONE_MATCH'], $_SERVER['HTTP_CACHE_CONTROL'])
+			&& ! strstr($_SERVER['HTTP_CACHE_CONTROL'], 'no-cache')
+			&& strstr($_SERVER['HTTP_IF_NONE_MATCH'], $etag) )
+		{
+			header('HTTP/1.1 304 Not Modified');
+			die;
+		}
+		
 		readfile($this->path);
 	}
 	

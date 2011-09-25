@@ -60,6 +60,9 @@ var Cowl = {
 		Parameters:
 			(string) URL - The URL to load
 			(function) callback - Optional callback that is called when everything is done
+		
+		Returns:
+			Returns the Request.JSON object
 	*/
 	
 	load: function(url, callback) {
@@ -71,6 +74,34 @@ var Cowl = {
 			}
 		});
 		req.get(url);
+		return req;
+	},
+	
+	/*
+		Method:
+			Cowl.send
+		
+		Send a POST request using AJAX.
+		
+		Parameters:
+			(string) URL - The URL to load
+			(object) params - The parameters to send as POST variables
+			(function) callback - A callback to be called when the request is done
+
+		Returns:
+			Returns the Request.JSON object
+	*/
+	
+	send: function(url, params, callback) {
+		var req = new Request.JSON({
+			onSuccess: function(data) {
+				Cowl.templateReplace(data);
+				if ( typeof callback == 'function' )
+					callback(data, req);
+			}
+		});
+		req.post(params.toQueryString());
+		return req;
 	},
 	
 	/*
