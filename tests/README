@@ -1,0 +1,24 @@
+How to run tests
+================
+
+Tests are run using PHPUnit. To install PHPUnit use PEAR. Everything about installation and how to get is running can
+be found in the manual: http://www.phpunit.de/manual/current/en/.
+
+Otherwise you just have to `cd cowl/tests` into the test directory and run `phpunit .`. If you want to just run the
+specific tests run `phpunit YourTest`. Please run all tests and see to it that they pass before commiting. And if
+you are in a hurry: Write and run the tests anyway. It will be better in the long run.
+
+How to write tests
+==================
+
+Each class gets its own file in the tests/-directory. For example the class `Controller` gets `tests/ControllerTest.php`,
+the class `Config` gets `tests/ConfigTest.php`. The test-directory should be flat version of cowl.
+
+Stuff you may need can be found in the `includes.php` file. Like some cowl-specific constants:
+
+- COWL_TEST_PATH: The path to cowl.
+- COWL_TEST_APP: The path to the test app.
+
+If you need test commands, models or views, use the COWL_TEST_APP-directory. Which is `tests/app/` and is just like a
+normal app-directory. You should include the files manually, and use `require_once` for every include. If something
+is included by the class you are testing, do not include it manually.

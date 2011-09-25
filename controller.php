@@ -37,6 +37,10 @@ class Controller
 	// The default response type for the argv-array
 	private static $default_type = 'html';
 	
+	// Property: <Controller:$use_require_once>
+	// Flag wether to use require or require_once when including files. Use only when testing
+	private static $use_require_once = false;
+	
 	// Property: <Controller::$error>
 	// The error-command. Must be in the <Controller::$dir>-directory
 	private $error_command = 'ErrorCommand';
@@ -183,7 +187,17 @@ class Controller
 			$return['argv'] = array_merge(array($this->error_command), $pieces);
 		}
 		
-		require($directory . $command_name);
+		// require_once is used when testing only, because a test might include the same command several times
+		// otherwise require should be used, because the performance penalty used is just unnecesary when you
+		// know you are only going to include one command per request.
+		if ( ! self::$use_require_once)
+			require($directory . $command_name);
+		else
+			require_once($directory . $command_name);
+		
+		// lowercase the commandname because the camelcased:nes of that name is not reliable
+		$return['argv'][0] = strtolower($return['argv'][0]);
+		
 		$return['directory'] = $directory;
 		$return['app_directory'] = $directory == self::$commands_dir ? '' : substr($directory, strlen(self::$commands_dir));
 		$return['command'] = $command_name;
@@ -223,6 +237,21 @@ class Controller
 	public static function setDir($dir)
 	{
 		self::$commands_dir = $dir;
+	}
+	
+	/*
+		Method:
+			<Controller::useRequireOnce>
+		
+		Set wether to use require_once or require when including commands. See <Controller::$use_requice_once>.
+		
+		Parameters:
+			(boolean) $use - True if should use require_once else false.
+	*/
+	
+	public static function useRequireOnce($use)
+	{
+		self::$use_require_once = $use;
 	}
 
 	/*
