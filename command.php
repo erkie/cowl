@@ -21,9 +21,9 @@ abstract class Command
 	// Holds an instance to the Templater class, which takes care of all templateing needs.
 	protected $template;
 	
-	// Property: <Command::$argv>
-	// The argv passed to <Command::run>
-	protected $argv;
+	// Property: <Command::$request>
+	// The request object passed to <Command::run>
+	protected $request;
 	
 	// Property: <Command::$js>
 	// Holds an array of JS-files for the command.
@@ -56,40 +56,21 @@ abstract class Command
 		Method:
 			<Command::run>
 		
-		Runs a method of the current class from the specified $args. The first element of the $args['argv'] should be the name of the class (just as in CLI).
-		
-		Examples:
-			// TODO: This example is outdated.
-			> // Argument array
-			> $args[-3] - The path to the command
-			> $args[-2] - The filename of the command
-			> $args[-1] - The filetype requested
-			> $args[0]  - CommandName
-			> $args[1]  - (mixed) argument
-			> $args[n]  - ...
-			> $args[last] - (optional) method to fire
-			
-			> /forum/view/narwals-and-red-tits.json
-			array(
-				-3 => /path/to/cowl/app/front/forum/view/,
-				-2 => command.view.php,
-				-1 => json,
-				 0 => forumviewCommand,
-				 1 => "narwals-and-red-tits"
-			)
+		Runs a method of the current class from the <RequestData>-object passed. To see how the data is formatted
+		please have a look at <Controller> and <RequestData>.
 		
 		Parameters:
-			$args - Contains information on which method to run. If none is provided index is called.
+			(RequestData) $request - Information about the request
 	*/
 	
-	public final function run($argv)
+	public final function run(RequestData $request)
 	{
-		$this->argv = $argv;
+		$this->request = $request;
 		
-		$view = explode('.', $argv['command']);
+		$view = explode('.', $request->command);
 		$view = $view[1];
 		
-		$args = array_slice($argv['argv'], 1);
+		$args = array_slice($request->argv, 1);
 		$method = (count($args)) ? $args[count($args) - 1] : false;
 		
 		// Call initialize method, if one exists
@@ -112,7 +93,7 @@ abstract class Command
 		{
 			$method = 'index';
 		}
-		$argv['method'] = $method;
+		$request->method = $method;
 		
 		// Set view to either the base-name of the class, which is default or the name of the method
 		if ( is_null($this->view) && $this->template->exists('view.' . $method . '.php') )
@@ -126,21 +107,21 @@ abstract class Command
 		
 		// Set the appropriate shell for the response type
 		try {
-			$this->template->setType($argv['response_type']);
+			$this->template->setType($request->response_type);
 		}
 		catch ( TPLShellNotExistsException $e )
 		{
 			$this->template->setType('html');
-			$argv['response_type'] = 'html';
+			$request->response_type = 'html';
 		}
 		
 		// Set cache path, if the user wants to activate cacheing
 		$this->template->setCachePath($this->getCachePath(), 600);
 		
-		$this->template->add('argv', $argv);
-		Current::$request->setInfo('argv', $argv);
+		$this->template->add('request', $request);
+		Current::$request->setInfo('request', $request);
 		
-		Current::$plugins->hook('commandRun', $this, $method, $argv);
+		Current::$plugins->hook('commandRun', $this, $method, $request);
 		
 		// Prepare some stuff before firing the command
 		$this->requestBegan();
@@ -253,8 +234,8 @@ abstract class Command
 	
 	public function getCachePath()
 	{
-		$argv = $this->argv['argv'];
-		$pieces = $this->argv['pieces'];
+		$argv = $this->request->argv;
+		$pieces = $this->request->pieces;
 		array_shift($argv);
 		$pieces = array_merge($pieces, $argv);
 

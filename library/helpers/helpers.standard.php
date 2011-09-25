@@ -81,11 +81,11 @@ function css()
 
 function js()
 {
-	$argv = Current::$request->getInfo('argv');
+	$request = Current::$request->getInfo('request');
 	
 	printf('<script type="text/javascript">');
 	printf('	var COWL_BASE = "%s";', COWL_BASE);
-	printf('	var COWL_CURRENT = [%s];', fimplode('"%__val__;"', array_map('addslashes', $argv['original_request']), ', '));
+	printf('	var COWL_CURRENT = [%s];', fimplode('"%__val__;"', array_map('addslashes', $request->original_request), ', '));
 	printf('</script>');
 	
 	$scripts = Current::$request->getInfo('js');
@@ -100,8 +100,8 @@ function js()
 	
 	if ( $fire = Current::$request->getInfo('js_fire') )
 	{
-		$argv = Current::$request->getInfo('argv');
-		printf('<script type="text/javascript">Cowl.fire("%s", "%s")</script>', strtolower(implode('.', $argv['pieces'])), $argv['method']);
+		$request = Current::$request->getInfo('request');
+		printf('<script type="text/javascript">Cowl.fire("%s", "%s")</script>', strtolower(implode('.', $request->pieces)), $request->method);
 	}
 }
 

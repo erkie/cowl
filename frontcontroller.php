@@ -102,16 +102,15 @@ class FrontController
 		}
 		
 		// Parse arguments from path and call appropriate command
-		$args = $this->controller->parse();
-		$command = new $args['argv'][0];
+		$request = $this->controller->parse();
+		$command = new $request->argv[0];
 		
-		// Set template directory, which is the same directory as the command directory
-		$view_dir = Current::$config->get('paths.view') . str_replace(Current::$config->get('paths.commands'), '', $args['directory']);
-		$command->setTemplateDir($view_dir);
+		// Set template directory, which is the command directory mirrored
+		$command->setTemplateDir(Current::$config->get('paths.view') . $request->app_directory);
 		
-		Current::$plugins->hook('postPathParse', $args);
+		Current::$plugins->hook('postPathParse', $request);
 		
-		$command->run($args);
+		$command->run($request);
 		
 		Current::$plugins->hook('postRun');
 	}

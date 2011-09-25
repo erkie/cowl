@@ -12,7 +12,7 @@ class JS extends Plugin
 		$this->files = array_map(array($this, 'parsePath'), $default_js);
 	}
 	
-	public function commandRun(Command $command, $method, $argv)
+	public function commandRun(Command $command, $method, RequestData $request)
 	{
 		// Get files requested by command
 		$js = $command->getJS();
@@ -37,7 +37,7 @@ class JS extends Plugin
 		$this->files = array_merge($this->files, $files);
 		
 		// See if this command has page.commandname.js
-		$page_name = 'app/' . $argv['app_directory'] . 'page.' . end($argv['pieces']) . '.js';
+		$page_name = 'app/' . $request->app_directory . 'page.' . end($request->pieces) . '.js';
 		$page_name = $this->parsePath($page_name);
 		
 		if ( file_exists($page_name) )

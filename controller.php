@@ -11,20 +11,6 @@ class Controller
 {
 	const SEPARATOR = '/';
 	
-	private static $MIMES = array(
-		'json' => 'text/json',
-		'css' => 'text/css',
-		'js' => 'text/x-javascript',
-		'jpg' => 'image/jpeg',
-		'jpeg' => 'images/jpeg',
-		'gif' => 'image/gif',
-		'png' => 'image/png',
-		'bmp' => 'image/bmp',
-		'html' => 'text/html',
-		'rss' => 'application/rss+xml',
-		'partial' => 'text/html'
-	);
-	
 	// Property: <Controller::$path>
 	// The path to be parsed
 	private $path;
@@ -87,78 +73,73 @@ class Controller
 		4. No other matches at this point result in the Error-command.
 		
 		Returns:
-			Returns an array, much like the argv array in other programming languages. The command filepath is the first element, and arguments to the command are the rest.
+			Returns an instant of <RequestData> with the correct fields filled in.
 	*/
 	
 	public function parse()
 	{
-		$return = array();
+		$request_data = new RequestData;
+		$request_data->base_directory = self::$commands_dir;
+		
 		$is_error = false;
 		
 		// If a file-ending is specified in the URL
-		if ( preg_match('/\.[A-Za-z0-9]+$/', $this->path) )
+		if ( $this->hasFileEnding() )
 		{
-			$period = strrpos($this->path, '.');
-			$path = substr($this->path, 0, $period);
-			$response_type = strtolower(substr($this->path, $period + 1));
+			$request_data->response_type = $this->getFileEndingFromPath();
 			
-			if ( ! isset(self::$MIMES[$response_type]) )
-			{
-				$is_error = true;
-			}
-			
-			$pieces = explode('/', trim($path, '/'));
+			// Every filetype is considered valid as far as <Controller> is concerned. This class
+			// should not care about the validity of this, because you might want to add your own
+			// and it is dependant on the type of shells in the app/-directory. So this for templater
+			// to check itself.
 		}
 		else
 		{
-			$response_type = isset($_SERVER['HTTP_X_REQUESTED_WITH']) || isset($_REQUEST['COWL_was_requested_with']) ? 'json' : self::$default_type;
-			$pieces = explode('/', trim($this->path, '/'));
+			$request_data->response_type = $this->getSuitableResponseType();
 		}
 		
+		$pieces = $this->getPiecesFromPath();
+		
+		$this->pieces = $pieces;
 		$original_pieces = $pieces;
 		
 		// No command? Go to main
-		if ( ! count($pieces) || empty($pieces[0]) )
+		if ( $this->isRequestEmpty() )
 		{
-			$directory = self::$commands_dir;
-			$command_name = 'command.main.php';
-			$dir_pieces = array('main');
-			
-			$return['argv'] = array($this->default_command);
+			$request_data->app_directory = '';
+			$request_data->command = 'command.main.php';
+			$request_data->pieces = array('main');
+			$request_data->argv = array($this->default_command);
 		}
 		// Start searching for commands
 		else
 		{
-			$directories = $pieces;
-			$glued = implode(DIRECTORY_SEPARATOR, $directories);
+			// Start by searching inwards
+			$this->directories = $pieces;
+			$glued = implode(DIRECTORY_SEPARATOR, $this->directories);
 			
 			// Traverse to the innermost directory, checking for packages
-			while ( count($directories) && ! is_dir(self::$commands_dir . $glued) )
+			while ( count($this->directories) && ! is_dir(self::$commands_dir . $glued) )
 			{
-				array_pop($directories);
-				$glued = implode(DIRECTORY_SEPARATOR, $directories);
-			}
-			
-			if ( is_dir(self::$commands_dir . $glued . DIRECTORY_SEPARATOR . 'main') )
-			{
-				$directories[] = 'main';
-				// Add junk to beginning of $pieces so
-				// "$args = array_slice($pieces, count($directories));"
-				// Won't remove one to many
-				array_unshift($pieces, 0);
+				array_pop($this->directories);
+				$glued = implode(DIRECTORY_SEPARATOR, $this->directories);
 			}
 			
 			// Command in base directory
-			if ( ! $directories || ! count($directories) )
+			if ( $this->isCommandInBaseDirectory() )
 			{
-				$directory = self::$commands_dir;
-				$command_name = 'command.' . $pieces[0] . '.php';
-				$dir_pieces = array($pieces[0]);
+				$request_data->directory = self::$commands_dir;
+				$request_data->pieces = array($pieces[0]);
 				
-				if ( file_exists($directory . $command_name) )
+				$command_file = 'command.' . $pieces[0] . '.php';
+				
+				// Does it even exist in the base directory?
+				if ( file_exists($request_data->directory . $command_file) )
 				{
-					$command = array_shift($pieces) . 'Command';
-					$return['argv'] = array_merge(array($command), $pieces);
+					$command_name = array_shift($pieces) . 'Command';
+					
+					$request_data->argv = array_merge(array($command_name), $pieces);
+					$request_data->command = $command_file;
 				}
 				else
 				{
@@ -168,46 +149,82 @@ class Controller
 			// Command in sub-directory
 			else
 			{
-				$command = implode('', $directories) . 'Command';
-				$args = array_slice($pieces, count($directories));
-				$dir_pieces = $directories;
+				$command = implode('', $this->directories) . 'Command';
+				$args = array_slice($pieces, count($this->directories));
 				
-				$directory = self::$commands_dir . implode(DIRECTORY_SEPARATOR, $directories) . DIRECTORY_SEPARATOR;
-				$command_name = 'command.' . end($directories) . '.php';
-				
-				$return['argv'] = array_merge(array($command), $args);
+				$request_data->app_directory = implode(DIRECTORY_SEPARATOR, $this->directories) . DIRECTORY_SEPARATOR;
+				$request_data->command = 'command.' . end($this->directories) . '.php';
+				$request_data->argv = array_merge(array($command), $args);
+				$request_data->pieces = $this->directories;
 			}
 		}
 		
+		// No matching command found. 
 		if ( $is_error )
 		{
-			$directory = self::$commands_dir;
-			$command_name = 'command.error.php';
-			
-			$return['argv'] = array_merge(array($this->error_command), $pieces);
+			$request_data->directory = self::$commands_dir;
+			$request_data->command = 'command.error.php';
+			$request_data->argv = array_merge(array($this->error_command), $pieces);
 		}
 		
 		// require_once is used when testing only, because a test might include the same command several times
 		// otherwise require should be used, because the performance penalty used is just unnecesary when you
 		// know you are only going to include one command per request.
+		$file_to_include = $request_data->base_directory . $request_data->app_directory . $request_data->command;
+		
 		if ( ! self::$use_require_once)
-			require($directory . $command_name);
+			require($file_to_include);
 		else
-			require_once($directory . $command_name);
+			require_once($file_to_include);
 		
 		// lowercase the commandname because the camelcased:nes of that name is not reliable
-		$return['argv'][0] = strtolower($return['argv'][0]);
+		$request_data->argv[0] = strtolower($request_data->argv[0]);
 		
-		$return['directory'] = $directory;
-		$return['app_directory'] = $directory == self::$commands_dir ? '' : substr($directory, strlen(self::$commands_dir));
-		$return['command'] = $command_name;
-		$return['response_type'] = $response_type;
-		$return['pieces'] = $dir_pieces;
-		$return['original_request'] = $original_pieces;
+		$request_data->original_request = $original_pieces;
 		
-		return $return;
+		return $request_data;
 	}
+	
+	// Parsing related methods
+	
+	public function isRequestEmpty()
+	{
+		return ! count($this->pieces) || empty($this->pieces[0]);
+	}
+	
+	public function hasFileEnding()
+	{
+		return preg_match('/\.[A-Za-z0-9]+$/', $this->path);
+	}
+	
+	public function getFileEndingFromPath()
+	{
+		$period = strrpos($this->path, '.');
 		
+		// FIXME: Refactor this. The $path-variable should not be set here
+		$path = substr($this->path, 0, $period);
+		$ret = strtolower(substr($this->path, $period + 1));
+		$this->path = $path;
+		
+		return $ret;
+	}
+	
+	public function getSuitableResponseType()
+	{
+		// Return JSON of is an ajax-request otherwise <Controller::$default_type>
+		return isset($_SERVER['HTTP_X_REQUESTED_WITH']) || isset($_REQUEST['COWL_was_requested_with']) ? 'json' : self::$default_type;
+	}
+	
+	public function getPiecesFromPath()
+	{
+		return explode('/', trim($this->path, '/'));
+	}
+	
+	public function isCommandInBaseDirectory()
+	{
+		return ! $this->directories || ! count($this->directories);
+	}
+	
 	/*
 		Method:
 			<Controller::isPackage>
@@ -332,4 +349,38 @@ class Controller
 	{
 		return $dir . 'command.' . strtolower($command) . '.php';
 	}
+}
+
+/*
+	Class:
+		RequestData
+	
+	Contains request data for a request. Like command, command path, arguments, etc
+*/
+
+class RequestData
+{
+	// Response type of the request, for example: html, json, xml, png, jpg
+	public $response_type;
+	
+	// Arguments passed to the controller. First element is always the classname.
+	public $argv = array();
+	
+	// The base directory for the commands in general
+	public $base_directory;
+	
+	// The path to the current command. Excluding the base directory
+	public $app_directory = '';
+	
+	// Filename of the command
+	public $command;
+	
+	// Pieces based for the decision
+	public $pieces;
+	
+	// Original request sent to the server, exploded by directory_separator
+	public $original_request;
+	
+	// The method of the request. Not determined by <Controller>, but by <Command> (FIXME: should it be, though?)
+	public $method;
 }
