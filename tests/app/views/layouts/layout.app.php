@@ -1,0 +1,1 @@
+APP <?php include($this->template); ?> HELLO

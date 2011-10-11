@@ -1,0 +1,1 @@
+HTML <?php include($this->template); ?> HELLO
