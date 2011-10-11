@@ -105,11 +105,11 @@ abstract class Command
 			$this->setView($view);
 		}
 		
-		// Set the appropriate shell for the response type
+		// Set the appropriate layout for the response type
 		try {
 			$this->template->setType($request->response_type);
 		}
-		catch ( TPLShellNotExistsException $e )
+		catch ( TPLLayoutNotExistsException $e )
 		{
 			$this->template->setType('html');
 			$request->response_type = 'html';

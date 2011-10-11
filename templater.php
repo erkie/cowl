@@ -1,7 +1,7 @@
 <?php
 
 class TPLTemplateNotExistsException extends Exception {}
-class TPLShellNotExistsException extends Exception {}
+class TPLLayoutNotExistsException extends Exception {}
 
 /*
 	Class:
@@ -25,12 +25,12 @@ class Templater
 	protected $template;
 	
 	// Property: <Templater::$type>
-	// The response type of the template. Used for <Templater::$shell>.
+	// The response type of the template. Used for <Templater::$layout>.
 	protected $type;
 	
-	// Property: <Templater::$shell>
-	// The shell template in which the template will be included by. Used for different response types, HTML, JSON, XML, etc.
-	protected $shell;
+	// Property: <Templater::$layout>
+	// The layout template in which the template will be included by. Used for different response types, HTML, JSON, XML, etc.
+	protected $layout;
 	
 	// Property: <Templater::$cache>
 	// Holds an instance of <Cache>, if the output is cached.
@@ -45,12 +45,12 @@ class Templater
 	protected $cache_active = false;
 	
 	// Property: <Templater::$base_dir>
-	// Base directory for all templates. See <Templater::$shell_dir> for the shells.
+	// Base directory for all templates. See <Templater::$layout_dir> for the layouts.
 	protected static $base_dir = 'templates/';
 	
-	// Property: <Templater::$shell_dir>
-	// Path to where all layout files are, called shells.
-	protected static $shell_dir = 'templates/shells/';
+	// Property: <Templater::$layout_dir>
+	// Path to where all layout files are.
+	protected static $layout_dir = 'templates/layouts/';
 		
 	/*
 		Method:
@@ -85,7 +85,7 @@ class Templater
 		
 		Render a file from the <Templater::$dir>, and if cacheing is enabled and the cache is not outdated output the contents of the cache.
 		
-		The passed $filename will be rendered inside the defined shell. (<Templater::$shell>).
+		The passed $filename will be rendered inside the defined layout. (<Templater::$layout>).
 		
 		Parameters:
 			string $filename - The file, contained in <Templater::$dir>, to render.
@@ -117,7 +117,7 @@ class Templater
 		
 		// Magic
 		extract($this->vars);
-		include($this->shell);
+		include($this->layout);
 		
 		// Update cache with outputed contents
 		if ( $this->cache_active )
@@ -161,20 +161,20 @@ class Templater
 		Method:
 			<Templater::setType>
 		
-		Set the type of shell to be used, HTML, JSON, etc. Will throw a TPLShellNotExistsException if the shell did not exist.
+		Set the type of layout to be used, HTML, JSON, etc. Will throw a TPLLayoutNotExistsException if the layout did not exist.
 		
 		Parameters:
-			string $type - The type of shell. A corresponding shell.type.php file must exist in <Templater::$dir>
+			string $type - The type of layout. A corresponding layout.type.php file must exist in <Templater::$dir>
 	*/
 	
 	public function setType($type)
 	{
-		$name = self::$shell_dir . 'shell.' . $type . '.php';
+		$name = self::$layout_dir . 'layout.' . $type . '.php';
 		if ( ! file_exists($name) )
 		{
-			throw new TPLShellNotExistsException($name);
+			throw new TPLLayoutNotExistsException($name);
 		}
-		$this->shell = $name;
+		$this->layout = $name;
 		$this->type = $type;
 	}
 	
@@ -267,10 +267,10 @@ class Templater
 		self::$base_dir = $dir;
 	}
 	
-	// Method: <Templater::setShellDir>
-	// Set the <Templater::$shell_dir>.
-	public static function setShellDir($dir)
+	// Method: <Templater::setLayoutDir>
+	// Set the <Templater::$layout_dir>.
+	public static function setLayoutDir($dir)
 	{
-		self::$shell_dir = $dir;
+		self::$layout_dir = $dir;
 	}
 }

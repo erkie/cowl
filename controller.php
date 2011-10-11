@@ -90,7 +90,7 @@ class Controller
 			
 			// Every filetype is considered valid as far as <Controller> is concerned. This class
 			// should not care about the validity of this, because you might want to add your own
-			// and it is dependant on the type of shells in the app/-directory. So this for templater
+			// and it is dependant on the type of layouts in the app/-directory. So this for templater
 			// to check itself.
 		}
 		else
