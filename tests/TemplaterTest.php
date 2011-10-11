@@ -52,8 +52,12 @@ class TemplaterTest extends PHPUnit_Framework_TestCase
 		$this->template->setType('nonexistant');
 	}
 	
+	/**
+	 * @expectedException TPLTemplateNotExistsException
+	 */
+	
 	public function testNonexistantView()
 	{
-		
+		$this->template->render('i-dont-exist');
 	}
 }
