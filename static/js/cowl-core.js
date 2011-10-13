@@ -12,7 +12,14 @@ var Cowl = {
 	templateCallbacks: [],
 	
 	Command: function(name, props) {
-		Cowl.commands[name.toLowerCase()] = new Class(props);
+		name = name.toLowerCase();
+		Cowl.commands[name] = new Class(props);
+		
+		if ( name === 'cowl.all' ) {			
+			window.addEvent('domready', function() {
+				Cowl.run(name, 'index');
+			});
+		}
 	},
 	
 	fire: function(command, method) {
@@ -47,8 +54,8 @@ var Cowl = {
 	*/
 	
 	url: function(arr) {
-		var data = $type(arr) == 'array' ? arr : arguments;
-		return COWL_BASE + $A(data).join('/');
+		var data = typeOf(arr) == 'array' ? arr : arguments;
+		return COWL_BASE + Array.from(data).join('/');
 	},
 	
 	/*
