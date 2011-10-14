@@ -27,7 +27,7 @@ function share_links($limit = 5, $url = '', $title = '', $short_title = '')
 	$short_title = urlencode($short_title);
 	
 	$db = array(
-		'facebook' => sprintf('https://www.facebook.com/sharer/sharer.php?s=100&p%%5Bsummary%%5D=%s&p%%5Burl%%5D=%s&p%%5Btitle%%5D=%s', $url, $title, $short_title),
+		'facebook' => sprintf('https://www.facebook.com/sharer/sharer.php?s=100&p%%5Bsummary%%5D=%s&p%%5Burl%%5D=%s&p%%5Btitle%%5D=%s', $title, $url, $short_title),
 		'twitter' => sprintf('http://twitter.com/share?text=%s&url=%s', $title, $url),
 		'googleplus' => sprintf('https://m.google.com/app/plus/x/?v=compose&content=%s%%20%s', $url, $title),
 		'reddit' => sprintf('http://reddit.com/submit?url=%s&title=%s', $url, $title)
