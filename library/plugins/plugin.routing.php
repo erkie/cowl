@@ -19,12 +19,14 @@ class Routing extends Plugin
 	public function prePathParse($controller, $server)
 	{
 		try {
-			$routes = Current::$config->get('plugins.routing.route');
-			$replaces = Current::$config->get('plugins.routing.replace');
+			$routes = Current::$config->get('plugins.routing.routes');
 			
 			if ( count($routes) )
 			{
-				$path = preg_replace($routes, $replaces, $controller->getPath());
+				$searches = array_keys($routes);
+				$replaces = array_values($routes);
+				
+				$path = preg_replace($searches, $replaces, $controller->getPath());
 				$controller->setPath($path);
 				$server->setPath($path);
 			}
