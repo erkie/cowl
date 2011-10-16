@@ -136,14 +136,13 @@ class StaticServer
 		header('Expires: ' . date(DATE_RFC2822, (time() + 60 * 60 * 24 * 365)));
 		
 		$mime = isset(self::$MIMES[$this->type]) ? self::$MIMES[$this->type] : 'text/html';
-		$mod_time = (int)filemtime($this->path);
+		$mod_time = filemtime($this->path);
 		
 		header('Content-type: ' . $mime);
-		$last_modified = filemtime($this->path);
 		
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $last_modified) . ' GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mod_time) . ' GMT');
 		
-		$etag = 'ci-' . dechex(crc32($this->path . $last_modified));
+		$etag = 'ci-' . dechex(crc32($this->path . $mod_time));
 		
 		header('ETag: "' . $etag . '"');
 		
