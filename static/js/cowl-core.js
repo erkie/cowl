@@ -11,6 +11,11 @@ var Cowl = {
 	instances: {},
 	templateCallbacks: [],
 	
+	/*
+		Method:
+			Cowl.Command
+	*/
+	
 	Command: function(name, props) {
 		name = name.toLowerCase();
 		Cowl.commands[name] = new Class(props);
@@ -22,21 +27,90 @@ var Cowl = {
 		}
 	},
 	
+	/*
+		Method:
+			Cowl.fire
+	*/
+	
 	fire: function(command, method) {
-		command = command.toLowerCase();
-		if ( Cowl.commands[command] ) {
-			window.addEvent('domready', function() {
+		if ( Cowl.hasCommand(command) ) {
+			if ( ! Browser.loaded )
+				window.addEvent('domready', function() {
+					Cowl.run(command, method);
+				});
+			else
 				Cowl.run(command, method);
-			});
 		}
 	},
 	
+	/*
+		Method:
+			Cowl.run
+		
+		Run a command
+		
+		Parameters:
+			command - The name of the command, case insensitive
+			method - The method to run
+	*/
+	
 	run: function(command, method) {
-		var instance = new Cowl.commands[command]();
+		var cmd = Cowl.commands[command.toLowerCase()];
+		var instance = new cmd();
 		if ( instance[method] ) {
 			instance[method]();
 		}
 		this.instances[command] = instance;
+	},
+	
+	/*
+		Method:
+			Cowl.hasCommand
+		
+		Check wether a particular command exists
+	*/
+	
+	hasCommand: function(command) {
+		return !! Cowl.commands[command.toLowerCase()];
+	},
+	
+	/*
+		Method:
+			Cowl.loadCommand
+		
+		Load a command.
+		
+		Parameters:
+			command - The command
+			callback - Callback for when the command is loaded
+	*/
+	
+	loadCommand: function(command, callback) {
+		if ( this.hasCommand(command) ) {
+			callback();
+			return;
+		}
+		
+		var url = Cowl.url('app', 'js', 'page.' + command + '.js');
+		var script = new Asset.javascript(url, {
+			onLoad: function() {
+				callback();
+			}
+		});
+	},
+	
+	/*
+		Method:
+			Cowl.getInstance
+		
+		Get an active instance of a command.
+		
+		Parameters:
+			command - The name of the command
+	*/
+	
+	getInstance: function(command) {
+		return Cowl.instances[command.toLowerCase()];
 	},
 	
 	/*
@@ -162,7 +236,7 @@ var Cowl = {
 		Parameters:
 			(string) url - The URL to send the POST request to
 			(object) parameters - The parameters to be send in the POST request
-			(object) formParamters - Extra parameters set on the new form, optional
+			(object) formParameters - Extra parameters set on the new form, optional
 	*/
 	post: function(url, parameters, formParameters) {
 		formParameters = formParameters || {};
