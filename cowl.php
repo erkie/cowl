@@ -10,7 +10,8 @@ define('COWL_CACHE_DIR', COWL_DIR . 'cache' . DIRECTORY_SEPARATOR);
 
 // Constant: <COWL_BASE>
 // The root of the URL. Will almost always be '/' in production.
-define('COWL_BASE', rtrim(dirname($_SERVER['SCRIPT_NAME']) . '/', '/') . '/');
+if ( ! defined('COWL_BAE') )
+	define('COWL_BASE', rtrim(dirname($_SERVER['SCRIPT_NAME']) . '/', '/') . '/');
 
 /*
 	Class:
@@ -77,9 +78,11 @@ class Cowl
 	public static function redirect($url)
 	{
 		if ( isset($_SERVER['HTTP_X_REQUESTED_WITH']) )
-		{
-			$url .= (strstr('?', $url) ? '&' : '?') . 'COWL_was_requested_with=' . $_SERVER['HTTP_X_REQUESTED_WITH'];
-		}
+			$url .= (strstr($url, '?') ? '&' : '?') . 'COWL_was_requested_with=' . $_SERVER['HTTP_X_REQUESTED_WITH'];
+		
+		if ( isset($_REQUEST['COWL_override_response_type']) )
+			$url .= (strstr($url, '?') ? '&' : '?') . 'COWL_override_response_type=' . $_REQUEST['COWL_override_response_type'];
+		
 		header('Location: ' . $url);
 		exit($url);
 	}

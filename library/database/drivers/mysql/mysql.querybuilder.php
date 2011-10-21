@@ -160,7 +160,7 @@ class MySQLQueryBuilder
 					case 'quote': $value = $this->quote($value); break;
 					case 'value': $value = $this->quoteValue($value); break;
 					case 'field': $value = $this->quoteField($value); break;
-					case 'string': $value = $value; break;
+					case 'string': $value = self::escape($value); break;
 					case 'this': $value = $this->$value; break;
 					default: throw new MySQLQBInvalidFormatModifierException(implode(' ', $pieces)); break;
 				}
@@ -554,6 +554,11 @@ class MySQLQueryBuilder
 	
 	public function quote($value)
 	{
-		return (is_numeric($value)) ? $value : sprintf('"%s"', mysql_real_escape_string($value));
+		return (is_numeric($value)) ? $value : sprintf('"%s"', self::escape($value));
+	}
+	
+	public static function escape($str)
+	{
+		return mysql_real_escape_string($str);
 	}
 }
