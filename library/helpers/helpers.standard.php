@@ -28,7 +28,7 @@ function p($str = '')
 	else
 		$html = vsprintf($str, $args);
 	
-	echo htmlentities($html);
+	echo htmlentities($html, ENT_COMPAT, 'UTF-8');
 }
 
 /*
@@ -147,7 +147,6 @@ function only_if($test, $if_true, $if_false = '')
 function to_options(DomainCollection $collection, $key_value, $key_text, $selected = null)
 {
 	$html = '';
-	
 	foreach ( $collection as $object )
 	{
 		$value = $object->get($key_value);
