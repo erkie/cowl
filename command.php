@@ -1,5 +1,7 @@
 <?php
 
+class TPLNotAllowedHereException extends Exception {}
+
 /*
 	Abstract Class:
 		<Command>
@@ -107,9 +109,17 @@ abstract class Command
 		
 		// Set the appropriate layout for the response type
 		try {
+			// Check if the user has restricted which layouts can automatically be set
+			$allowed_types = Current::$config->getOr('allowed_layouts', true);
+			
+			if ( is_array($allowed_types) && ! in_array($request->response_type, $allowed_types) )
+			{
+				throw new TPLNotAllowedHereException($request->response_type);
+			}
+			
 			$this->template->setType($request->response_type);
 		}
-		catch ( TPLLayoutNotExistsException $e )
+		catch ( Exception $e )
 		{
 			$this->template->setType('html');
 			$request->response_type = 'html';
