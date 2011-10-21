@@ -78,9 +78,11 @@ class Cowl
 	public static function redirect($url)
 	{
 		if ( isset($_SERVER['HTTP_X_REQUESTED_WITH']) )
-		{
 			$url .= (strstr($url, '?') ? '&' : '?') . 'COWL_was_requested_with=' . $_SERVER['HTTP_X_REQUESTED_WITH'];
-		}
+		
+		if ( isset($_REQUEST['COWL_override_response_type']) )
+			$url .= (strstr($url, '?') ? '&' : '?') . 'COWL_override_response_type=' . $_REQUEST['COWL_override_response_type'];
+		
 		header('Location: ' . $url);
 		exit($url);
 	}
