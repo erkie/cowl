@@ -460,7 +460,7 @@ abstract class DataMapper
 		Will count the number of rows sorted and offsetted using the current <DataMapper::$state>. This method will not flush the state-array.
 		
 		Examples:
-			$total = $postmapper->select('all')->count();
+			$total = $postmapper->filter('all')->count();
 			echo $total; // 102 posts
 		
 		Parameters:
