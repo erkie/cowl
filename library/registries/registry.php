@@ -162,7 +162,7 @@ abstract class Registry
 		try {
 			return $this->get($key);
 		}
-		catch ( RegistryMemberNotFoundException $e )
+		catch ( Exception $e )
 		{}
 		
 		return $default_value;
