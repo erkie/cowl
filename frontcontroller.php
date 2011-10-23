@@ -39,7 +39,7 @@ class FrontController
 	
 	public function __construct()
 	{
-		session_start();
+		@session_start(); // I know that the @-notation is frowned upon, but adding it to session_start saves us unnecessary warnings
 		
 		Cache::setDir(COWL_CACHE_DIR);
 		Current::initialize(COWL_DIR);
