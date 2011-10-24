@@ -29,9 +29,7 @@
 	'paths.urls.js'    => "js/",
 	'paths.urls.files' => "files/",
 
-	'config.other' => array(
-		"app/config/user.php"
-	),
+	'config.other' => array("app/config/user.php"),
 
 	// Plugins
 	'plugins.load' => array("css", "js", "routing"),
@@ -41,7 +39,7 @@
 	'plugins.css.cache'        => "static.css",
 	'plugins.css.base_css'     => "app/css/site.css",
 	'plugins.css.force_update' => true, // = Performance killer!
-
+	
 	// JS Handler and Compressor
 	'plugins.js.path'  => "~/library/plugins/js/plugin.js.php",
 	'plugins.js.cache' => "static.js",
@@ -57,7 +55,11 @@
 
 	'plugins.routing.routes'   => array(
 		"#^/css/gfx/(.+?)#" => "gfx/$1"
-	)
+	),
+
+	// Logging
+	'plugins.logging.path' => "~/library/plugins/plugin.logging.php",
+	'plugins.logging.log_file' => "~/log/info-%s.log" // Needs to exist and be writable
 
 	// Add your routes to app/config/user.ini
 );

@@ -40,18 +40,16 @@ class Plugins
 	
 	private function loadPlugins($dir)
 	{
-		try {
-			$plugins = Current::$config->get('plugins.load');
+		$plugins = Current::$config->get('plugins.load');
+		
+		foreach ( $plugins as $plugin )
+		{
+			$path = Current::$config->get('plugins.' . $plugin . '.path');
+			require($path);
 			
-			foreach ( $plugins as $plugin )
-			{
-				$path = Current::$config->get('plugins.' . $plugin . '.path');
-				require($path);
-				
-				$name = Plugins::makeName($path);
-				$this->plugins[] = new $name();
-			}
-		} catch ( RegistryException $e ) {}
+			$name = Plugins::makeName($path);
+			$this->plugins[] = new $name();
+		}
 	}
 	
 	/*
@@ -163,4 +161,5 @@ abstract class Plugin
 	public function dbInsert(DataMapper $mapper, DomainObject $object) {}
 	public function dbUpdate(DataMapper $mapper, DomainObject $object) {}
 	public function dbRemove(DataMapper $mapper, $id) {}
+	public function postDBQuery(DataMapper $mapper, $query, DBDriver $db) {}
 }

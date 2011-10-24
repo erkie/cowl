@@ -4,13 +4,17 @@
 // Contains the path in which Cowl is set up.
 define('COWL_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
+// Constant: <COWL_TOP>
+// Contains the path in which the project base is (where index.php lies)
+define('COWL_TOP', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+
 // Constant: <COWL_CACHE_DIR>
 // The path to the cache
 define('COWL_CACHE_DIR', COWL_DIR . 'cache' . DIRECTORY_SEPARATOR);
 
 // Constant: <COWL_BASE>
 // The root of the URL. Will almost always be '/' in production.
-if ( ! defined('COWL_BAE') )
+if ( ! defined('COWL_BASE') )
 	define('COWL_BASE', rtrim(dirname($_SERVER['SCRIPT_NAME']) . '/', '/') . '/');
 
 /*

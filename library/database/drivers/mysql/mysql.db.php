@@ -11,24 +11,24 @@ class MySQLDBQueryException extends Exception {}
 	MySQL database wrapper with built in data sanitation.
 */
 
-class MySQLDB
+class MySQLDB extends DBDriver
 {
 	// Property: <DataMapper::$output_query>
 	// Output the current query using <var_dump>. Debug-flag, will be set to false after use.
 	public $output_query = false;
 
-	// Property: <DB::$conn>
+	// Property: <MySQLDB::$conn>
 	// Holds the connection ID returned by mysql_query.
 	private $conn;
 
 	/*
 		Constructor:
-			<DB::__construct>
+			<MySQLDB::__construct>
 		
 		Connect to MySQL server. This should ideally only be created once, so be sure to keep track of all instances created.
 		
 		Parameters:
-			See <DB::connect> parameter list.
+			See <MySQLDB::connect> parameter list.
 	*/
 	
 	public function __construct($server, $user, $password, $database)
@@ -38,7 +38,7 @@ class MySQLDB
 	
 	/*
 		Method:
-			<DB::connect>
+			<MySQLDB::connect>
 		
 		Create connection to server. Will throw a <DBConnectionException> if there was a problem connecting. Will throw a <DBDatabaseSelectException> will be thrown if the chosen database could not be selected.
 		
@@ -69,7 +69,7 @@ class MySQLDB
 	
 	/*
 		Method:
-			<DB::execute>
+			<MySQLDB::execute>
 		
 		Execute a query. All input variables are sanitized by <DB::sanitize>.
 		
@@ -87,7 +87,9 @@ class MySQLDB
 		$args = func_get_args();
 		$args = array_slice($args, 1);
 		
+		$this->startTimer();
 		$res = $this->query($query, $args);
+		$this->endTimer();
 		
 		$result = new MySQLDBResult($res);
 		$result->setID(mysql_insert_id());
@@ -98,7 +100,7 @@ class MySQLDB
 	
 	/*
 		Method:
-			<DB::query>
+			<MySQLDB::query>
 		
 		Execute a query, throwing a DBQueryExecption on failure. Sanitizes input.
 		
@@ -129,7 +131,7 @@ class MySQLDB
 	
 	/*
 		Method:
-			<DB::sanitize>
+			<MySQLDB::sanitize>
 		
 		Sanitize input by removing slashes and mysql_real_escape_string:ing. This is done recursively on an array.
 		
