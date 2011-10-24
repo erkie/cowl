@@ -160,6 +160,8 @@ abstract class DataMapper
 		$result = $db->execute($query);
 		$this->populateFromDBResult($object, $result);
 		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
+		
 		return $object;
 	}
 	
@@ -222,6 +224,8 @@ abstract class DataMapper
 		
 		$query = $this->builder->buildFind($args, $order, $offset, $amount);
 		$result = $db->execute($query);
+		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
 		
 		return new DomainCollection($result, $this);
 	}
@@ -392,6 +396,8 @@ abstract class DataMapper
 		
 		$object->setID($result->getID());
 		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
+		
 		return $object;
 	}
 	
@@ -416,7 +422,9 @@ abstract class DataMapper
 		
 		$query = $this->builder->buildUpdate($object);
 		$result = $db->execute($query);
-
+		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
+		
 		return $object;
 	}
 	
@@ -451,6 +459,8 @@ abstract class DataMapper
 		
 		$query = $this->builder->buildDelete($id);
 		$result = $db->execute($query);
+		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
 	}
 	
 	/*
@@ -486,7 +496,11 @@ abstract class DataMapper
 		$db = Current::db($this->driver);
 		
 		$query = $this->builder->buildCount($args, $order, $offset, $amount);
-		return end($db->execute($query)->row());
+		$ret = end($db->execute($query)->row());
+		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
+		
+		return $ret;
 	}
 	
 	/*
@@ -516,6 +530,9 @@ abstract class DataMapper
 		
 		$query = $this->builder->format($query, $data);
 		$result = $db->execute($query);
+		
+		Current::$plugins->hook('postDBQuery', $this, $query, $db);
+		
 		return new DomainCollection($result, $this);
 	}
 	

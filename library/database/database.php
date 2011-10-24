@@ -3,9 +3,17 @@
 require('datamapper.php');
 require('domainobject.php');
 require('domaincollection.php');
+require('dbdriver.php');
 require('dbresult.php');
 
 class DatabaseDriverException extends Exception {}
+
+/*
+	Class:
+		Database
+	
+	Keeps track of all loaded drivers and loading of drivers.
+*/
 
 class Database
 {
