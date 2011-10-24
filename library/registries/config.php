@@ -47,7 +47,13 @@ class Config extends Registry
 		$other = $this->get('config.other');
 		if ( is_array($other) )
 		{
-			array_walk($other, array($this, 'parseFile'));
+			// Loop over other config files backwards, so we catch
+			// if other "config.other"'s are added
+			while ( isset($this->data['config.other'][0]) )
+			{
+				$this->parseFile($this->data['config.other'][0]);
+				array_shift($this->data['config.other']);
+			}
 		}
 	}
 	
