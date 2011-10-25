@@ -1,26 +1,40 @@
-#!/bin/bash
+#!/usr/bin/php
+<?php
 
-echo "*** Installing Cowl."
+echo "*** Installing Cowl.\n";
 
-echo "** Moving app-directory"
+echo "** Moving app-directory\n";
+
 # Move sample app directory
-cp -R app-SAMPLE/ ../app/
+if ( ! is_dir('../app/') )
+{
+	shell_exec("cp -R app-SAMPLE/ ../app/");
+}
 
-echo "** Moving .htaccess"
+echo "** Moving .htaccess\n";
+
 # Move .htaccess and index.php
-cp SAMPLE.htaccess ../.htaccess
+if ( ! file_exists('../.htaccess') )
+{
+	shell_exec("SAMPLE.htaccess ../.htaccess");
 
-echo "** Moving index.php"
-cp index.php-SAMPLE ../index.php
+	# Change RewriteBase / to the real base
+	echo "# Please enter the base web path of your app (almost always /): \n";
 
-# Change RewriteBase / to the real base
-echo "# Please enter the base web path of your app (almost always /): "
-read BASE_PATH
-sed "s#RewriteBase /#RewriteBase $BASE_PATH#g" ../.htaccess > ../.htaccess.temp
-mv ../.htaccess.temp ../.htaccess
+	$BASE_PATH = trim(fgets(STDIN));
+
+	file_put_contents("../.htaccess", str_replace("RewriteBase /", "RewriteBase $BASE_PATH", file_get_contents("../.htaccess")));
+}
+
+echo "** Moving index.php\n";
+
+if ( ! file_exists('../index.php') )
+{
+	shell_exec("cp index.php-SAMPLE ../index.php");
+}
 
 # Make /cowl/cache writeable
-mkdir cache
-chmod 0777 ./cache
+shell_exec("mkdir cache");
+shell_exec("chmod 0777 ./cache");
 
-echo "*** Done."
+echo "*** Done.\n";

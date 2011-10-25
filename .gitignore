@@ -1,7 +1,6 @@
 .DS_Store
 
 # Cache
-cache/
 cache/*
-!cache/index.html
+!cache/.gitignore
 log/
