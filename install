@@ -34,7 +34,12 @@ if ( ! file_exists('../index.php') )
 }
 
 # Make /cowl/cache writeable
-shell_exec("mkdir cache");
+
+if ( ! is_dir('cache/') )
+{
+	shell_exec("mkdir cache");
+}
+
 shell_exec("chmod 0777 ./cache");
 
 echo "*** Done.\n";
