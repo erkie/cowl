@@ -10,15 +10,20 @@
 
 class Logging extends Plugin
 {
+	private $tmp = '';
+	
 	public function __construct()
 	{
 		$this->messages = array();
-		$this->file = COWL_TOP . sprintf(Current::$config->get("plugins.logging.log_file"), date("Ymd"));
+		$this->file = COWL_TOP . sprintf(Current::$config->get("plugins.logging.log_file"), date("Ymd",  $_SERVER['REQUEST_TIME']));
+		
+		// Set global accessor as Current::$log
+		Current::$log = $this;
 	}
 	
-	private function log($type, $message = '--')
+	public function log($type, $message = '--')
 	{
-		$message = sprintf("%-12s = %s", $type, $message);
+		$message = sprintf("(%s) %-12s = %s", date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']), $type, $message);
 		$this->messages[] = $message;
 	}
 	
@@ -31,6 +36,10 @@ class Logging extends Plugin
 	// FrontController-related hooks
 	public function postRun()
 	{
+		// Do not log anything if we do not have anything to log
+		if ( ! count($this->messages) )
+			return;
+		
 		file_put_contents($this->file, implode(PHP_EOL, $this->messages) . PHP_EOL, FILE_APPEND);
 	}
 	
@@ -43,31 +52,31 @@ class Logging extends Plugin
 	// ORM-related hooks
 	public function dbPopulate(DataMapper $mapper, DomainObject $object)
 	{
-		$this->log("db_populate");
+		$this->tmp = 'db_populate';
 	}
 	
 	public function dbFind(DataMapper $mapper, $args)
 	{
-		$this->log("db_find");
+		$this->tmp = 'db_find';
 	}
 	
 	public function dbInsert(DataMapper $mapper, DomainObject $object)
 	{
-		$this->log("db_insert");
+		$this->tmp = 'db_insert';
 	}
 	
 	public function dbUpdate(DataMapper $mapper, DomainObject $object)
 	{
-		$this->log("db_update");
+		$this->tmp = 'db_update';
 	}
 	
 	public function dbRemove(DataMapper $mapper, $id)
 	{
-		$this->log("db_remove");
+		$this->tmp = 'db_remove';
 	}
 	
 	public function postDBQuery(DataMapper $mapper, $query, DBDriver $db)
 	{
-		$this->log('query', sprintf("%01.6f ms. %s", $db->getQueryTime(), str_replace(array("\n", "\t"), array(" ", ""), $query)));
+		$this->log($this->tmp, sprintf("%01.6f ms. %s", $db->getQueryTime(), str_replace(array("\n", "\t"), array(" ", ""), $query)));
 	}
 }

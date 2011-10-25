@@ -67,10 +67,6 @@ class Current
 	// User session registry
 	public static $store;
 	
-	// Property: <Current::$registry>
-	// Site-wide registry
-	public static $registry;
-	
 	// Property: <Current::$config>
 	// Global config object
 	public static $config;
@@ -78,4 +74,8 @@ class Current
 	// Property: <Current::$plugins>
 	// Current plugin object.
 	public static $plugins;
+	
+	// Property: <Current::$log>
+	// A generic log
+	public static $log;
 }
