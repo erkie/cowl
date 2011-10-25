@@ -69,7 +69,7 @@ abstract class Registry
 		(end code)
 	*/
 	
-	abstract public static function instance();
+	public static function instance() { throw new Exception("Registry::instance is an abstract method"); }
 	
 	/*
 		Method:
