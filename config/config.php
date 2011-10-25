@@ -1,5 +1,8 @@
 <?php return array(
 	// Cowl configuration file
+	
+	'mode' => 'development', // Change to production in production
+	'release_tag' => 'dev', // Change to version number or commit hash when in production mode, used for caches
 
 	'paths.base'  => "cowl", // Leave base empty for the value to be set at run time
 	'paths.cache' => "~/cache/",

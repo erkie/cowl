@@ -34,13 +34,13 @@ class CSS extends Plugin
 	
 	public function __construct()
 	{
-		list($dir, $url_dir, $cache, $force_update)
-			= Current::$config->gets('paths.top', 'paths.urls.css', 'plugins.css.cache', 'plugins.css.force_update');
+		list($dir, $url_dir, $cache, $force_update, $release_tag)
+			= Current::$config->gets('paths.top', 'paths.urls.css', 'plugins.css.cache', 'plugins.css.force_update', 'release_tag');
 		
 		CSSCompiler::setDir($dir);
 		
 		$this->url_dir = COWL_BASE . $url_dir;
-		$this->cache = $cache;
+		$this->cache = $release_tag . '.' . $cache;
 		$this->force_update = $force_update;
 		
 		$this->loadSiteCSS();
