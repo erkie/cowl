@@ -148,6 +148,7 @@ class FormHelper
 		}
 		
 		$ret = sprintf('<%s %s', $type, fimplode('%__key__;="%__val__;"', $attrs, ' '));
+		
 		if ( ! $with_both )
 		{
 			$ret = $ret . ' />';
@@ -178,11 +179,11 @@ class FormHelper
 		// Default container type is a 'p', but this is optional
 		$container_type = isset($options['container_type']) ? $options['container_type'] : 'div';
 		
-		if ( ! isset($attrs['class']) )
-			$attrs['class'] = array();
+		if ( ! isset($options['class']) )
+			$options['class'] = array();
 		
 		// Create container html
-		$classes = array_merge(array('form-field-container'), $attrs['class']);
+		$classes = array_merge(array('form-field-container'), $options['class']);
 		
 		// Add error class to bad fields
 		if ( $has_errors )
