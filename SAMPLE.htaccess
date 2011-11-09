@@ -1,5 +1,7 @@
 RewriteEngine on
 
+RewriteRule ^css/gfx/(.*) app/gfx/$1 [L]
+
 RewriteCond %{SCRIPT_FILENAME} !-f
 RewriteCond %{SCRIPT_FILENAME} !-d
 
