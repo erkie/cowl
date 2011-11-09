@@ -72,6 +72,7 @@ abstract class DomainObject
 		}
 		
 		$this->validator = new Validator();
+		$this->validator->setStoreErrors(true);
 	}
 	
 	/*
@@ -101,7 +102,8 @@ abstract class DomainObject
 				$this->rest[$name] = $value;
 			}
 		}
-		elseif ( $raw || (! $raw && $this->validate($name, $value)) )
+		// Do not validate until ensure is called
+		else/*if ( $raw || (! $raw && $this->validate($name, $value)) )*/
 		{
 			$this->values[$name] = $value;
 		}
@@ -264,10 +266,48 @@ abstract class DomainObject
 		{
 			// Ignore default rules, as this is not a validation clause
 			if ( $rule == 'default' ) continue;
-			$this->validator->validate($input, $rule, $arg);
+			$this->validator->validate($input, $rule, $arg, $name);
 		}
 		
 		return true;
+	}
+	
+	/*
+		Method:
+			DomainObject::ensure
+		
+		Ensure the integrity of the data by running everything through a validator
+		and throwing a ValidatorFailException for all failed keys.
+		
+		If it comes across a bad value that value will be unset.
+	*/
+	
+	public function ensure()
+	{
+		foreach ( $this->values as $key => $value )
+		{
+			$this->validate($key, $value);
+		}
+		
+		if ( count($this->validator->getErrors()) )
+		{
+			throw new ValidatorFailException($this->validator);
+		}
+	}
+	
+	/*
+		Method:
+			DomainObject::getValidator
+		
+		Get the validator for the object.
+		
+		Returns:
+			A <Validator>
+	*/
+	
+	public function getValidator()
+	{
+		return $this->validator;
 	}
 	
 	// Method: <DomainObject::getData>

@@ -51,17 +51,18 @@ class FrontController
 			$commands_dir, $plugins_dir, $model_dir,
 			$validators_dir, $library_dir, $view_dir,
 			$helpers_dir, $drivers_dir, $app_dir,
-			$view_layout_dir)
+			$view_layout_dir, $validator_error_messages)
 		= 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
 				'paths.helpers', 'paths.drivers', 'paths.app',
-				'paths.layouts');
+				'paths.layouts', 'paths.validator_messages');
 		
 		Controller::setDir($commands_dir);	
 		DataMapper::setMappersDir($model_dir);
 		DataMapper::setObjectsDir($model_dir);
 		Validator::setPath($validators_dir);
+		Validator::loadStrings($validator_error_messages);
 		Templater::setBaseDir($view_dir);
 		Templater::setLayoutDir($view_layout_dir);
 		Library::setPath($library_dir);	
@@ -72,7 +73,7 @@ class FrontController
 		Current::$plugins = new Plugins($plugins_dir);
 		
 		// Load default helper
-		Helpers::load('standard');
+		Helpers::load('standard', 'form');
 	}
 	
 	/*

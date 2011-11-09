@@ -32,6 +32,8 @@
 	'paths.urls.js'    => "js/",
 	'paths.urls.files' => "files/",
 
+	'paths.validator_messages' => '~/library/validators/error_strings.php',
+
 	'config.other' => array("app/config/user.php"),
 
 	// Plugins
@@ -60,10 +62,10 @@
 		"#^/css/gfx/(.+?)#" => "gfx/$1"
 	),
 
+	// Add your routes to app/config/user.ini
+
 	// Logging
 	'plugins.logging.path' => "~/library/plugins/plugin.logging.php",
 	'plugins.logging.log_file' => "~/log/info-%s.log", // Needs to exist and be writable
 	'plugins.logging.error_file' => "~/log/error-%s.log"
-
-	// Add your routes to app/config/user.ini
 );

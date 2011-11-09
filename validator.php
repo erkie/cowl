@@ -2,7 +2,16 @@
 
 class ValidatorException extends Exception {}
 class ValidatorNotFoundException extends ValidatorException {}
-class ValidatorFailException extends ValidatorException {}
+
+class ValidatorFailException extends ValidatorException
+{
+	public $validator;
+	
+	public function __construct($validator)
+	{
+		$this->validator = $validator;
+	}
+}
 
 /*
 	Class:
@@ -16,6 +25,16 @@ class Validator
 	// Property: <Validator::$path>
 	// Contains the pathname to where the validators are contained.
 	private static $path = 'validators/';
+	
+	private static $error_messages = array();
+	
+	// Property: Validator::$store_errors
+	// Flag wether to store errors or just throw a ValidatorFailException
+	private $store_errors = false;
+	
+	// Property: Validator::$errors
+	// If <Validator::$store_errors> is true it will store errors in this array as key->values
+	private $errors = array();
 		
 	/*
 		Method:
@@ -34,7 +53,23 @@ class Validator
 	
 	/*
 		Method:
-			<Validator::validate>
+			<Validator::loadStrings>
+		
+		Load error messages from a specified path.
+		
+		Parameters:
+			The path to load error messages from.
+	*/
+	
+	public static function loadStrings($path)
+	{
+		self::$error_messages = require($path);
+		self::$error_messages = self::$error_messages['en'];
+	}
+	
+	/*
+		Method:
+			Validator::validate
 		
 		Validate the input, throwing a <ValidatorFailException> on failure.
 		
@@ -42,12 +77,13 @@ class Validator
 			$input - The input to validate.
 			$func - The validator function to call. If the function does not exist, it will be loaded by <Validator::loadValidator>. $func will be translated to <Validator::$path>/validator.$func.php.
 			$arg - An optional argument to pass to the validator.
+			$key - An optional key to remember this input by
 		
 		Returns:
 			Returns true on success, throws a ValidatorException on failure.
 	*/
 	
-	public function validate($input, $func, $arg = null)
+	public function validate($input, $func, $arg = null, $key = '')
 	{
 		$funcname = self::makeName($func);
 		
@@ -58,7 +94,17 @@ class Validator
 		
 		if ( ! call_user_func($funcname, $input, $arg) )
 		{
-			throw new ValidatorFailException($funcname . ': "' . $input . '"');
+			if ( $this->store_errors )
+			{
+				if ( ! isset($this->errors[$key]) )
+					$this->errors[$key] = array();
+				
+				$this->errors[$key][] = $this->makeErrorMessage($func, $arg);
+			}
+			else
+			{
+				throw new ValidatorFailException($funcname . ': "' . $input . '"');
+			}
 		}
 		
 		return true;
@@ -110,6 +156,48 @@ class Validator
 		{
 			throw new ValidatorNotFoundException($name);
 		}
+	}
+	
+	/*
+		Method:
+			Validator::setStoreErrors
+		
+		Set wether to store errors or not. See the <Validator::$store_errors> property.
+		
+		Parameters:
+			(bool) $store - Flag wether to store the errors or not
+	*/
+	
+	public function setStoreErrors($store)
+	{
+		$this->store_errors = $store;
+	}
+	
+	/*
+		Method:
+			Validator::getErrors
+		
+		Get all errors or just errors for a specific key.
+		
+		Parameters:
+			(optional) $key - The key to retrieve errors for
+		
+		Returns:
+			<Validator::$errors>, i.e errors in key -> value format.
+	*/
+	
+	public function getErrors($key = false)
+	{
+		if ( $key )
+			return isset($this->errors[$key]) ? $this->errors[$key] : array();
+		return $this->errors;
+	}
+	
+	private function makeErrorMessage($name, $arg)
+	{
+		if ( is_array($arg) )
+			$arg = implode(', ', $arg);
+		return @sprintf(self::$error_messages[$name], $arg);
 	}
 	
 	/*

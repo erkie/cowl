@@ -387,6 +387,9 @@ abstract class DataMapper
 	
 	public function insert(DomainObject $object)
 	{
+		// Ensure data integrity
+		$object->ensure();
+		
 		$db = Current::db($this->driver);
 		
 		Current::$plugins->hook('dbInsert', $this, $object);
@@ -416,6 +419,9 @@ abstract class DataMapper
 	
 	public function update(DomainObject $object)
 	{
+		// Ensure data integrity
+		$object->ensure();
+		
 		$db = Current::db($this->driver);
 		
 		Current::$plugins->hook('dbUpdate', $this, $object);

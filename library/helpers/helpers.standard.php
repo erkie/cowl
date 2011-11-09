@@ -283,3 +283,4 @@ function flash()
 		Current::$request->setInfo($key, false);
 	}
 }
+
