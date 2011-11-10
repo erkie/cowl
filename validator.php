@@ -99,7 +99,7 @@ class Validator
 				if ( ! isset($this->errors[$key]) )
 					$this->errors[$key] = array();
 				
-				$this->errors[$key][] = $this->makeErrorMessage($func, $arg);
+				$this->addError($key, $this->makeErrorMessage($func, $arg));
 			}
 			else
 			{
@@ -175,6 +175,22 @@ class Validator
 	
 	/*
 		Method:
+			Validator::addError
+		
+		Add an error message for a key.
+		
+		Parameters:
+			$key - The key to add the error message to
+			$message - The message in question
+	*/
+	
+	public function addError($key, $message)
+	{
+		$this->errors[$key][] = $message;
+	}
+	
+	/*
+		Method:
 			Validator::getErrors
 		
 		Get all errors or just errors for a specific key.
@@ -192,6 +208,21 @@ class Validator
 			return isset($this->errors[$key]) ? $this->errors[$key] : array();
 		return $this->errors;
 	}
+	
+	/*
+		Method:
+			<Validator::makeErrorMessage>
+		
+		Make an error message from the specified func_name and arg, using the i18n error
+		messages.
+		
+		Parameters:
+			$name - The func name
+			$arg - The argument for the func name
+		
+		Returns:
+			The error message
+	*/
 	
 	private function makeErrorMessage($name, $arg)
 	{
