@@ -183,7 +183,7 @@ abstract class DomainObject
 	{
 		if ( $name == 'id' )
 		{
-			return $this->setID($id);
+			return $this->setID($value);
 		}
 		return $this->set($name, $value);
 	}

@@ -15,7 +15,7 @@
 		<?php form_for($user, array('users', 'signup')); ?>
 			<?php text_field_for('username', 'Username'); ?>
 			<?php password_field_for('password', 'Password'); ?>
-			<?php submit_button(); ?>
+			<?php submit_button('Submit'); ?>
 		<?php form_end(); ?>
 		
 		(end code)
@@ -50,7 +50,7 @@ function password_field_for($key, $label, $html_attrs = array())
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'password';
-	echo $form->input('input', $html_attrs, array('label' => $label));
+	echo $form->input('input', $key, $html_attrs, array('label' => $label));
 }
 
 function submit_button($value, $html_attrs = array())
@@ -218,8 +218,9 @@ class FormHelper
 	
 	public function input($type, $key, $html_attrs = array(), $options = array())
 	{
-		$options['key'] = $key;
 		$html_attrs['name'] = $key;
+		
+		$options['key'] = $key;
 		$html_attrs['value'] = $this->model->get($key);
 		
 		// Errors?
