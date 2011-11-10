@@ -96,10 +96,10 @@ class FormHelper
 	// The path that the form maps to
 	private $path;
 	
-	public function __construct($model, $path, $attributes = array())
+	public function __construct($model, $path, $attributes = array(), $name = false)
 	{
 		$this->model = $model;
-		$this->model_name = strtolower(get_class($model));
+		$this->model_name = $name ? $name : strtolower(get_class($model));
 		$this->path = $path;
 		$this->attributes = $attributes;
 	}
