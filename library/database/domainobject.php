@@ -284,9 +284,9 @@ abstract class DomainObject
 	
 	public function ensure()
 	{
-		foreach ( $this->values as $key => $value )
+		foreach ( $this->members as $key => $value )
 		{
-			$this->validate($key, $value);
+			$this->validate($key, isset($this->values[$key]) ? $this->values[$key] : '');
 		}
 		
 		if ( count($this->validator->getErrors()) )
