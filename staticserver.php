@@ -133,16 +133,16 @@ class StaticServer
 		header('Cache-Control: private');
 		header('Pragma: private');
 		
-		header('Expires: ' . date(DATE_RFC2822, (time() + 60 * 60 * 24 * 365)));
+		// This is removed because Chrome won't even send a request if it has an expires headers, thus defeating the HTTP_IF_NONE_MATCH
+		//header('Expires: ' . date(DATE_RFC2822, (time() + 60 * 60 * 24 * 365)));
 		
 		$mime = isset(self::$MIMES[$this->type]) ? self::$MIMES[$this->type] : 'text/html';
 		$mod_time = filemtime($this->path);
 		
 		header('Content-type: ' . $mime);
-		
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mod_time) . ' GMT');
 		
-		$etag = 'ci-' . dechex(crc32($this->path . $mod_time));
+		$etag = 'cowl-' . dechex(crc32($this->path . $mod_time));
 		
 		header('ETag: "' . $etag . '"');
 		
