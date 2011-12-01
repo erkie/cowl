@@ -11,6 +11,11 @@ class ValidatorFailException extends ValidatorException
 	{
 		$this->validator = $validator;
 	}
+	
+	public function getValidator()
+	{
+		return $this->validator;
+	}
 }
 
 /*

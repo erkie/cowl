@@ -286,7 +286,18 @@ abstract class DomainObject
 	{
 		foreach ( $this->members as $key => $value )
 		{
-			$this->validate($key, isset($this->values[$key]) ? $this->values[$key] : '');
+			if ( isset($this->values[$key]) )
+				$val = $this->values[$key];
+			elseif ( isset($value['default']) )
+			{
+				$val = $value['default'];
+				$this->values[$key] = $val;
+				var_dump('default is', $val);
+			}
+			else
+				$val = null;
+			
+			$this->validate($key, $val);
 		}
 		
 		if ( count($this->validator->getErrors()) )
