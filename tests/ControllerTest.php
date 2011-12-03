@@ -49,12 +49,15 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 			// Commands in subcommand directories
 			array('forum', 'forum/command.forum.php', array('forumcommand')),
 			
+			// With 1 argument
+			array('forum/forum/add', 'forum/command.forum.php', array('forumcommand', 'forum', 'add')),
+			
 			// This is the real test for commands in subdirectories. The basic idea is that subcommand directories
 			// should have the same structure the base command directory has, with several commands in that directory
 			array('forum/posts', 'forum/command.posts.php', array('forumpostscommand')),
 			
 			// Same test as before but with arguments passed too
-			array('forum/posts/10/add', 'forum/command.posts.php', array('forumpostscommand', '10', 'add')),
+			array('forum/posts/10/add', 'forum/command.posts.php', array('forumpostscommand', '10', 'add'))
 		);
 	}
 	

@@ -159,7 +159,11 @@ class Controller
 				
 				$dirs = $this->directories;
 				
-				if ( count($leftovers) && file_exists(self::$commands_dir . $request_data->app_directory . $this->makeName($leftovers[0]) ) )
+				if (
+					count($leftovers) &&
+					$leftovers[0] != end($dirs) &&
+					file_exists(self::$commands_dir . $request_data->app_directory . $this->makeName($leftovers[0]) )
+				)
 				{
 					$dirs[] = $leftovers[0];
 					array_shift($leftovers);
