@@ -20,7 +20,7 @@ var Cowl = {
 		name = name.toLowerCase();
 		Cowl.commands[name] = new Class(props);
 		
-		if ( name === 'cowl.all' ) {			
+		if ( /base$/.test(name) ) {			
 			window.addEvent('domready', function() {
 				Cowl.run(name, 'index');
 			});
