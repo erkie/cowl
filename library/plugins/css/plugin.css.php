@@ -43,24 +43,8 @@ class CSS extends Plugin
 		$this->cache = $release_tag . '.' . $cache;
 		$this->force_update = $force_update;
 		
-		$this->loadSiteCSS();
+		Current::$request->setInfo('css', array());
 	}
-	
-	/*
-		Method:
-			CSS::loadSiteCSS
-		
-		Add the site-wide css file to the request. Called /css/site.css
-	*/
-	
-	public function loadSiteCSS()
-	{
-		$filename = Current::$config->get('plugins.css.base_css');
-		
-		// Append the URL for the site-specific CSS-file to the <Request> registry object.
-		Current::$request->setInfo('css[]', $this->url_dir . 'site.css');
-	}
-	
 	
 	/*
 		Method:

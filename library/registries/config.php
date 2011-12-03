@@ -1,10 +1,11 @@
 <?php
 
 class ConfigKeyNotFoundException extends RegistryException {}
+class ConfigFileNotFoundException extends Exception {}
 
 /*
 	Class:
-		<Config>
+		Config
 	
 	Global config registry. Parses config.php, which returns an array of key values.
 	It is also capable of loading several other configuration files.
@@ -17,15 +18,15 @@ class ConfigKeyNotFoundException extends RegistryException {}
 
 class Config extends Registry
 {
-	// Property: <Config::$instance>
+	// Property: Config::$instance
 	// See <Registry::$instance>
 	protected static $instance;
 
-	// Property: <Config::$path>
+	// Property: Config::$path
 	// Points to the directory in which the config.php file lies.
 	private static $path = '';
 	
-	// Property: <Config::instance>
+	// Property: Config::instance
 	// See <Registry::instance>
 	public static function instance()
 	{
@@ -34,7 +35,7 @@ class Config extends Registry
 	
 	/*
 		Method:
-			<Config::initialize>
+			Config::initialize
 		
 		Parse ini-file and add variables to store. The values are also stored in the cache file as serialized php.
 	*/
@@ -59,16 +60,19 @@ class Config extends Registry
 	
 	/*
 		Method:
-			<Config::parseFile>
+			Config::parseFile
 		
 		Parse a configuration file. Uses the <Config::set>-method to add values to store.
+		
+		Additional files can be specified with config.other, if a file specified in
+		config.other is not found, a ConfigFileNotFoundException is thrown.
 	*/
 	
 	private function parseFile($filename)
 	{
 		if ( ! file_exists($filename) )
 		{
-			return false;
+			throw new ConfigFileNotFoundException($filename);
 		}
 		
 		$arr = include($filename);
@@ -94,7 +98,7 @@ class Config extends Registry
 	
 	/*
 		Method:
-			<Config::get>
+			Config::get
 		
 		Works almost the same as <Registry::get>, but with a much faster and simpler model for fetching values.
 		
@@ -119,7 +123,23 @@ class Config extends Registry
 	
 	/*
 		Method:
-			<Config::setPath>
+			Config::set
+		
+		Set a config attribute using a key.
+		
+		Parameters:
+			$key - The key to set
+			$value - The value to set
+	*/
+	
+	public function set($key, $value)
+	{
+		$this->data[$key] = $value;
+	}
+	
+	/*
+		Method:
+			Config::setPath
 		
 		Sets the path variable.
 		

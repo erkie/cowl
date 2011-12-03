@@ -42,7 +42,7 @@
 	// CSS Compiler
 	'plugins.css.path'         => "~/library/plugins/css/plugin.css.php",
 	'plugins.css.cache'        => "static.css",
-	'plugins.css.base_css'     => "app/css/site.css",
+	'plugins.css.base_css'     => "css/site.css",
 	'plugins.css.force_update' => true, // = Performance killer!
 	
 	// JS Handler and Compressor

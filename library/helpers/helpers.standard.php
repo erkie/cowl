@@ -63,6 +63,16 @@ function css()
 {
 	$stylesheets = Current::$request->getInfo('css');
 	
+	try {
+		$base_css = Current::$config->get('plugins.css.base_css');
+		if ( strlen($base_css) )
+		{
+			$base_css = Cowl::url($base_css);
+			array_unshift($stylesheets, $base_css);
+		}
+	}
+	catch ( ConfigKeyNotFoundException $e ) {}
+	
 	if ( is_array($stylesheets) )
 	{
 		foreach ( $stylesheets as $stylesheet )
