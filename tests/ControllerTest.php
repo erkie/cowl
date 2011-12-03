@@ -40,11 +40,21 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 			// Subcommand with arguments
 			array('/emptysub/foo/bar', 'emptysub/command.emptysub.php', array('emptysubcommand', 'foo', 'bar')),
 			
-			// Passing what looks like another command to a subcommand, is turned into an argument
-			array('/subcommand/main', 'subcommand/command.subcommand.php', array('subcommandcommand', 'main')),
+			// Passing a badly named command to a subcommand. This works but is bad practice
+			array('/subcommand/main', 'subcommand/command.main.php', array('subcommandmaincommand')),
 			
 			// Subcommand in subcommand. This command structure is actually really bad form, but it should work
-			array('/badsub/main/', 'badsub/main/command.main.php', array('badsubmaincommand'))
+			array('/badsub/main/', 'badsub/main/command.main.php', array('badsubmaincommand')),
+			
+			// Commands in subcommand directories
+			array('forum', 'forum/command.forum.php', array('forumcommand')),
+			
+			// This is the real test for commands in subdirectories. The basic idea is that subcommand directories
+			// should have the same structure the base command directory has, with several commands in that directory
+			array('forum/posts', 'forum/command.posts.php', array('forumpostscommand')),
+			
+			// Same test as before but with arguments passed too
+			array('forum/posts/10/add', 'forum/command.posts.php', array('forumpostscommand', '10', 'add')),
 		);
 	}
 	
@@ -52,7 +62,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 	 * @dataProvider routeProvider
 	 */
 	
-	public function testBasic($path, $command_path, $cmd_args)
+	public function testParsing($path, $command_path, $cmd_args)
 	{
 		$controller = new Controller($path);
 		$request = $controller->parse();

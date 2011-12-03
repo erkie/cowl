@@ -2,7 +2,7 @@
 
 /*
 	Class:
-		<Controller>
+		Controller
 	
 	Core routing.
 */
@@ -11,41 +11,41 @@ class Controller
 {
 	const SEPARATOR = '/';
 	
-	// Property: <Controller::$path>
+	// Property: Controller::$path
 	// The path to be parsed
 	private $path;
 	
-	// Property: <Controller::$commands_dir>
+	// Property: Controller::$commands_dir
 	// The directory in where the commands lie
 	private static $commands_dir = 'commands/';
 	
-	// Property: <Controller::$default_type>
+	// Property: Controller::$default_type
 	// The default response type for the argv-array
 	private static $default_type = 'html';
 	
-	// Property: <Controller:$use_require_once>
+	// Property: Controller:$use_require_once
 	// Flag wether to use require or require_once when including files. Use only when testing
 	private static $use_require_once = false;
 	
-	// Property: <Controller::$error>
+	// Property: Controller::$error
 	// The error-command. Must be in the <Controller::$dir>-directory
 	private $error_command = 'ErrorCommand';
 	
-	// Property: <Controller::$default>
+	// Property: Controller::$default
 	// The default command. Used when, for example, <Controller::$path> is empty.
 	private $default_command = 'MainCommand';
 	
-	// Property: <Controller::$current_dir>
+	// Property: Controller::$current_dir
 	// The directory of the currently included <Command>.
 	private $current_dir;	
 	
-	// Property: <Controller::$is_error>
+	// Property: Controller::$is_error
 	// A flag that is set to true if a command cannot be found, in which case the Error command used in <Controller::parse>
 	private $is_error = false;
 	
 	/*
 		Constructor:
-			<Controller::__construct>
+			Controller::__construct
 		
 		Prepares the variables so that everything is in order for the <Controller::parse>-call.
 		
@@ -63,7 +63,7 @@ class Controller
 	
 	/*
 		Method:
-			<Controller::parse>
+			Controller::parse
 		
 		Parses <Controller::$path> and determines an appropriate command. Following these conventions:
 		
@@ -107,7 +107,7 @@ class Controller
 		if ( $this->isRequestEmpty() )
 		{
 			$request_data->app_directory = '';
-			$request_data->command = 'command.main.php';
+			$request_data->command = $this->makeName('main');
 			$request_data->pieces = array('main');
 			$request_data->argv = array($this->default_command);
 		}
@@ -131,7 +131,7 @@ class Controller
 				$request_data->directory = self::$commands_dir;
 				$request_data->pieces = array($pieces[0]);
 				
-				$command_file = 'command.' . $pieces[0] . '.php';
+				$command_file = $this->makeName($pieces[0]);
 				
 				// Does it even exist in the base directory?
 				if ( file_exists($request_data->directory . $command_file) )
@@ -149,13 +149,29 @@ class Controller
 			// Command in sub-directory
 			else
 			{
-				$command = implode('', $this->directories) . 'Command';
-				$args = array_slice($pieces, count($this->directories));
+				// We now have the subcommand directory, determine wether it is the base subcommand or another
+				// command in the directory
 				
 				$request_data->app_directory = implode(DIRECTORY_SEPARATOR, $this->directories) . DIRECTORY_SEPARATOR;
-				$request_data->command = 'command.' . end($this->directories) . '.php';
+				
+				// Make an array containing the pieces after the subcommand directory piece
+				$leftovers = array_slice($pieces, count($this->directories));
+				
+				$dirs = $this->directories;
+				
+				if ( count($leftovers) && file_exists(self::$commands_dir . $request_data->app_directory . $this->makeName($leftovers[0]) ) )
+				{
+					$dirs[] = $leftovers[0];
+					array_shift($leftovers);
+				}
+				
+				$args = array_slice($pieces, count($dirs));
+				
+				$command = implode('', $dirs) . 'Command';
+				
+				$request_data->command = 'command.' . end($dirs) . '.php';
 				$request_data->argv = array_merge(array($command), $args);
-				$request_data->pieces = $this->directories;
+				$request_data->pieces = $dirs;
 			}
 		}
 		
@@ -171,6 +187,8 @@ class Controller
 		// otherwise require should be used, because the performance penalty used is just unnecesary when you
 		// know you are only going to include one command per request.
 		$file_to_include = $request_data->base_directory . $request_data->app_directory . $request_data->command;
+		
+		$this->includeBase($file_to_include);
 		
 		if ( ! self::$use_require_once)
 			require($file_to_include);
@@ -228,25 +246,29 @@ class Controller
 		return ! $this->directories || ! count($this->directories);
 	}
 	
-	/*
-		Method:
-			<Controller::isPackage>
-		
-		Will check the specified directory for a "package", a directory, with the name of the command it contains, which also contains views, styles and scripts for this command.
-		
-		Parameters:
-			$dir - The directory in which the package should lie in.
-			$name - The name of the command/package
-	*/
-	
-	public function isPackage($dir, $name)
+	private function includeBase($path)
 	{
-		return file_exists($this->makePath($dir . $name . DIRECTORY_SEPARATOR, $name));
+		$path = str_replace(self::$commands_dir, '', $path);
+		$pieces = explode('/', $path);
+		
+		// Remove command file from pieces
+		array_pop($pieces);
+		
+		if ( file_exists(self::$commands_dir . 'base.php') )
+			require(self::$commands_dir . 'base.php');
+		
+		$dir = self::$commands_dir;
+		foreach ( $pieces as $subdir )
+		{
+			$dir .= $subdir . DIRECTORY_SEPARATOR;
+			if ( file_exists($dir . 'base.php') )
+				require($dir . 'base.php');
+		}
 	}
 	
 	/*
 		Method:
-			<Controller::setDir>
+			Controller::setDir
 		
 		Sets the <Controller::$dir>.
 		
@@ -261,7 +283,7 @@ class Controller
 	
 	/*
 		Method:
-			<Controller::useRequireOnce>
+			Controller::useRequireOnce
 		
 		Set wether to use require_once or require when including commands. See <Controller::$use_requice_once>.
 		
@@ -276,7 +298,7 @@ class Controller
 
 	/*
 		Method:
-			<Controller::setCurrent>
+			Controller::setCurrent
 		
 		Sets the <Controller::$current_dir>, replaces the <Controller::$dir> with nothing.
 		
@@ -291,7 +313,7 @@ class Controller
 	
 	/*
 		Method:
-			<Controller::getCurrent>
+			Controller::getCurrent
 		
 		Returns the <Controller::$current_dir>
 		
@@ -306,7 +328,7 @@ class Controller
 	
 	/*
 		Method:
-			<Controller::getPath>
+			Controller::getPath
 		
 		Returns the <Controller::$path> variable.
 		
@@ -321,7 +343,7 @@ class Controller
 	
 	/*
 		Method:
-			<Controller::setPath>
+			Controller::setPath
 		
 		Set <Controller::$path>. No validation of any sort is performed.
 		
@@ -336,7 +358,7 @@ class Controller
 	
 	/*
 		Method:
-			<Controller::makePath>
+			Controller::makePath
 		
 		Makes a commandpath from a directory and command name.
 		
@@ -350,7 +372,25 @@ class Controller
 	
 	private function makePath($dir, $command)
 	{
-		return $dir . 'command.' . strtolower($command) . '.php';
+		return $dir . $this->makeName($command);
+	}
+	
+	/*
+		Method:
+			Controller::makeName
+		
+		Makes a command filename from a command.
+		
+		Parameters:
+			$command - The name of the command
+		
+		Returns:
+			The filename for a command, in the format: command.commandname.php
+	*/
+	
+	private function makeName($command)
+	{
+		return 'command.' . strtolower($command) . '.php';
 	}
 }
 
