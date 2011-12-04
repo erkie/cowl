@@ -90,14 +90,7 @@ class Validator
 	
 	public function validate($input, $func, $arg = null, $key = '')
 	{
-		$funcname = self::makeName($func);
-		
-		if ( ! $this->hasValidator($funcname) )
-		{
-			$this->loadValidator($func);
-		}
-		
-		if ( ! call_user_func($funcname, $input, $arg) )
+		if ( ! $this->checkValue($input, $func, $arg) )
 		{
 			if ( $this->store_errors )
 			{
@@ -113,6 +106,34 @@ class Validator
 		}
 		
 		return true;
+	}
+	
+	/*
+		Method:
+			Validator::checkValue
+		
+		Validate an input with a validator, without throwing any errors or leaving any traces.
+		A silent validation.
+		
+		Parameters:
+			$input - The input to check
+			$rule - The rule to check with
+			(option) $arg - Argument input to function
+		
+		Returns:
+			true or false if it succeeds
+	*/
+	
+	public function checkValue($input, $rule, $arg = null)
+	{
+		$funcname = self::makeName($rule);
+		
+		if ( ! $this->hasValidator($funcname) )
+		{
+			$this->loadValidator($rule);
+		}
+		
+		return call_user_func($funcname, $input, $arg);
 	}
 	
 	/*

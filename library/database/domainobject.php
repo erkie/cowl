@@ -262,6 +262,17 @@ abstract class DomainObject
 	{
 		$rules = $this->members[$name];
 		
+		// If it is specified as `is_mandatory` => false, then we should skip validation if it is
+		// not present. So if is_mandatory is true, and when checking it as if it was mandatory,
+		// if it returns true (not there), it shouldn't be validated
+		if (
+			isset($rules['is_mandatory']) &&
+			! $rules['is_mandatory'] &&
+			! $this->validator->checkValue($input, 'is_mandatory', true) )
+		{
+			return true;
+		}
+		
 		foreach ( $rules as $rule => $arg )
 		{
 			// Ignore default rules, as this is not a validation clause
