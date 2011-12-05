@@ -6,7 +6,7 @@ class MapperNoTableException extends Exception {}
 
 /*
 	Abstract Class:
-		<DataMapper>
+		DataMapper
 	
 	A base-class for mappers. Responsible for abstracting database logic from <DomainObjects>. 
 */
@@ -14,7 +14,7 @@ class MapperNoTableException extends Exception {}
 abstract class DataMapper
 {
 	/*
-		Property: <DataMapper::$table>
+		Property: DataMapper::$table
 		
 		This property _must be_ overwritten in base classes. It should contain the name of the table for which the mapper maps.
 	*/
@@ -22,54 +22,54 @@ abstract class DataMapper
 	protected $table;
 	
 	/*
-		Property: <DataMapper::$primary_key>
+		Property: DataMapper::$primary_key
 		
 		Contains the name of the primary key for the table. The default value is "id". The <DataMapper::$table> and <DataMapper::$primary_key> are simply passed on to the <QueryBuilder>.
 	*/
 	
 	protected $primary_key = 'id';
 	
-	// Property: <DataMapper::$driver>
+	// Property: DataMapper::$driver
 	// Contains the database driver which this mapper uses.
 	protected $driver = 'mysql';
 	
 	/*
 		Property:
-			<DataMapper::$state>
+			DataMapper::$state
 		
 		Stores states for a query that is built in <DataMapper::find>.
 	*/
 	
 	protected $state = array('order' => null, 'offset' => null, 'amount' => null, 'args' => null);
 	
-	// Property: <DataMapper::$state_dirty>
+	// Property: DataMapper::$state_dirty
 	// A bool value set to true if the <DataMapper::$state>-array has been changed.
 	
 	protected $state_dirty = false;
 	
-	// Property: <DataMapper::$builder>
+	// Property: DataMapper::$builder
 	// An instance to a <QueryBuilder> pointed to this mapper.
 	protected $builder;
 	
-	// Property: <DataMapper::$instances>
+	// Property: DataMapper::$instances
 	// A simple registry that contains intances of mappers.
 	private static $instances = array();
 	
-	// Property: <DataMapper::$mappers_dir>
+	// Property: DataMapper::$mappers_dir
 	// The directory in which mappers are contained. Note that the filename of a mapper must follow the pattern "mapper.NAME.php"
 	private static $mappers_dir = 'mappers/';
 	
-	// Property: <DataMapper::$objects_dir>
+	// Property: DataMapper::$objects_dir
 	// The directory in which objects are contained. The filename must follow the pattern "object.NAME.php". An object MUST have a corresponding mapper. The directory of the mappers and objects can be the same.
 	private static $objects_dir = 'objects/';
 	
-	// Property: <DataMapper::$object_name>
+	// Property: DataMapper::$object_name
 	// Holds the the name of the DomainObject for which the current mapper maps.
 	protected $object_name;
 	
 	/*
 		Constructor:
-			<DataMapper::__construct>
+			DataMapper::__construct
 		
 		Enforces the rule that a mapper must define a <DataMapper::$table>.
 	*/
@@ -91,7 +91,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::setMappersDir>
+			DataMapper::setMappersDir
 		
 		Sets the <DataMapper::$mappers_dir>.
 		
@@ -106,7 +106,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::setObjectsDir>
+			DataMapper::setObjectsDir
 		
 		Sets the <DataMapper::$objects_dir>.
 		
@@ -121,7 +121,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::populate>
+			DataMapper::populate
 		
 		Populates a <DomainObject> based upon defined fields in the $object.
 		If no entry is found the object will be set as erroneous.
@@ -167,7 +167,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::find>
+			DataMapper::find
 		
 		Executes a SELECT-statement after building the query with <QueryBuilder>. Will flush the <DataMapper::$state>.
 		
@@ -230,7 +230,7 @@ abstract class DataMapper
 		return new DomainCollection($result, $this);
 	}
 	
-	// Alias: <DataMapper::fetch>
+	// Alias: DataMapper::fetch
 	// See <DataMapper::find>.
 	
 	public function fetch()
@@ -241,8 +241,8 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::filter>
-		
+			DataMapper::filter
+				
 		Sets the current args state of the querybuilder to SELECT $args. This method is able to chain mapper calls for a more intuitive API.
 		
 		(begin code)
@@ -262,7 +262,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::by>
+			DataMapper::by
 		
 		Set the current state of the querybuilder to ORDER BY $by. Used to chain mapper-calls for a more intuituve API. This method has to be called before <DataMapper::find>
 		
@@ -305,7 +305,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::limit>
+			DataMapper::limit
 		
 		Sets the limit state to the passed $limit. Used to chain mapper calls for a more intuitive API. This method has to be called before <DataMapper::find>.
 		
@@ -338,7 +338,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::uptodate>
+			DataMapper::uptodate
 		
 		Keeps a <DomainObject> up-to date by either inserting or updating it, depedning on whether it has an ID. See <DataMapper::insert> or <DataMapper::update> for more details about the operations.
 		
@@ -374,7 +374,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::insert>
+			DataMapper::insert
 		
 		Inserts the $object into the database. It uses the fields with a default value and values present to build the query, so you must properly populate the object before inserting.
 		
@@ -406,7 +406,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::update>
+			DataMapper::update
 		
 		Updates the $object. Sets new values for all present values in the $object. Be sure to set the ID property of the $object before updating.
 		
@@ -436,7 +436,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::remove>
+			DataMapper::remove
 		
 		Removes an entry from the table.
 		
@@ -471,7 +471,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::count>
+			DataMapper::count
 		
 		Will count the number of rows sorted and offsetted using the current <DataMapper::$state>. This method will not flush the state-array.
 		
@@ -511,7 +511,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::query>
+			DataMapper::query
 		
 		Run a databasecentric query returning the results in a <DomainCollection>
 		
@@ -544,7 +544,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::populateFromDBResult>
+			DataMapper::populateFromDBResult
 		
 		Loops through $result's first row and inserts every field into the passed <DomainObject>.
 		Will set the object as erroneous if the row is empty.
@@ -565,7 +565,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::populateFromRow>
+			DataMapper::populateFromRow
 		
 		Loops through the $row's fields and populates them to a <DomainObject>-instance.
 		
@@ -590,7 +590,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::createObject>
+			DataMapper::createObject
 		
 		Create a <DomainObject>-object that maps to the current mapper.
 		
@@ -605,7 +605,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::getTable>
+			DataMapper::getTable
 		
 		Get the mapper's table name.
 		
@@ -620,7 +620,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::get>
+			DataMapper::get
 		
 		Returns an instance to the passed $mapper. If the class of the passed name it will be included from the <DataMapper::$mappers_dir>. Corresponding <DomainObject>s will also be included.
 		
@@ -657,7 +657,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::includeMapper>
+			DataMapper::includeMapper
 		
 		Includes the $mapper from the <DataMapper::$mappers_dir>. Will throw a <MapperNotFoundException> if it is not found.
 		
@@ -680,7 +680,7 @@ abstract class DataMapper
 	
 	/*
 		Method:
-			<DataMapper::includeObject>
+			DataMapper::includeObject
 		
 		Includes the $object from the <DataMapper::$objects_dir>. Will throw a <MapperObjectNotFoundException> if it is not found.
 		
