@@ -303,7 +303,6 @@ abstract class DomainObject
 			{
 				$val = $value['default'];
 				$this->values[$key] = $val;
-				var_dump('default is', $val);
 			}
 			else
 				$val = null;
