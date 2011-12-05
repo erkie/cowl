@@ -83,6 +83,28 @@ $pipe-menu {
     }    
 
 /**
+ * Comma list
+ * Turns a UL into a comma separated list: foo, bar, baz
+ */
+$comma-list {
+    margin-left: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+    $comma-list li {
+        display: inline;
+    }
+
+    $comma-list li:after {
+        content: ", ";
+    }
+
+    $comma-list li:last-child:after {
+        content: "";
+    }
+
+/**
  * Dash Menu
  * Turns a UL into foo - bar - zaz
  */
