@@ -9,6 +9,7 @@
 			'is_id' => 'Must be a valid ID',
 			'is_integer' => 'Must be a valid integer',
 			'is_mandatory' => 'Is mandatory',
-			'max_length' => 'Cannot be longer than %s characters'
+			'is_url' => 'Must be a URL',
+			'max_length' => 'Cannot be longer than %s characters',
 		)
 	);
