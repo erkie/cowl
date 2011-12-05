@@ -221,7 +221,9 @@ class FormHelper
 		$html_attrs['name'] = $key;
 		
 		$options['key'] = $key;
-		$html_attrs['value'] = $this->model->get($key);
+		
+		if ( $this->model->get($key) )
+			$html_attrs['value'] = $this->model->get($key);
 		
 		// Errors?
 		$options['errors'] = $this->model->getValidator()->getErrors($key);
