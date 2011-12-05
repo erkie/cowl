@@ -37,7 +37,7 @@ abstract class Command
 	
 	// Property: <Command::$view_map>
 	// Translation table for view types.
-	protected $view_map = array('dick');
+	protected $view_map = array();
 	
 	/*
 		Constructor:
