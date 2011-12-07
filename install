@@ -16,7 +16,7 @@ echo "** Moving .htaccess\n";
 # Move .htaccess and index.php
 if ( ! file_exists('../.htaccess') )
 {
-	shell_exec("SAMPLE.htaccess ../.htaccess");
+	shell_exec("cp SAMPLE.htaccess ../.htaccess");
 
 	# Change RewriteBase / to the real base
 	echo "# Please enter the base web path of your app (almost always /): \n";
