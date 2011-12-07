@@ -171,7 +171,7 @@ class FormHelper
 	public function field($type, $attrs = array(), $options = array())
 	{
 		// Prefix the id:s with "modelname_"
-		$id_prefix = $this->model_name . '_';
+		$id_prefix = $this->model_name . '-';
 		$id = $id_prefix . $options['key'];
 		
 		// Content after <input>
@@ -197,7 +197,7 @@ class FormHelper
 		if ( $has_errors )
 			$classes[] = 'form-error';
 		
-		$html = sprintf('<%s class="%s" id="%s_container">', $container_type, implode(' ', $classes), $id);
+		$html = sprintf('<%s class="%s" id="%s-container">', $container_type, implode(' ', $classes), $id);
 		
 		// If a label is specified we format it as a the label text inside a span, inside the label
 		if ( isset($options['label']) )
