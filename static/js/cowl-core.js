@@ -18,7 +18,7 @@ var Cowl = {
 	
 	Command: function(name, props) {
 		name = name.toLowerCase();
-		Cowl.commands[name] = new Class(props);
+		Cowl.commands[name] = new Class(Object.merge({Extends: Cowl.CommandClass}, props));
 		
 		if ( /base$/.test(name) ) {			
 			window.addEvent('domready', function() {
@@ -259,6 +259,41 @@ var Cowl = {
 	}
 };
 
+Cowl.CommandClass = new Class({
+	element: 'body',
+	
+	actions: {},
+	
+	initialize: function() {
+		this._setElement();
+		this._addDelegateEvents();
+	},
+	
+	_setElement: function() {
+		this.element = document.getElement(this.element);
+	},
+	
+	_addDelegateEvents: function() {
+		Object.each(Object.clone(this.actions), function(method, ev) {
+			var pieces = ev.split(' ');
+			
+			var eventName = pieces.shift();
+			var selector = pieces.join(' ');
+			
+			this.element.addEvent(eventName, this._makeDelegateEventFor(selector, method));
+		}, this);
+	},
+	
+	_makeDelegateEventFor: function(selector, method) {
+		return function(e) {
+			var target = e.target;
+			if ( target.is(selector) ) {
+				this[method].apply(this, arguments);
+			}
+		}.bind(this);
+	}
+});
+
 Element.implement({
 	isVisible: function() {
 		try {
@@ -293,11 +328,7 @@ Element.implement({
 			return !!(this.match(test) || this.getParent(test));
 		} else {
 			if ( this === test ) return true;
-			var top = test;
-			while ( top && top.getParent && top !== this ) {
-				top = top.getParent();
-			}
-			return !!top;
+			return this.getParents().contains(test);
 		}
 	}
 });
