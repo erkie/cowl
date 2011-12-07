@@ -174,6 +174,14 @@ class FormHelper
 		$id_prefix = $this->model_name . '_';
 		$id = $id_prefix . $options['key'];
 		
+		// Content after <input>
+		$after = isset($attrs['after']) ? $attrs['after'] : '';
+		unset($attrs['after']);
+		
+		// No whitespace?
+		$no_whitespace = isset($attrs['no_whitespace']) && $attrs['no_whitespace'];
+		unset($attrs['no_whitespace']);
+		
 		$has_errors = isset($options['errors']) && count($options['errors']);
 		
 		// Default container type is a 'p', but this is optional
@@ -194,7 +202,7 @@ class FormHelper
 		// If a label is specified we format it as a the label text inside a span, inside the label
 		if ( isset($options['label']) )
 		{
-			$html .= sprintf('<label><span>%s:</span> ', $options['label']);
+			$html .= sprintf('<label><span>%s</span>%s', $options['label'], $no_whitespace ? '' : ' ');
 		}
 		else
 		{
@@ -205,13 +213,15 @@ class FormHelper
 		$attrs['id'] = $id;
 		$html .= $this->element($type, $attrs);
 		
+		// Build closing tag
+		$html .= sprintf('%s</label>', $after);
+		
 		if ( isset($options['errors']) && count($options['errors']) )
 		{
 			$html .= ' ' . $this->buildErrors($options['errors']);
 		}
 		
-		// Build closing tag
-		$html .= sprintf('</label></%s>', $container_type);
+		$html .= sprintf('</%s>', $container_type);
 		
 		return $html;
 	}
