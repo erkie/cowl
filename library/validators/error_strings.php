@@ -11,5 +11,6 @@
 			'is_mandatory' => 'Is mandatory',
 			'is_url' => 'Must be a URL',
 			'max_length' => 'Cannot be longer than %s characters',
+			'must_match' => 'Can only contain certain characters'
 		)
 	);
