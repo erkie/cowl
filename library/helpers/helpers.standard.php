@@ -134,6 +134,21 @@ function only_if($test, $if_true, $if_false = '')
 
 /*
 	Function:
+		p_only_if
+	
+	Same as only_if, but use safe print function.
+	
+	Parameters:
+		See: <only_if>
+*/
+
+function p_only_if($test, $if_true, $if_false = '')
+{
+	p(($test) ? $if_true : $if_false);
+}
+
+/*
+	Function:
 		to_options
 	
 	Create HTML options from a <DomainCollection> using specified keys for value="" and text of the <option></option>.
