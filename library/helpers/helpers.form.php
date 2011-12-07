@@ -170,7 +170,7 @@ class FormHelper
 	
 	public function field($type, $attrs = array(), $options = array())
 	{
-		// Prefix the id:s with "modelname_"
+		// Prefix the id:s with "modelname-"
 		$id_prefix = $this->model_name . '-';
 		$id = $id_prefix . $options['key'];
 		
