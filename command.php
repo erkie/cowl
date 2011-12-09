@@ -292,12 +292,12 @@ abstract class Command
 		For information about them see each method in the <Command> class.
 		
 		Parameters:
-			(string) $message - The message to flash
+			(string or array) $message - The message to flash
 	*/
 	
 	public function flash($message)
 	{
-		Current::$request->setInfo('flash[]', $message);
+		$this->setFlashMessage('flash', $message);
 	}
 	
 	/*
@@ -309,7 +309,7 @@ abstract class Command
 	
 	public function flashError($message)
 	{
-		Current::$request->setInfo('flashError[]', $message);
+		$this->setFlashMessage('flashError', $message);
 	}
 	
 	
@@ -322,7 +322,7 @@ abstract class Command
 	
 	public function flashNotice($message)
 	{
-		Current::$request->setInfo('flashNotice[]', $message);
+		$this->setFlashMessage('flashNotice', $message);
 	}
 	
 	
@@ -335,7 +335,48 @@ abstract class Command
 	
 	public function flashSuccess($message)
 	{
-		Current::$request->setInfo('flashSuccess[]', $message);
+		$this->setFlashMessage('flashSuccess', $message);
+	}
+	
+	/*
+		Method:
+			Command::setFlashMessage
+		
+		Set a flash message using specified type.
+		
+		Parameters:
+			$type - The type of flash. It's basically just a key that is stored in the current request
+			$message - Either array or string, if array it is recursively added
+	*/
+	
+	private function setFlashMessage($type, $message)
+	{
+		if ( is_array($message) )
+		{
+			foreach ( $message as $mess )
+			{
+				$this->setFlashMessage($type, $mess);
+			}
+		}
+		else
+		{
+			Current::$request->setInfo($type . '[]', $message);
+		}
+	}
+	
+	/*
+		Method:
+			debug
+		
+		Set a debug environment
+	*/
+	
+	protected function debug()
+	{
+		header('Content-type: text/plain');
+		
+		// This is hard-coded as mysql, because the only supported DB is mysql. Change this if that ever changes.
+		Current::db('mysql')->output_query = true;
 	}
 	
 	public abstract function index();
