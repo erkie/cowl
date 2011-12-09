@@ -469,10 +469,12 @@ class MySQLQueryBuilder
 	{
 		if ( strstr($field, '.') )
 		{
+			echo "!!! " .  $field, PHP_EOL;
 			return $field;
 		}
-		elseif ( stristr($field, 'DESC') || stristr($field, 'ASC') )
+		elseif ( (stristr($field, 'DESC') || stristr($field, 'ASC')) && strstr($field, ' ') )
 		{
+			echo "¡¡¡ " .  $field, PHP_EOL;
 			$pos = stripos($field, 'DESC');
 			if ( $pos === false )
 			{
