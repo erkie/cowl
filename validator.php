@@ -237,6 +237,50 @@ class Validator
 	
 	/*
 		Method:
+			Validator::getErrorMessages
+		
+		Get all errors as an array of strings, using a print friendly name, if present.
+		
+		Example:
+			array(
+				'display_type' => array('Must be either: list, grid')
+			)
+			
+			Will return:
+			
+			array(
+				'Display type must be either: list, grid'
+			)
+		
+		Returns:
+			An array of strings
+	*/
+	
+	public function getErrorMessages()
+	{
+		$errors = $this->getErrors();
+		$ret = array();
+		
+		foreach ( $errors as $key => $errs )
+		{
+			// Transform _ to spaces
+			$print_name = str_replace(array('_'), array(' '), $key);
+			
+			// Transform all uppercase accronyms to all uppercase
+			if ( in_array($print_name, array('url')) )
+				$print_name = strtoupper($print_name);
+			
+			foreach ( $errs as $error )
+			{
+				$ret[] = sprintf('%s %s', ucfirst($print_name), lcfirst($error));
+			}
+		}
+		
+		return $ret;
+	}
+	
+	/*
+		Method:
 			<Validator::makeErrorMessage>
 		
 		Make an error message from the specified func_name and arg, using the i18n error
