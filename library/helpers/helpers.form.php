@@ -30,37 +30,37 @@ function form_for($model, $path, $html_attrs = array())
 	return $form;
 }
 
-function text_field_for($key, $label, $html_attrs = array())
+function text_field_for($key, $label, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'text';
-	echo $form->input('input', $key, $html_attrs, array('label' => $label));
+	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
 }
 
-function text_area_for($key, $label, $html_attrs = array())
+function text_area_for($key, $label, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
 	
-	echo $form->input('textarea', $key, $html_attrs, array('label' => $label));
+	echo $form->input('textarea', $key, $html_attrs, array_merge(array('label' => $label), $options));
 }
 
-function password_field_for($key, $label, $html_attrs = array())
+function password_field_for($key, $label, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'password';
-	echo $form->input('input', $key, $html_attrs, array('label' => $label));
+	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
 }
 
-function submit_button($value, $html_attrs = array())
+function submit_button($value, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['value'] = $value;
 	$html_attrs['type'] = 'submit';
 	
-	echo $form->field('input', $html_attrs, array('key' => 'submit'));
+	echo $form->field('input', $html_attrs, array_merge(array('key' => 'submit'), $options));
 }
 
 function form_end()
