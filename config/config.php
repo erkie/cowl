@@ -61,6 +61,8 @@
 	'plugins.routing.routes'   => array(
 		"#^/css/gfx/(.+?)#" => "gfx/$1"
 	),
+	
+	'plugins.routing.host_routes' => array(),
 
 	// Add your routes to app/config/user.ini
 
