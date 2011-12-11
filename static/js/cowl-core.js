@@ -325,7 +325,7 @@ Element.implement({
 	
 	is: function(test) {
 		if ( typeof test == "string" ) {
-			return !!(this.match(test) || this.getParent(test));
+			return !!(this.match(test) || this.getParents().filter(test).length);
 		} else {
 			if ( this === test ) return true;
 			return this.getParents().contains(test);
@@ -333,6 +333,6 @@ Element.implement({
 	},
 	
 	getClosest: function(selector) {
-		return this.match(selector) ? this : this.getParent(selector);
+		return this.match(selector) ? this : this.getParents().filter(selector)[0];
 	}
 });
