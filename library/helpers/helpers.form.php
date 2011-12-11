@@ -122,7 +122,7 @@ class FormHelper
 		
 		// Default id is formed as modelname_form
 		if ( ! isset($attributes['id']) )
-			$attributes['id'] = sprintf('%s_form', $this->model_name);
+			$attributes['id'] = sprintf('%s-form', $this->model_name);
 		
 		$attributes = fimplode('%__key__;="%__val__;"', $attributes, ' ');
 		return sprintf('<form %s>', $attributes);
