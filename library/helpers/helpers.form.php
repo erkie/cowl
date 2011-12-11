@@ -53,6 +53,14 @@ function password_field_for($key, $label, $html_attrs = array(), $options = arra
 	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
 }
 
+function hidden_field_for($key, $html_attrs = array(), $options = array())
+{
+	$form = Current::$request->getInfo('active_form');
+	
+	$html_attrs['type'] = 'hidden';
+	echo $form->input('input', $key, $html_attrs, array_merge(array('no_container' => true), $options));
+}
+
 function submit_button($value, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
@@ -174,6 +182,9 @@ class FormHelper
 		$id_prefix = $this->model_name . '-';
 		$id = $id_prefix . $options['key'];
 		
+		// No container?
+		$no_container = isset($options['no_container']) ? $options['no_container'] : false;
+		
 		// Content after <input>
 		$after = isset($attrs['after']) ? $attrs['after'] : '';
 		unset($attrs['after']);
@@ -197,31 +208,38 @@ class FormHelper
 		if ( $has_errors )
 			$classes[] = 'form-error';
 		
-		$html = sprintf('<%s class="%s" id="%s-container">', $container_type, implode(' ', $classes), $id);
+		$html = '';
+		if ( ! $no_container )
+		{
+			$html .= sprintf('<%s class="%s" id="%s-container">', $container_type, implode(' ', $classes), $id);
 		
-		// If a label is specified we format it as a the label text inside a span, inside the label
-		if ( isset($options['label']) )
-		{
-			$html .= sprintf('<label><span>%s</span>%s', $options['label'], $no_whitespace ? '' : ' ');
-		}
-		else
-		{
-			$html .= '<label>';
+			// If a label is specified we format it as a the label text inside a span, inside the label
+			if ( isset($options['label']) )
+			{
+				$html .= sprintf('<label><span>%s</span>%s', $options['label'], $no_whitespace ? '' : ' ');
+			}
+			else
+			{
+				$html .= '<label>';
+			}
 		}
 		
 		// Build input
 		$attrs['id'] = $id;
 		$html .= $this->element($type, $attrs);
 		
-		// Build closing tag
-		$html .= sprintf('%s</label>', $after);
-		
-		if ( isset($options['errors']) && count($options['errors']) )
+		if ( ! $no_container )
 		{
-			$html .= ' ' . $this->buildErrors($options['errors']);
-		}
+			// Build closing tag
+			$html .= sprintf('%s</label>', $after);
 		
-		$html .= sprintf('</%s>', $container_type);
+			if ( isset($options['errors']) && count($options['errors']) )
+			{
+				$html .= ' ' . $this->buildErrors($options['errors']);
+			}
+		
+			$html .= sprintf('</%s>', $container_type);
+		}
 		
 		return $html;
 	}
