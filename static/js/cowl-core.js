@@ -330,5 +330,9 @@ Element.implement({
 			if ( this === test ) return true;
 			return this.getParents().contains(test);
 		}
+	},
+	
+	getClosest: function(selector) {
+		return this.match(selector) ? this : this.getParent(selector);
 	}
 });
