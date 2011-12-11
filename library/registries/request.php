@@ -34,6 +34,8 @@ class Request extends Registry
 	protected function initialize()
 	{
 		$this->data = $_REQUEST;
+		if ( get_magic_quotes_gpc() )
+			$this->data = $this->stripSlashes($this->data);
 		$this->request_data = array();
 	}
 	
@@ -118,5 +120,32 @@ class Request extends Registry
 	public function has($key)
 	{
 		return isset($this->request_data[$key]);
+	}
+	
+	/*
+		Method:
+			<Request::stripSlashes>
+		
+		Recursively strip slashes from request variables. This should only be called if get_magic_quotes is on.
+		Stupid magic quotes.
+		
+		Parameters:
+			$arr - The array to strip slashes on
+	*/
+	
+	private function stripSlashes($arr)
+	{
+		foreach ( $arr as $key => $val )
+		{
+			if ( is_array($val) )
+			{
+				$arr[$key] = $this->stripSlashes($val);
+			}
+			else
+			{
+				$arr[$key] = stripslashes($val);
+			}
+		}
+		return $arr;
 	}
 }
