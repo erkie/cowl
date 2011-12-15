@@ -50,12 +50,12 @@ class FrontController
 		list(
 			$commands_dir, $plugins_dir, $model_dir,
 			$validators_dir, $library_dir, $view_dir,
-			$helpers_dir, $drivers_dir, $app_dir,
-			$view_layout_dir, $validator_error_messages)
+			$helpers_dir, $helpers_app_dir, $drivers_dir,
+			$app_dir, $view_layout_dir, $validator_error_messages)
 		= 
 			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
-				'paths.helpers', 'paths.drivers', 'paths.app',
+				'paths.helpers', 'paths.helpers_app', 'paths.drivers', 'paths.app',
 				'paths.layouts', 'paths.validator_messages');
 		
 		Controller::setDir($commands_dir);	
@@ -67,6 +67,7 @@ class FrontController
 		Templater::setLayoutDir($view_layout_dir);
 		Library::setPath($library_dir);	
 		Helpers::setPath($helpers_dir);
+		Helpers::setAppPath($helpers_app_dir);
 		Database::setPath($drivers_dir);
 		StaticServer::setDir($app_dir);
 		

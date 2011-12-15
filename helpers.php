@@ -4,20 +4,24 @@ class HelpersNotFoundException extends Exception {}
 
 /*
 	Class:
-		<Helpers>
+		Helpers
 	
 	Keep track of helper files and create an easily managed interface for including helpers.
 */
 
 class Helpers
 {
-	// Property: <Helpers::$path>
+	// Property: Helpers::$path
 	// Holds the path to the helper files
 	private static $path = 'helpers/';
 	
+	// Property: Helpers::$app_path
+	// Path to app-wide helper files
+	private static $app_path = 'app/helpers/';
+	
 	/*
 		Method:
-			<Helpers::load>
+			Helpers::load
 		
 		Load one or more helper files. Only specify the middle-part of the name. E.g. "forum" in "helpers.forum.php"
 		
@@ -39,7 +43,7 @@ class Helpers
 	
 	/*
 		Method:
-			<Helpers::fetch>
+			Helpers::fetch
 		
 		Inlude a helper file. Will throw a <HelperNotFoundException> if the helper file did not exist.
 		
@@ -49,20 +53,36 @@ class Helpers
 	
 	private static function fetch($helper)
 	{
-		$filename = self::$path . 'helpers.' . $helper . '.php';
+		$pieces = explode('/', $helper);
+		$name = array_pop($pieces);
+		
+		if ( isset($pieces[0]) && $pieces[0] == 'app' )
+			array_shift($pieces);
+		
+		$path = implode('/', $pieces) . '/';
+		
+		$base_dir = preg_match('#^app/#', $helper) ? self::$app_path : self::$path;
+		$filename = $base_dir . $path . 'helpers.' . $name . '.php';
 		
 		if ( ! file_exists($filename) )
 		{
-			throw new HelperNotFoundException($filename);
+			throw new HelpersNotFoundException($filename);
 		}
 		
 		require($filename);
 	}
 	
-	// Method: <Helpers::setPath>
+	// Method: Helpers::setPath
 	// Set <Helpers::$path>
 	public static function setPath($path)
 	{
 		self::$path = $path;
+	}
+	
+	// Method: Helpers::setAppPath
+	// Set <Helpers::$app_path>
+	public static function setAppPath($path)
+	{
+		self::$app_path = $path;
 	}
 }
