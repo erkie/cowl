@@ -83,9 +83,9 @@ abstract class Command
 		if ( method_exists($this, 'initialize') )
 		{
 			$redirect = call_user_func_array(array($this, 'initialize'), $args);
-			if ( is_array($redirect) )
+			if ( is_array($redirect) || is_string($redirect) )
 			{
-				$url = Cowl::url($redirect);
+				$url = is_array($redirect) ? Cowl::url($redirect) : $redirect;
 				Cowl::redirect($url);
 			}
 		}
