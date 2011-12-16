@@ -78,4 +78,8 @@ class Current
 	// Property: <Current::$log>
 	// A generic log
 	public static $log;
+	
+	// Property: <Current::$user>
+	// A user object
+	public static $user;
 }
