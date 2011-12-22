@@ -107,7 +107,7 @@ class StaticServer
 		Check if the current path maps to a static path on disk.
 		
 		Returns:
-			true if it is, otherwise false
+			Wether it exists
 	*/
 	
 	public function isFile()
@@ -135,7 +135,6 @@ class StaticServer
 		
 		// This is removed because Chrome won't even send a request if it has an expires headers, thus defeating the HTTP_IF_NONE_MATCH
 		//header('Expires: ' . date(DATE_RFC2822, (time() + 60 * 60 * 24 * 365)));
-		
 		$mime = isset(self::$MIMES[$this->type]) ? self::$MIMES[$this->type] : 'text/html';
 		$mod_time = filemtime($this->path);
 		
@@ -172,6 +171,36 @@ class StaticServer
 	{
 		$this->path = $path;
 		$this->parsePath();
+	}
+	
+	/*
+		Method:
+			forceSetPath
+		
+		Force set path without checking if it exists.
+		
+		Parameters:
+			(string) $path - The path of the request
+	*/
+	
+	public function forceSetPath($path)
+	{
+		$this->path = $path;
+	}
+	
+	/*
+		Method:
+			setIsFile
+		
+		Force set if StaticServer::$is_file.
+		
+		Parameters:
+			$is_file - The bool value to set it to
+	*/
+	
+	public function setIsFile($is_file)
+	{
+		$this->is_file = $is_file;
 	}
 	
 	/*

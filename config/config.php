@@ -28,10 +28,11 @@
 	'paths.helpers'     => "~/library/helpers/",
 	'paths.helpers_app' => "app/helpers/",
 
-	'paths.urls.css'   => "css/",
-	'paths.urls.gfx'   => "css/gfx/",
-	'paths.urls.js'    => "js/",
-	'paths.urls.files' => "files/",
+	'paths.urls.css'          => "css/",
+	'paths.urls.css_packaged' => "css/release_",
+	'paths.urls.gfx'          => "css/gfx/",
+	'paths.urls.js'           => "js/",
+	'paths.urls.files'        => "files/",
 
 	'paths.validator_messages' => '~/library/validators/error_strings.php',
 
@@ -43,27 +44,17 @@
 	// CSS Compiler
 	'plugins.css.path'         => "~/library/plugins/css/plugin.css.php",
 	'plugins.css.cache'        => "static.css",
-	'plugins.css.base_css'     => "css/site.css",
 	'plugins.css.force_update' => true, // = Performance killer!
 	
 	// JS Handler and Compressor
 	'plugins.js.path'  => "~/library/plugins/js/plugin.js.php",
 	'plugins.js.cache' => "static.js",
 
-	'plugins.js.standard' => array(
-		"cowl/mootools-core.js",
-		"cowl/mootools-more.js",
-		"cowl/cowl-core.js"
-	),
-
 	// Routing
 	'plugins.routing.path' => "~/library/plugins/plugin.routing.php",
 
-	'plugins.routing.routes'   => array(
-		"#^/css/gfx/(.+?)#" => "gfx/$1"
-	),
-	
-	'plugins.routing.host_routes' => array(),
+	'plugins.routing.routes'   => array(),
+	'plugins.routing.host_routes' => array(), // Routes based on the host (domain, example.com, sub.example.com)
 
 	// Add your routes to app/config/user.ini
 

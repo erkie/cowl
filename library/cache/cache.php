@@ -173,7 +173,7 @@ class Cache
 		$directories = substr($name, 0, strrpos($name, '/'));
 		if ( ! is_dir($directories))
 		{
-			mkdir($directories, 0755, 1);
+			mkdir($directories, 0777, 1);
 		}
 		
 		fclose(fopen($name, 'w'));

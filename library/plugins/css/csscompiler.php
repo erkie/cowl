@@ -95,7 +95,8 @@ class CSSCompiler
 		Method:
 			<CSSCompiler::compile>
 		
-		Compile and return the compiled code. See <CSSCompiler::fetchIncludes>, <CSSCompiler::fetchLoads>, <CSSCompiler::fetchConstants>, <CSSCompiler::fetchAssignments>, <CSSCompiler::applyConstants>, <CSSConstants::compress> for further details.
+		Compile and return the compiled code. See <CSSCompiler::fetchIncludes>, <CSSCompiler::fetchLoads>, <CSSCompiler::fetchConstants>, <CSSCompiler::fetchAssignments>, <CSSCompiler::applyConstants> for further details.
+		Won't compile the code. You will have to do that manually.
 		
 		Returns:
 			The compiled code, minified.
@@ -108,7 +109,6 @@ class CSSCompiler
 		$this->fetchConstants();
 		$this->fetchAssignments();
 		$this->applyConstants();
-		$this->compress();
 		
 		return $this->code;
 	}

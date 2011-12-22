@@ -28,8 +28,12 @@ abstract class Command
 	protected $request;
 	
 	// Property: <Command::$js>
-	// Holds an array of JS-files for the command.
-	protected $js = array();
+	// Holds an array of JS-packages for the command.
+	protected $js = array('core');
+	
+	// Property: <Command::$css>
+	// Holds an array of CSS-packages for the command
+	protected $css = array('core');
 	
 	// Property: <Command::$view>
 	// The name of the view to include as template.
@@ -264,6 +268,10 @@ abstract class Command
 	// Returns <Command::$js>
 	public function getJS() { return $this->js; }
 	
+	// Method: <Command::getCSS>
+	// Returns <Command::$css>
+	public function getCSS() { return $this->css; }
+	
 	/*
 		Method:
 			<Command::assign>
@@ -375,7 +383,8 @@ abstract class Command
 	{
 		header('Content-type: text/plain');
 		
-		// This is hard-coded as mysql, because the only supported DB is mysql. Change this if that ever changes.
+		// This is hard-coded as mysql, because the only supported DB is mysql.
+		// Change this if that ever changes.
 		Current::db('mysql')->output_query = true;
 	}
 	

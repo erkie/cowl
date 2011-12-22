@@ -8,33 +8,24 @@ class JS extends Plugin
 	
 	public function __construct()
 	{
-		$default_js = Current::$config->get('plugins.js.standard');
-		$this->files = array_map(array($this, 'parsePath'), $default_js);
+		
 	}
 	
 	public function commandRun(Command $command, $method, RequestData $request)
 	{
-		// Get files requested by command
-		$js = $command->getJS();
+		// Get packages requested by command
+		$js_packages = $command->getJS();
+		$packages = Current::$config->get('js');
 		
-		$files = array();
-		foreach ( $js as $key => $file )
+		foreach ( $js_packages as $package )
 		{
-			// Entries with a numeric key are files used for all methods of the command
-			if ( is_numeric($key) )
-			{
-				$files[] = $file;
-			}
+			$this->files = array_merge($this->files, $packages[$package]);
 		}
 		
-		// Entries specific to that method
-		if ( isset($js[$method]) && is_array($js[$method]) )
-		{
-			$files = array_merge($files, $js[$method]);
-		}
+		$this->files = array_map(array($this, 'parsePath'), $this->files);
 		
-		$files = array_map(array($this, 'parsePath'), $files);
-		$this->files = array_merge($this->files, $files);
+		// This cannot change with the new packaging
+		// --
 		
 		// See if this command has page.commandname.js
 		$page_name = 'app/' . $request->app_directory . 'page.' . end($request->pieces) . '.js';
@@ -45,6 +36,8 @@ class JS extends Plugin
 			$this->files[] = $page_name;
 			Current::$request->setInfo('js_fire', substr(get_class($command), 0, -strlen('command')));
 		}
+		
+		// --
 		
 		$this->setFiles();
 	}

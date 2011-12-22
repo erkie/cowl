@@ -91,7 +91,10 @@ var Cowl = {
 			return;
 		}
 		
-		var url = Cowl.url('app', 'js', 'page.' + command + '.js');
+		var pieces = command.split('.');
+		var last = pieces.pop();
+		
+		var url = Cowl.url('app', 'js', pieces.join('/') + '/page.' + last + '.js');
 		var script = new Asset.javascript(url, {
 			onLoad: function() {
 				callback();
@@ -270,7 +273,7 @@ Cowl.CommandClass = new Class({
 	},
 	
 	_setElement: function() {
-		this.element = document.getElement(this.element);
+		this.element = document.getElement(this.element || 'body');
 	},
 	
 	_addDelegateEvents: function() {
