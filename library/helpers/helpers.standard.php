@@ -67,7 +67,7 @@ function css()
 	{
 		foreach ( $stylesheets as $stylesheet )
 		{
-			printf('<link rel="stylesheet" type="text/css" media="all" href="%s" />', $stylesheet);
+			printf('<link rel="stylesheet" type="text/css" media="all" href="%s" />' . PHP_EOL, $stylesheet);
 		}
 	}
 }
