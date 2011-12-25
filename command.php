@@ -39,9 +39,9 @@ abstract class Command
 	// The name of the view to include as template.
 	private $view;
 	
-	// Property: <Command::$view_map>
-	// Translation table for view types.
-	protected $view_map = array();
+	// Property: <Command::$layouts>
+	// Translation table for layout types.
+	protected $layouts = array();
 	
 	/*
 		Constructor:
@@ -118,7 +118,7 @@ abstract class Command
 		// Set the appropriate layout for the response type
 		try {
 			$type = $request->response_type;
-			$type = isset($this->view_map[$type]) ? $this->view_map[$type] : $type;
+			$type = isset($this->layouts[$type]) ? $this->layouts[$type] : $type;
 			
 			// Check if the user has restricted which layouts can automatically be set
 			$allowed_types = Current::$config->getOr('allowed_layouts', true);
@@ -131,7 +131,7 @@ abstract class Command
 		}
 		catch ( Exception $e )
 		{
-			$html_type = isset($this->view_map['html']) ? $this->view_map['html'] : 'html';
+			$html_type = isset($this->layouts['html']) ? $this->layouts['html'] : 'html';
 			$this->template->setType($html_type);
 			
 			$request->response_type = 'html';
