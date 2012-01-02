@@ -152,11 +152,11 @@ abstract class Command
 		$ret = call_user_func_array(array($this, $method), $args);
 		
 		// If an array is returned it is used as pieces for a <Cowl::url> redirect
-		if ( is_array($ret) )
+		if ( is_array($ret) || is_string($ret) )
 		{
 			$this->requestEnded();
 			
-			$url = Cowl::url($ret);		
+			$url = is_array($ret) ? Cowl::url($ret) : $ret;
 			Cowl::redirect($url);
 		}
 		
