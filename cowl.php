@@ -17,6 +17,8 @@ define('COWL_CACHE_DIR', COWL_DIR . 'cache' . DIRECTORY_SEPARATOR);
 if ( ! defined('COWL_BASE') )
 	define('COWL_BASE', rtrim(dirname($_SERVER['SCRIPT_NAME']) . '/', '/') . '/');
 
+define('COWL_START_TIME', microtime(true));
+
 /*
 	Class:
 		<Cowl>

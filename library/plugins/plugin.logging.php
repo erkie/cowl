@@ -81,7 +81,7 @@ class Logging extends Plugin
 	
 	// Plugin hooks
 	
-	public function postPathParse($args)
+	public function prePathParse($args)
 	{
 		$this->log("request", $_SERVER['REQUEST_URI']);
 	}
@@ -89,6 +89,9 @@ class Logging extends Plugin
 	// FrontController-related hooks
 	public function postRun()
 	{
+		$request_time = microtime(true) - COWL_START_TIME;
+				
+		$this->log("request_done", sprintf("took %01.6f ms. %s", $request_time, $_SERVER['REQUEST_URI']));
 		$this->save();
 	}
 	
@@ -126,6 +129,14 @@ class Logging extends Plugin
 	
 	public function postDBQuery(DataMapper $mapper, $query, DBDriver $db)
 	{
-		$this->log($this->tmp, sprintf("%01.6f ms. %s", $db->getQueryTime(), str_replace(array("\n", "\t"), array(" ", ""), $query)));
+		$time = $db->getQueryTime();
+		$query = str_replace(array("\n", "\t"), array(" ", ""), $query);
+		
+		$this->log($this->tmp, sprintf("%01.6f ms. %s", $time, $query));
+		
+		if ( $time > 0.25 )
+		{
+			$this->log('SLOW_QUERY', sprintf("took %01.6f ms. %s", $time, $query));
+		}
 	}
 }
