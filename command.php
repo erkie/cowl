@@ -175,15 +175,15 @@ abstract class Command
 	
 	private function requestBegan()
 	{
-		if ( isset($_SESSION['__cowl'], $_SESSION['__cowl']['flash']) )
-		{
-			$info = $_SESSION['__cowl']['flash'];
-			
+		try {
+			$info = Current::$store->get('cowl.flash');
+		
 			Current::$request->setInfo('flash', $info['flash']);
 			Current::$request->setInfo('flashError', $info['error']);
 			Current::$request->setInfo('flashSuccess', $info['success']);
 			Current::$request->setInfo('flashNotice', $info['notice']);
 		}
+		catch ( RegistryMemberNotFoundException $e ) {}
 	}
 	
 	/*
@@ -195,20 +195,17 @@ abstract class Command
 	
 	private function requestEnded()
 	{
-		if ( ! isset($_SESSION['__cowl']) )
-			$_SESSION['__cowl'] = array();
-		
 		$flash = Current::$request->getInfo('flash');
 		$error = Current::$request->getInfo('flashError');
 		$notice = Current::$request->getInfo('flashNotice');
 		$success = Current::$request->getInfo('flashSuccess');
 		
-		$_SESSION['__cowl']['flash'] = array(
+		Current::$store->set('cowl.flash', array(
 			'flash' => $flash,
 			'error' => $error,
 			'notice' => $notice,
 			'success' => $success
-		);
+		));
 	}
 	
 	/*

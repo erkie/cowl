@@ -1,11 +1,9 @@
 <?php
 
-if ( ! defined('COWL_CACHED') )
-{
-	require('library/registries/registry.php');
-	require('library/registries/request.php');
-	require('library/registries/config.php');
-}
+require('library/registries/registry.php');
+require('library/registries/request.php');
+require('library/registries/config.php');
+require('library/registries/store.php');
 
 /*
 	Class:
@@ -29,6 +27,7 @@ class Current
 		
 		self::$request = Request::instance();
 		self::$config = Config::instance();
+		self::$store = Store::instance();
 	}
 	
 	/*
