@@ -9,9 +9,9 @@
 	// JavaScript packages
 	'js' => array(
 		'core' => array(
-			'cowl/static/js/mootools-core.js',
-			'cowl/static/js/mootools-more.js',
-			'cowl/static/js/cowl-core.js'
+			'cowl/mootools-core.js',
+			'cowl/mootools-more.js',
+			'cowl/cowl-core.js'
 		)
 	)
 );
