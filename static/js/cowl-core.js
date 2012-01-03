@@ -33,13 +33,19 @@ var Cowl = {
 	*/
 	
 	fire: function(command, method) {
+		var previousInstance = Cowl.previousInstance;
+		
+		if ( previousInstance ) {
+			previousInstance.destroy();
+		}
+		
 		if ( Cowl.hasCommand(command) ) {
 			if ( ! Browser.loaded )
 				window.addEvent('domready', function() {
-					Cowl.run(command, method);
-				});
+					this.previousInstance = Cowl.run(command, method);
+				}.bind(this));
 			else
-				Cowl.run(command, method);
+				this.previousInstance = Cowl.run(command, method);
 		}
 	},
 	
@@ -52,6 +58,9 @@ var Cowl = {
 		Parameters:
 			command - The name of the command, case insensitive
 			method - The method to run
+		
+		Return:
+			Returns the newly created instance
 	*/
 	
 	run: function(command, method) {
@@ -61,6 +70,7 @@ var Cowl = {
 			instance[method]();
 		}
 		this.instances[command] = instance;
+		return instance;
 	},
 	
 	/*
@@ -268,8 +278,17 @@ Cowl.CommandClass = new Class({
 	actions: {},
 	
 	initialize: function() {
+		this._events = {};
 		this._setElement();
 		this._addDelegateEvents();
+	},
+	
+	destroy: function() {
+		Object.each(this._events, function(events, eventName) {
+			events.each(function(ev) {
+				this.element.removeEvent(eventName, ev);
+			}, this);
+		}, this);
 	},
 	
 	_setElement: function() {
@@ -283,7 +302,13 @@ Cowl.CommandClass = new Class({
 			var eventName = pieces.shift();
 			var selector = pieces.join(' ');
 			
-			this.element.addEvent(eventName, this._makeDelegateEventFor(selector, method));
+			var delegateEvent = this._makeDelegateEventFor(selector, method);
+			
+			if ( ! this._events[eventName] )
+				this._events[eventName] = [];
+			this._events[eventName].push(delegateEvent);
+			
+			this.element.addEvent(eventName, delegateEvent);
 		}, this);
 	},
 	
