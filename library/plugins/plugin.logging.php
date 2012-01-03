@@ -96,7 +96,18 @@ class Logging extends Plugin
 	}
 	
 	public function preStaticServe(StaticServer $server) {}
-	public function postStaticServe(StaticServer $server) {}
+	
+	public function postStaticServe(StaticServer $server)
+	{
+		$request_time = microtime(true) - COWL_START_TIME;
+		$this->log("static_serve", sprintf("took %01.6f ms. %s", $request_time, $server->getPath()));
+		
+		// Logging static file requests is optional since it floods the logs
+		if ( Current::$config->get('plugins.logging.log_static_files') )
+		{
+			$this->save();
+		}
+	}
 	
 	// Command-related hooks
 	public function commandRun(Command $command, $method, $args) {}

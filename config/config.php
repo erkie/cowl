@@ -61,5 +61,6 @@
 	// Logging
 	'plugins.logging.path' => "~/library/plugins/plugin.logging.php",
 	'plugins.logging.log_file' => "~/log/info-%s.log", // Needs to exist and be writable
-	'plugins.logging.error_file' => "~/log/error-%s.log"
+	'plugins.logging.error_file' => "~/log/error-%s.log",
+	'plugins.logging.log_static_files' => false
 );

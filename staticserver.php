@@ -150,10 +150,11 @@ class StaticServer
 			&& strstr($_SERVER['HTTP_IF_NONE_MATCH'], $etag) )
 		{
 			header('HTTP/1.1 304 Not Modified');
-			die;
 		}
-		
-		readfile($this->path);
+		else
+		{
+			readfile($this->path);
+		}
 	}
 	
 	/*
