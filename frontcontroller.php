@@ -112,8 +112,13 @@ class FrontController
 		
 		Current::$plugins->hook('postPathParse', $request);
 		
-		$command->run($request);
+		$ret = $command->run($request);
 		
 		Current::$plugins->hook('postRun');
+		
+		if ( is_string($ret) )
+		{
+			Cowl::redirect($ret);
+		}
 	}
 }

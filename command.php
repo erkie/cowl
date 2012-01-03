@@ -155,9 +155,8 @@ abstract class Command
 		if ( is_array($ret) || is_string($ret) )
 		{
 			$this->requestEnded();
-			
 			$url = is_array($ret) ? Cowl::url($ret) : $ret;
-			Cowl::redirect($url);
+			return $url;
 		}
 		
 		// Render the template
