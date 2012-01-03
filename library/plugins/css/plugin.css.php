@@ -157,7 +157,7 @@ class CSS extends Plugin
 		
 		$cache_path = $this->cache . '.' . $package;
 		
-		$cache = new FileCache($cache_path, $files);
+		$cache = new Cache($cache_path, 60*60*24*365);
 		$cache->setExtension('css');
 		
 		if ( $cache->isOutDated() || $this->force_update )
@@ -170,7 +170,8 @@ class CSS extends Plugin
 			}
 			
 			$compiler = new CSSCompiler($contents);
-			$updated = $compiler->compile();
+			$compiler->compile();
+			$updated = $compiler->compress();
 			
 			$cache->update($updated);
 		}

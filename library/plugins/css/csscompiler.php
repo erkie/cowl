@@ -339,7 +339,9 @@ class CSSCompiler
 		$this->code = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $this->code);
 		$this->code = str_replace('{ ', '{', $this->code);
 		$this->code = str_replace(' }', '}', $this->code);
-		$this->code = str_replace('; ', ';', $this->code);	
+		$this->code = str_replace('; ', ';', $this->code);
+		
+		return $this->code;
 	}
 	
 	// Method: <CSSCompiler::getCode>
