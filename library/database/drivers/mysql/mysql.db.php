@@ -124,7 +124,7 @@ class MySQLDB extends DBDriver
 		$ret = mysql_query($query);
 		if ( ! $ret )
 		{
-			throw new MySQLDBQueryException(mysql_error());
+			throw new MySQLDBQueryException(mysql_error() . ': ' . $query);
 		}
 		return $ret;
 	}

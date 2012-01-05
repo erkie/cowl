@@ -513,7 +513,7 @@ abstract class DataMapper
 		Method:
 			DataMapper::query
 		
-		Run a databasecentric query returning the results in a <DomainCollection>
+		Run a database-centric query returning the results in a <DomainCollection>
 		
 		Examples:
 			$posts = $postmapper->query('
@@ -534,6 +534,11 @@ abstract class DataMapper
 	{
 		$db = Current::db($this->driver);
 		
+		if ( ! is_array($data) )
+		{
+			$data = func_get_args();
+			$data = array_slice($data, 1);
+		}
 		$query = $this->builder->format($query, $data);
 		$result = $db->execute($query);
 		

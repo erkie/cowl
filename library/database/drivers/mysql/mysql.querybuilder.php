@@ -71,7 +71,8 @@ class MySQLQueryBuilder
 		
 		Many times the built in methods of <QueryBuilder> are not enough for advanced queries. If you want to write your own queries (preferably in your <DataMapper>-classes) but still want to be able to use some of the facilities brought to you by <QueryBuilder, <QueryBuilder::format> is right for you.
 		
-		The formatted values are contained in %(key), where "key" is a key in the $values array.
+		The formatted values are contained in %(key), where "key" is a key in the $values array. The "key"
+		can also be a question mark (?), i.e %(?), this will treat the $values array in a numeric order.
 		
 		Values can use modifiers. They look like %(modifier->key), where modifier is one of the following:
 		
@@ -105,7 +106,12 @@ class MySQLQueryBuilder
 	
 	public function format($query, $values)
 	{
-		$this->values = array_merge($values, array('table' => $this->table, 'primary_key' => $this->primary_key, 'prefix' => $this->prefix));
+		$this->values = array_merge($values, array(
+			'table' => $this->table,
+			'primary_key' => $this->primary_key,
+			'prefix' => $this->prefix
+		));
+		
 		$query = preg_replace_callback('/%\(([^)]+)\)/', array($this, 'formatCallback'), $query);
 		return $query;
 	}
@@ -131,10 +137,19 @@ class MySQLQueryBuilder
 		if ( strstr($key, '->') )
 		{
 			$pieces = explode('->', $key);
-			$key = $pieces[count($pieces) - 1];
+			$key = array_pop($pieces);
+		}
+		else if ( strstr($key, '|') )
+		{
+			$pieces = explode('|', $key);
+			$key = array_shift($pieces);
 		}
 		
-		if ( ! in_array(substr($key, 0, 1), array('"', "'")) && ! in_array(substr($key, -1), array('"', "'")) )
+		if ( $key == '?' )
+		{
+			$value = array_shift($this->values);
+		}
+		elseif ( ! in_array(substr($key, 0, 1), array('"', "'")) && ! in_array(substr($key, -1), array('"', "'")) )
 		{
 			if ( ! isset($this->values[$key]) )
 			{
@@ -149,10 +164,8 @@ class MySQLQueryBuilder
 			$value = substr(substr($key, 1), 0, -1);
 		}
 		
-		if ( isset($pieces) && count($pieces) > 1 )
+		if ( isset($pieces) )
 		{
-			array_pop($pieces);
-			
 			foreach ( $pieces as $piece )
 			{
 				switch ( $piece )
@@ -161,6 +174,7 @@ class MySQLQueryBuilder
 					case 'value': $value = $this->quoteValue($value); break;
 					case 'field': $value = $this->quoteField($value); break;
 					case 'string': $value = self::escape($value); break;
+					case 'safe': $value = $this->quote($value); break;
 					case 'this': $value = $this->$value; break;
 					default: throw new MySQLQBInvalidFormatModifierException(implode(' ', $pieces)); break;
 				}
