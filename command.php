@@ -90,7 +90,7 @@ abstract class Command
 			if ( is_array($redirect) || is_string($redirect) )
 			{
 				$url = is_array($redirect) ? Cowl::url($redirect) : $redirect;
-				Cowl::redirect($url);
+				return $url;
 			}
 		}
 		
