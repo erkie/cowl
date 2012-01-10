@@ -147,7 +147,7 @@ abstract class DomainObject
 			return $this->getID();
 		}
 		
-		if ( isset($this->rest[$name]) )
+		if ( array_key_exists($name, $this->rest) )
 		{
 			return $this->rest[$name];
 		}
