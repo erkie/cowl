@@ -568,7 +568,7 @@ class MySQLQueryBuilder
 	
 	public function quote($value)
 	{
-		return (is_numeric($value)) ? $value : sprintf('"%s"', self::escape($value));
+		return (is_int($value) || is_float($value)) ? $value : sprintf('"%s"', self::escape($value));
 	}
 	
 	public static function escape($str)
