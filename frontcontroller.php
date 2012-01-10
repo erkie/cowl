@@ -4,6 +4,8 @@ require('cowl.php');
 
 set_include_path(COWL_DIR . PATH_SEPARATOR . get_include_path());
 
+Cowl::timer('require system');
+
 require('controller.php');
 require('staticserver.php');
 require('command.php');
@@ -16,6 +18,8 @@ require('helpers.php');
 
 require('library/cache/cache.php');
 require('library/database/database.php');
+
+Cowl::timerEnd('require system');
 
 /*
 	Class:
@@ -39,12 +43,16 @@ class FrontController
 	
 	public function __construct()
 	{
+		Cowl::timer('init');
+		
 		@session_start(); // I know that the @-notation is frowned upon, but adding it to session_start saves us unnecessary warnings
 		
 		Cache::setDir(COWL_CACHE_DIR);
 		Current::initialize(COWL_DIR);
 		
 		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
+		
+		Cowl::timer('set_defaults');
 		
 		// Get and set all directories for various things.
 		list(
@@ -71,10 +79,16 @@ class FrontController
 		Database::setPath($drivers_dir);
 		StaticServer::setDir($app_dir);
 		
+		Cowl::timerEnd('set_defaults');
+		
+		Cowl::timer('plugins_load');
 		Current::$plugins = new Plugins($plugins_dir);
+		Cowl::timerEnd('plugins_load');
 		
 		// Load default helper
 		Helpers::load('standard', 'form');
+		
+		Cowl::timerEnd('init');
 	}
 	
 	/*
@@ -104,7 +118,10 @@ class FrontController
 		}
 		
 		// Parse arguments from path and call appropriate command
+		Cowl::timer('parse');
 		$request = $this->controller->parse();
+		Cowl::timerEnd('parse');
+		
 		$command = new $request->argv[0];
 		
 		// Set template directory, which is the command directory mirrored
@@ -112,7 +129,9 @@ class FrontController
 		
 		Current::$plugins->hook('postPathParse', $request);
 		
+		Cowl::timer('command_run');
 		$ret = $command->run($request);
+		Cowl::timerEnd('command_run');
 		
 		Current::$plugins->hook('postRun');
 		

@@ -1,27 +1,31 @@
 <?php
 
-// Constant: <COWL_DIR>
+// Constant: COWL_DIR
 // Contains the path in which Cowl is set up.
 define('COWL_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
-// Constant: <COWL_TOP>
+// Constant: COWL_TOP
 // Contains the path in which the project base is (where index.php lies)
 define('COWL_TOP', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 
-// Constant: <COWL_CACHE_DIR>
+// Constant: COWL_CACHE_DIR
 // The path to the cache
 define('COWL_CACHE_DIR', COWL_DIR . 'cache' . DIRECTORY_SEPARATOR);
 
-// Constant: <COWL_BASE>
+// Constant: COWL_BASE
 // The root of the URL. Will almost always be '/' in production.
 if ( ! defined('COWL_BASE') )
 	define('COWL_BASE', rtrim(dirname($_SERVER['SCRIPT_NAME']) . '/', '/') . '/');
 
 define('COWL_START_TIME', microtime(true));
 
+// Constant: COWL_DEBUG_MODE
+// Define to true if you want to debug Cowl. For example activate timers.
+define('COWL_DEBUG_MODE', false);
+
 /*
 	Class:
-		<Cowl>
+		Cowl
 	
 	Contains information about Cowl.
 */
@@ -36,7 +40,7 @@ class Cowl
 	
 	/*
 		Method:
-			<Cowl::url>
+			Cowl::url
 		
 		Create a URL from the passed pieces. It will be relative to the current directory, so it is recommended to be used everywhere URLs are needed.
 		
@@ -73,7 +77,7 @@ class Cowl
 	
 	/*
 		Method:
-			<Cowl::redirect>
+			Cowl::redirect
 		
 		Redirects the user to the specified site. This method calls <exit>, so nothing after the <Cowl::redirect>-call will be executed.
 		
@@ -95,7 +99,7 @@ class Cowl
 	
 	/*
 		Method:
-			<Cowl::timer>
+			Cowl::timer
 		
 		Examples:
 			Cowl::timer('Instantiate 1000 objects');
@@ -112,12 +116,13 @@ class Cowl
 	
 	public static function timer($label)
 	{
+		if ( ! COWL_DEBUG_MODE ) return;
 		self::$timers[$label] = microtime(true);
 	}
 	
 	/*
 		Method:
-			<Cowl::timerEnd>
+			Cowl::timerEnd
 		
 		Ends the timer associated with $label. See <Cowl::getTimer> for information on retrieving the time.
 		
@@ -127,12 +132,14 @@ class Cowl
 	
 	public static function timerEnd($label)
 	{
+		if ( ! COWL_DEBUG_MODE ) return;
 		self::$timers[$label] = microtime(true) - self::$timers[$label];
+		return self::$timers[$label];
 	}
 	
 	/*
 		Method:
-			<Cowl::getTimer>
+			Cowl::getTimer
 		
 		Returns the results of a specified timer in seconds.
 		
@@ -145,12 +152,13 @@ class Cowl
 	
 	public static function getTimer($label)
 	{
+		if ( ! COWL_DEBUG_MODE ) return;
 		return self::$timers[$label];
 	}
 	
 	/*
 		Method:
-			<Cowl::getTimers>
+			Cowl::getTimers
 		
 		Returns an array containing the results of all the timers. If a timer has not been stopped the start-time in microseconds of that timer is stored.
 		
@@ -160,6 +168,7 @@ class Cowl
 	
 	public static function getTimers()
 	{
-		return self::$timers;	
+		if ( ! COWL_DEBUG_MODE ) return array();
+		return self::$timers;
 	}
 }
