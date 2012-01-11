@@ -430,4 +430,13 @@ class RequestData
 	
 	// The method of the request. Not determined by <Controller>, but by <Command> (FIXME: should it be, though?)
 	public $method;
+	
+	public function toJSON()
+	{
+		return array(
+			'response_type' => $this->response_type,
+			'pieces' => $this->pieces,
+			'original_request' => $this->original_request
+		);
+	}
 }

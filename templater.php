@@ -249,6 +249,10 @@ class Templater
 			{
 				$data[$key] = $this->toJSON($value);
 			}
+			else if ( is_object($value) && method_exists($value, 'toJSON') )
+			{
+				$data[$key] = $value->toJSON();
+			}
 		}
 		return $data;
 	}
