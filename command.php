@@ -40,7 +40,7 @@ abstract class Command
 	private $view;
 	
 	// Property: <Command::$layouts>
-	// Translation table for layout types.
+	// Translation table for layout types. Add a * (start) key for it to be used for every request type
 	protected $layouts = array();
 	
 	/*
@@ -115,9 +115,11 @@ abstract class Command
 			$this->setView($view);
 		}
 		
+		// If a global layout type has defined use that
+		
 		// Set the appropriate layout for the response type
 		try {
-			$type = $request->response_type;
+			$type = isset($this->layouts['*']) ? $this->layouts['*'] : $request->response_type;
 			$type = isset($this->layouts[$type]) ? $this->layouts[$type] : $type;
 			
 			// Check if the user has restricted which layouts can automatically be set
