@@ -109,21 +109,6 @@ class Request extends Registry
 	
 	/*
 		Method:
-			<Request::has>
-		
-		Checks to see if the key exists.
-		
-		Returns:
-			True if it does, else false.
-	*/
-	
-	public function has($key)
-	{
-		return isset($this->request_data[$key]);
-	}
-	
-	/*
-		Method:
 			<Request::stripSlashes>
 		
 		Recursively strip slashes from request variables. This should only be called if get_magic_quotes is on.

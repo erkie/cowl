@@ -143,7 +143,24 @@ abstract class Registry
 	
 	/*
 		Method:
-			getOr
+			Request::has
+		
+		Checks to see if the key exists.
+		
+		Returns:
+			True if it does, else false.
+	*/
+	
+	public function has($key)
+	{
+		try { $this->get($key); return true; }
+		catch ( RegistryMemberNotFoundException $e ) {}
+		return false;
+	}
+	
+	/*
+		Method:
+			Registry::getOr
 		
 		Attempt to fetch a value from the store, if it doesn't exist, just 
 		return a default value. A fail-gracefully version of <Registry::get>
@@ -170,7 +187,7 @@ abstract class Registry
 	
 	/*
 		Method:
-			<Registry::gets>
+			Registry::gets
 		
 		Works like <Registry::get> accept it can take several values to be found, returning them in the order of appearence in the argument list.
 		
@@ -198,7 +215,7 @@ abstract class Registry
 	
 	/*
 		Method:
-			<Registry::fetch>
+			Registry::fetch
 		
 		Fetches a piece of the data store.
 		
@@ -219,7 +236,7 @@ abstract class Registry
 	
 	/*
 		Method:
-			<Registry::set>
+			Registry::set
 		
 		Sets the corresponding $key, $value in the data store, overwriting existing values. This method will also set the is_dirty flag to true. Namespacing is allowed, just as in <Registry::get>.
 		
