@@ -128,6 +128,17 @@ var Cowl = {
 	
 	/*
 		Method:
+			Cowl.get
+		
+		Alias for <Cowl.getInstance>.
+	*/
+	
+	get: function(command) {
+		return Cowl.getInstance(command);
+	},
+	
+	/*
+		Method:
 			Cowl.url
 		
 		Works exactly as PHP <Cowl::url>. Pass each piece as an argument and it will be joined with a '/'. The project <BASE_PATH> will be applied to the url.
