@@ -2,7 +2,7 @@
 
 /*
 	Class:
-		<PHPCache>
+		PHPCache
 	
 	Store PHP arrays in the cache.
 */
@@ -11,7 +11,7 @@ class PHPCache extends Cache
 {
 	/*
 		Method:
-			<PHPCache>
+			PHPCache
 		
 		Get the contents of the cache and unserialize it.
 		
@@ -33,7 +33,7 @@ class PHPCache extends Cache
 	
 	/*
 		Method:
-			<PHPCache::update>
+			PHPCache::update
 		
 		Store the contents as serialized PHP.
 		
