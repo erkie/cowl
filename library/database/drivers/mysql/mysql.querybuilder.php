@@ -6,28 +6,28 @@ class MySQLQBFormatValueNotSpecifiedException extends Exception {}
 
 /*
 	Class:
-		<QueryBuilder>
+		MySQLQueryBuilder
 	
 	Takes a table and primary_key and is used by <DataMapper> to build querys.
 */
 
 class MySQLQueryBuilder
 {
-	// Property: <QueryBuilder::$table>
+	// Property: QueryBuilder::$table
 	// Contains the table for which the particular <QueryBuilder> is pointed to.
 	private $table;
 	
-	// Property: <QueryBuilder::$primary_key>
+	// Property: QueryBuilder::$primary_key
 	// Contains the name of the primary key for the table.
 	private $primary_key;
 	
-	// Property: <QueryBuilder::$prefix>
+	// Property: QueryBuilder::$prefix
 	// The prefix used for the table name in queries. Default value is p, p for prefix!
 	private $prefix = 'p';
 	
 	/*
 		Method:
-			<QueryBuilder::__construct>
+			QueryBuilder::__construct
 		
 		Initialized <QueryBuilder::$table> and <QueryBuilder::$primary_key>.
 		
@@ -44,7 +44,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildFind>
+			QueryBuilder::buildFind
 		
 		Builds a SELECT-statement.
 		
@@ -65,7 +65,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::format>
+			QueryBuilder::format
 		
 		An advanced sprintf, sort of.
 		
@@ -83,12 +83,11 @@ class MySQLQueryBuilder
 		
 		Examples:
 			$qb->format('
-				SELECT * FROM %(this->table) AS %(prefix)
-				WHERE %(field->my_field) %(value->my_value)
+				SELECT * FROM %(table)
+				WHERE %(my_field|field) %(my_value|safe)
 			', array(
-				'prefix' => 'us',
 				'my_field' => 'auth_level',
-				'my_value' => '> 3'
+				'my_value >' => '3'
 			));
 			
 			// Will result in:
@@ -118,7 +117,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::formatCallback>
+			QueryBuilder::formatCallback
 		
 		Callback used by the preg_replace in <QueryBuilder::format>. See <QueryBuilder::format> for formatting rules.
 		
@@ -186,7 +185,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildFindObject>
+			QueryBuilder::buildFindObject
 		
 		Build a query using information from a passed <DomainObject>. If the <DomainObject> has set an ID, that will be the WHERE parameter. Otherwise all values of the <DomainObject> that do exist will be used for the WHERE clause.
 		
@@ -222,7 +221,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildSelectBody>
+			QueryBuilder::buildSelectBody
 		
 		Builds the SELECT body. This includes WHERE, ORDER BY and LIMIT clauses.
 		
@@ -246,7 +245,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildWhere>
+			QueryBuilder::buildWhere
 		
 		Build the WHERE clause for an SQL query. The following rules are used while constructing the WHERE:
 		
@@ -277,7 +276,7 @@ class MySQLQueryBuilder
 				}
 				else
 				{
-					$args[$key] = sprintf('%s%s', $this->quoteField($key), $val);
+					$args[$key] = sprintf('%s%s', $this->quoteStatement($key), $val);
 				}
 			}
 			$query .= implode(' AND ', $args) . PHP_EOL;
@@ -291,7 +290,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildLimit>
+			QueryBuilder::buildLimit
 		
 		Build the LIMIT clause for an SQL query. The methods parameters work the same way as they do in an SQL LIMIT clause.
 		
@@ -316,7 +315,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildOrderBy>
+			QueryBuilder::buildOrderBy
 		
 		Build an ORDER BY clause for an SQL statement. If an array is passed I will join them together will commas (,). All fields are quoted with <QueryBuilder::quoteField>.
 		
@@ -329,18 +328,18 @@ class MySQLQueryBuilder
 		$query = '';
 		if ( is_array($orderby) )
 		{
-			$query .= 'ORDER BY ' . implode(', ', array_map(array($this, 'quoteField'), $orderby)) . PHP_EOL;
+			$query .= 'ORDER BY ' . implode(', ', array_map(array($this, 'quoteStatement'), $orderby)) . PHP_EOL;
 		}
 		elseif (! empty($orderby) )
 		{
-			$query .= 'ORDER BY ' . $this->quoteField($orderby) . PHP_EOL;
+			$query .= 'ORDER BY ' . $this->quoteStatement($orderby) . PHP_EOL;
 		}
 		return $query;
 	}
 	
 	/*
 		Method:
-			<QueryBuilder::buildInsert>
+			QueryBuilder::buildInsert
 		
 		Build an INSERT clause for an SQL query, using fields from the passed <DomainObject>.
 		
@@ -378,7 +377,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildUpdate>
+			QueryBuilder::buildUpdate
 		
 		Build an UPDATE clause for an SQL query. All the passed values contained in the passed <DomainObject> will be updated.
 		
@@ -405,7 +404,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildDelete>
+			QueryBuilder::buildDelete
 		
 		Build a DELETE statement.
 		
@@ -427,7 +426,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::buildCount>
+			QueryBuilder::buildCount
 		
 		Build a statement that counts the row in the table. See <QueryBuilder::buildSelectBody> for details about the WHERE clauses, etc.
 	*/
@@ -442,7 +441,7 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::setPrefix>
+			QueryBuilder::setPrefix
 		
 		Set <QueryBuilder::$prefix>.
 		
@@ -460,17 +459,40 @@ class MySQLQueryBuilder
 	
 	/*
 		Method:
-			<QueryBuilder::quoteField>
+			QueryBuilder::quoteField
 		
-		Appropriately quote a field name using backticks. If the $field contains a period (.) it will be returned as it is, because it doesn't need to be quoted.
+		Quote a field to fit with as an SQL field. Add backticks to it and add the prefix.
 		
 		Examples:
+			// prefix is "p"
 			$qb->quoteField('name');
+			> p.`name`
+		
+		Paremeters:
+			$field - The field name
+		
+		Returns: 
+			The quoted field name
+	*/
+	
+	public function quoteField($field)
+	{
+		return $this->prefix . '.`' . $field . '`';
+	}
+	
+	/*
+		Method:
+			QueryBuilder::quoteStatement
+		
+		Appropriately quote a statement using backticks. Don't use prefixes ("p.field_name")
+		
+		Examples:
+			$qb->quoteStatement('name');
 			> `name`
-			$qb->quoteField('u.name');
-			> u.name
-			$qb->quoteField('name DESC');
+			$qb->quoteStatement('name DESC');
 			> `name` DESC
+			$qb->quoteStatement('points >');
+			> `points` > 
 		
 		Parameters:
 			$field - The value to be quoted.
@@ -479,39 +501,33 @@ class MySQLQueryBuilder
 			The quoted value.
 	*/
 	
-	public function quoteField($field)
+	public function quoteStatement($field)
 	{
-		if ( strstr($field, '.') )
+		$pieces = explode(' ', trim($field));
+		
+		if ( count($pieces) == 1 )
 		{
-			return $field;
+			return $this->quoteField($pieces[0]) . ' = ';
 		}
-		elseif ( (stristr($field, 'DESC') || stristr($field, 'ASC')) && strstr($field, ' ') )
-		{
-			$pos = stripos($field, 'DESC');
-			if ( $pos === false )
-			{
-				$pos = stripos($field, 'ASC');
-			}
-			return $this->prefix . '.`' . trim(substr($field, 0, $pos)) . '` ' . substr($field, $pos);
-		}
-		return $this->prefix . '.`' . $field . '`';
+		
+		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
 	}
 	
 	/*
 		Method:
-			<QueryBuilder::quoteValue>
+			QueryBuilder::quoteValue
 		
-		Appropriately quote a value for SQL. This method is best described in examples.
+		Just quote a value so it's not SQL injectable. Takes an array and recursively quotes them
 		
 		Examples:
 			$qb->quoteValue('Mozilla just released it's new project Snowl, Cowl sues.');
-			> "= "Mozilla just released it's new project Snowl, Cowl sues.""
+			> "Mozilla just released it's new project Snowl, Cowl sues."
+			$qb->quoteValue(10);
+			> 10
 			$qb->quoteValue('10');
-			> "= 10"
-			$qb->quoteValue('< 10');
-			> "< 10"
-			$qb->quoteValue('!= 0');
-			> "!= 0"
+			> "10"
+			$qb->quoteValue('foobar');
+			> "foobar"
 		
 		Parameters:
 			$value - The value to transform.
@@ -528,28 +544,12 @@ class MySQLQueryBuilder
 			return array_map(array($this, 'quoteValue'), $value);
 		}
 		
-		if ( empty($value) )
-		{
-			return ' = ""';
-		}
-		
-		// A simple equals statement, with no type specified
-		if ( ! in_array($value[0], array('=', '<', '>', '!')) || substr($value, 0, 3) == 'IN()' )
-		{
-			return ' = ' . $this->quote($value);
-		}
-		// Where the comparison type is specified
-		else
-		{
-			$operator = substr($value, 0, strpos($value, ' '));
-			$value = substr($value, strpos($value, ' ') + 1);
-			return ' ' . $operator . ' ' . $this->quote($value);
-		}
+		return $this->quote($value);
 	}
 	
 	/*
 		Method:
-			<QueryBuilder::quote>
+			QueryBuilder::quote
 		
 		Adds quotes to the passed value if anything but numerical. If the value is numerical it is left unchanged.
 		
