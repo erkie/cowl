@@ -103,6 +103,14 @@ abstract class Command
 		{
 			$method = 'index';
 		}
+		
+		// Ensure that method is public
+		$reflection = new ReflectionMethod(get_class($this), $method);
+		if ( ! $reflection->isPublic() )
+		{
+			$method = 'index';
+		}
+		
 		$request->method = $method;
 		
 		// Set view to either the base-name of the class, which is default or the name of the method
