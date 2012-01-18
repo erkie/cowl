@@ -91,21 +91,18 @@ var Cowl = {
 		Load a command.
 		
 		Parameters:
-			command - The command
+			commandPath - The path to the command
+			command - The command name
 			callback - Callback for when the command is loaded
 	*/
 	
-	loadCommand: function(command, callback) {
+	loadCommand: function(commandPath, command, callback) {
 		if ( this.hasCommand(command) ) {
 			callback();
 			return;
 		}
 		
-		var pieces = command.split('.');
-		var last = pieces.pop();
-		
-		var url = Cowl.url('app', 'js', pieces.join('/') + '/page.' + last + '.js');
-		var script = new Asset.javascript(url, {
+		var script = new Asset.javascript(commandPath, {
 			onLoad: function() {
 				callback();
 			}

@@ -35,6 +35,7 @@ class JS extends Plugin
 		{
 			$this->files[] = $page_name;
 			Current::$request->setInfo('js_fire', substr(get_class($command), 0, -strlen('command')));
+			Current::$request->setInfo('js_page_path', Cowl::url($page_name));
 		}
 		
 		// --
