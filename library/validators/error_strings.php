@@ -7,7 +7,7 @@
 			'is_enum' => 'Must be of either: %s',
 			'is_float' => 'Must be floating point number',
 			'is_id' => 'Must be a valid ID',
-			'is_integer' => 'Must be a valid integer',
+			'is_integer' => 'Must be a valid number',
 			'is_mandatory' => 'Is mandatory',
 			'is_url' => 'Must be a URL',
 			'max_length' => 'Cannot be longer than %s characters',
