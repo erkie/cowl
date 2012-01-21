@@ -2,28 +2,28 @@
 
 /*
 	Class:
-		<DomainCollection>
+		DomainCollection
 	
 	General purpose class for a database rowset and lazy instantiaton of <DomainObject>-objects.
 */
 
 class DomainCollection implements Iterator, Countable
 {
-	// Property: <DomainCollection::$result>
+	// Property: DomainCollection::$result
 	// Holds the instance of <DBResult> to interface.
 	private $result;
 	
-	// Property: <DomainCollection::$instances>
+	// Property: DomainCollection::$instances
 	// Holds the instances of <DomainObjects>
 	private $instances = array();
 	
-	// Property: <DomainCollection::$mapper>
+	// Property: DomainCollection::$mapper
 	// The mapper used to create <DomainObject>s.
 	private $mapper;
 	
 	/*
 		Constructor:
-			<DomainCollection::__construct>
+			DomainCollection::__construct
 		
 		Paramaters:
 			DBResult $result - The result to interface with.
@@ -36,28 +36,28 @@ class DomainCollection implements Iterator, Countable
 		$this->mapper = $mapper;
 	}
 	
-	// Method: <DomainCollection::rewind>
+	// Method: DomainCollection::rewind
 	// For <Iterator>
 	public function rewind()
 	{
 		$this->result->rewind();
 	}
 	
-	// Method: <DomainCollection::current>
+	// Method: DomainCollection::current
 	// For <Iterator>
 	public function current()
 	{
 		return $this->get($this->result->key());
 	}
 	
-	// Method: <DomainCollection::key>
+	// Method: DomainCollection::key
 	// For <Iterator>
 	public function key()
 	{
 		return $this->result->key();
 	}
 	
-	// Method: <DomainCollection::next>
+	// Method: DomainCollection::next
 	// For <Iterator>
 	public function next()
 	{
@@ -65,7 +65,7 @@ class DomainCollection implements Iterator, Countable
 		return $this->get($this->result->key());
 	}
 	
-	// Method: <DomainCollection::prev>
+	// Method: DomainCollection::prev
 	// Interfaces <DBResult::prev>
 	public function prev()
 	{
@@ -73,7 +73,7 @@ class DomainCollection implements Iterator, Countable
 		return $this->current();
 	}
 	
-	// Method: <DomainCollection::valid>
+	// Method: DomainCollection::valid
 	// For <Iterator>
 	public function valid()
 	{
@@ -82,7 +82,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::count>
+			DomainCollection::count
 		
 		Get amount of results. As <DomainCollection> implements <Countable> the standard PHP function <count> can be used on a <DomainCollection>-object.
 		
@@ -97,7 +97,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::get>
+			DomainCollection::get
 		
 		Get an instance at specified index.
 		
@@ -126,7 +126,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::first>
+			DomainCollection::first
 		
 		Convenience method for getting the first object contained.
 		
@@ -141,7 +141,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::last>
+			DomainCollection::last
 		
 		Same as <DomainCollection::first>, but for the last element.
 	*/
@@ -153,7 +153,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::indexOf>
+			DomainCollection::indexOf
 		
 		Searches for the index of the passed <DomainObject>.
 		
@@ -180,7 +180,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::combine>
+			DomainCollection::combine
 		
 		Combine this <DomainCollection> with another iterable object (or array).
 		
@@ -208,7 +208,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::getData>
+			DomainCollection::getData
 		
 		Returns the data of all <DomainObject>:s contained as an array.
 	*/
@@ -225,7 +225,7 @@ class DomainCollection implements Iterator, Countable
 	
 	/*
 		Method:
-			<DomainCollection::getPublicData>
+			DomainCollection::getPublicData
 		
 		Returns all public data from a DomainObject. See <DomainObject::getPublicData> for more
 		information about whats public.
@@ -238,6 +238,40 @@ class DomainCollection implements Iterator, Countable
 		{
 			$ret[$key] = $value->getPublicData();
 		}
+		return $ret;
+	}
+	
+	/*
+		Method:
+			DomainCollection::toArray
+		
+		Transform data to array. Works the same as <DomainCollection::getData>.
+		But it can also take a key that you want to retrieve.
+		
+		For example:
+			(code)
+			
+			// Return a DomainCollection where each result only contains an id key
+			$data = $mapper->query('select id from table where param = 1');
+			
+			// To turn it into a single-dimension array like so:
+			// array(1, 2, 3, 4);
+			$arr = $data->toArray('id');
+			
+			(end code)
+	*/
+	
+	public function toArray($key = false)
+	{
+		if ( ! $key )
+		{
+			return $this->getData();
+		}
+		
+		$ret = array();
+		foreach ( $this as $d )
+			$ret[] = $d->$key;
+		
 		return $ret;
 	}
 }
