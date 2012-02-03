@@ -274,4 +274,38 @@ class DomainCollection implements Iterator, Countable
 		
 		return $ret;
 	}
+	
+	/*
+		Method:
+			DomainCollection::findBy
+		
+		Find an entry in the DomainCollection by specified key and value.
+		
+		Example:
+			(code)
+			
+			$collection = new DomainCollection();
+			$obj = $collection->findBy('id', 10); // Fetch the DomainObject with id 10
+			
+			(end code)
+		
+		Parameters:
+			(string) $key - The key to match agains
+			(mixed) $value - The value to match agains
+		
+		Returns:
+			The <DomainObject> with the value, or false if not found.
+	*/
+	
+	public function findBy($key, $value)
+	{
+		foreach  ( $this as $obj )
+		{
+			if ( $obj->$key == $value )
+			{
+				return $obj;
+			}
+		}
+		return false;
+	}
 }
