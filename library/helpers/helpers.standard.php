@@ -49,7 +49,22 @@ function p($str = '')
 function url()
 {
 	$args = func_get_args();
-	echo COWL_BASE . implode('/', $args);
+	echo Cowl::url($args);
+}
+
+/*
+	Function:
+		make_url
+	
+	Convenience function to create a URL string, like <url> does, without outputting it.
+	
+	See: <url>
+*/
+
+function make_url()
+{
+	$args = func_get_args();
+	return Cowl::url($args);
 }
 	
 /*
@@ -298,4 +313,3 @@ function flash()
 		Current::$request->setInfo($key, false);
 	}
 }
-
