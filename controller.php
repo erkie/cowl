@@ -233,8 +233,13 @@ class Controller
 	
 	public function getSuitableResponseType()
 	{
+		// COWL_override_response_type is deprecated, but still supported
 		if ( isset($_REQUEST['COWL_override_response_type']) )
 			return $_REQUEST['COWL_override_response_type'];
+		
+		// Use ?response_type instead
+		if ( isset($_REQUEST['response_type']) )
+			return $_REQUEST['response_type'];
 		
 		// Return JSON of is an ajax-request otherwise <Controller::$default_type>
 		return isset($_SERVER['HTTP_X_REQUESTED_WITH']) || isset($_REQUEST['COWL_was_requested_with']) ? 'json' : self::$default_type;
