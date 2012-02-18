@@ -32,6 +32,7 @@
 	'paths.urls.css_packaged' => "css/release_",
 	'paths.urls.gfx'          => "css/gfx/",
 	'paths.urls.js'           => "js/",
+	'paths.urls.js_packaged'  => "js/release_",
 	'paths.urls.files'        => "files/",
 
 	'paths.validator_messages' => '~/library/validators/error_strings.php',
@@ -49,6 +50,7 @@
 	// JS Handler and Compressor
 	'plugins.js.path'  => "~/library/plugins/js/plugin.js.php",
 	'plugins.js.cache' => "static.js",
+	'plugins.js.force_update' => true,
 
 	// Routing
 	'plugins.routing.path' => "~/library/plugins/plugin.routing.php",
