@@ -5,6 +5,10 @@
 		DomainCollection
 	
 	General purpose class for a database rowset and lazy instantiaton of <DomainObject>-objects.
+	
+	This class has a special state when serialized. When serialized it loses everything it knows
+	about where it came from and any database related data. It becomes just an array of
+	<DomainObject>s.
 */
 
 class DomainCollection implements Iterator, Countable
@@ -36,10 +40,29 @@ class DomainCollection implements Iterator, Countable
 		$this->mapper = $mapper;
 	}
 	
+	public function __sleep()
+	{
+		// Make sure all instances are loaded before saving
+		$this->getData();
+		return array('instances');
+	}
+	
+	public function __wakeup()
+	{
+		$this->result = false;
+		$this->mapper = false;
+	}
+	
 	// Method: DomainCollection::rewind
 	// For <Iterator>
 	public function rewind()
 	{
+		if ( ! $this->result )
+		{
+			reset($this->instances);
+			return;
+		}
+		
 		$this->result->rewind();
 	}
 	
@@ -47,6 +70,9 @@ class DomainCollection implements Iterator, Countable
 	// For <Iterator>
 	public function current()
 	{
+		if ( ! $this->result )
+			return current($this->instances);
+		
 		return $this->get($this->result->key());
 	}
 	
@@ -54,6 +80,8 @@ class DomainCollection implements Iterator, Countable
 	// For <Iterator>
 	public function key()
 	{
+		if ( ! $this->result )
+			return key($this->instances);
 		return $this->result->key();
 	}
 	
@@ -61,6 +89,8 @@ class DomainCollection implements Iterator, Countable
 	// For <Iterator>
 	public function next()
 	{
+		if ( ! $this->result )
+			return next($this->instances);
 		$this->result->next();
 		return $this->get($this->result->key());
 	}
@@ -69,6 +99,8 @@ class DomainCollection implements Iterator, Countable
 	// Interfaces <DBResult::prev>
 	public function prev()
 	{
+		if ( ! $this->result )
+			return prev($this->instances);
 		$this->result->prev();
 		return $this->current();
 	}
@@ -77,6 +109,11 @@ class DomainCollection implements Iterator, Countable
 	// For <Iterator>
 	public function valid()
 	{
+		if ( ! $this->result )
+		{
+			$key = key($this->instances);
+	        return $key !== null && $key !== false;
+		}
 		return $this->result->valid();
 	}
 	
@@ -92,6 +129,8 @@ class DomainCollection implements Iterator, Countable
 	
 	public function count()
 	{
+		if ( ! $this->result )
+			return count($this->instances);
 		return $this->result->getNumRows();
 	}
 	
@@ -112,7 +151,7 @@ class DomainCollection implements Iterator, Countable
 	{		
 		if ( ! isset($this->instances[$index]) )
 		{
-			if ( ! $this->result->get($index) )
+			if ( ! $this->result || ! $this->result->get($index) )
 			{
 				return false;
 			}
@@ -273,5 +312,39 @@ class DomainCollection implements Iterator, Countable
 			$ret[] = $d->$key;
 		
 		return $ret;
+	}
+	
+	/*
+		Method:
+			DomainCollection::findBy
+		
+		Find an entry in the DomainCollection by specified key and value.
+		
+		Example:
+			(code)
+			
+			$collection = new DomainCollection();
+			$obj = $collection->findBy('id', 10); // Fetch the DomainObject with id 10
+			
+			(end code)
+		
+		Parameters:
+			(string) $key - The key to match agains
+			(mixed) $value - The value to match agains
+		
+		Returns:
+			The <DomainObject> with the value, or false if not found.
+	*/
+	
+	public function findBy($key, $value)
+	{
+		foreach  ( $this as $obj )
+		{
+			if ( $obj->$key == $value )
+			{
+				return $obj;
+			}
+		}
+		return false;
 	}
 }

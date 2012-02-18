@@ -91,7 +91,7 @@ class Logging extends Plugin
 	{
 		$request_time = microtime(true) - COWL_START_TIME;
 				
-		$this->log("request_done", sprintf("took %01.6f ms. %s", $request_time, $_SERVER['REQUEST_URI']));
+		$this->log("request_done", sprintf("took %01.6f s. %s", $request_time, $_SERVER['REQUEST_URI']));
 		$this->save();
 	}
 	
@@ -100,7 +100,7 @@ class Logging extends Plugin
 	public function postStaticServe(StaticServer $server)
 	{
 		$request_time = microtime(true) - COWL_START_TIME;
-		$this->log("static_serve", sprintf("took %01.6f ms. %s", $request_time, $server->getPath()));
+		$this->log("static_serve", sprintf("took %01.6f s. %s", $request_time, $server->getPath()));
 		
 		// Logging static file requests is optional since it floods the logs
 		if ( Current::$config->get('plugins.logging.log_static_files') )
@@ -143,11 +143,11 @@ class Logging extends Plugin
 		$time = $db->getQueryTime();
 		$query = str_replace(array("\n", "\t"), array(" ", ""), $query);
 		
-		$this->log($this->tmp, sprintf("%01.6f ms. %s", $time, $query));
+		$this->log($this->tmp, sprintf("%01.6f s. %s", $time, $query));
 		
 		if ( $time > 0.25 )
 		{
-			$this->log('SLOW_QUERY', sprintf("took %01.6f ms. %s", $time, $query));
+			$this->log('SLOW_QUERY', sprintf("took %01.6f s. %s", $time, $query));
 		}
 	}
 }

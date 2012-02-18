@@ -86,12 +86,18 @@ class Cowl
 	*/
 	
 	public static function redirect($url)
-	{
+	{	
+		// Make sure override certain request params are passed by upon redirect
 		if ( isset($_SERVER['HTTP_X_REQUESTED_WITH']) )
 			$url .= (strstr($url, '?') ? '&' : '?') . 'COWL_was_requested_with=' . $_SERVER['HTTP_X_REQUESTED_WITH'];
 		
+		// COWL_override_response_type is deprecated.
 		if ( isset($_REQUEST['COWL_override_response_type']) )
 			$url .= (strstr($url, '?') ? '&' : '?') . 'COWL_override_response_type=' . $_REQUEST['COWL_override_response_type'];
+
+		// Use response_type instead
+		if ( isset($_REQUEST['response_type']) )
+			$url .= (strstr($url, '?') ? '&' : '?') . 'response_type=' . $_REQUEST['response_type'];
 		
 		header('Location: ' . $url);
 		exit($url);
