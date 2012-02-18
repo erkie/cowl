@@ -50,6 +50,10 @@ class StaticServer
 	// The type of the file. (based on the extension)
 	protected $type;
 	
+	// Property: StaticServer::$is_locked
+	// If the path has been locked
+	protected $is_locked = false;
+	
 	/*
 		Constructor
 		
@@ -71,12 +75,12 @@ class StaticServer
 	
 	private function parsePath()
 	{
-		if ( empty($this->path) || (! strstr($this->path, 'gfx') && ! strstr($this->path, 'css')) )
+		if ( empty($this->path) || (! strstr($this->path, 'gfx') && ! strstr($this->path, 'css') && ! strstr($this->path, 'js')) )
 		{
 			$this->is_file = false;
 			return;
 		}
-
+		
 		// Check to see if it really exists
 		if ( file_exists($this->path) )
 		{
@@ -170,8 +174,33 @@ class StaticServer
 	
 	public function setPath($path)
 	{
+		if ( $this->is_locked ) return;
 		$this->path = $path;
 		$this->parsePath();
+	}
+	
+	/*
+		Method:
+			lockPath
+		
+		Lock path so subsequent calls to <StaticServer::setPath> are ignored.
+	*/
+	
+	public function lockPath()
+	{
+		$this->is_locked = true;
+	}
+	
+	/*
+		Method:
+			unlockPath
+		
+		Unlock the path, if previously locked by <StaticServer::lockPath>
+	*/
+	
+	public function unlockPath()
+	{
+		$this->is_locked = false;
 	}
 	
 	/*
