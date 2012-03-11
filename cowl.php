@@ -178,3 +178,19 @@ class Cowl
 		return self::$timers;
 	}
 }
+
+/*
+	Function:
+		array_last
+	
+	Nice clean way of getting the last element of an array in one line.
+	
+	Parameters:
+		$arr - The array
+*/
+
+function array_last($arr)
+{
+	$last = end($arr);
+	return $last;
+}

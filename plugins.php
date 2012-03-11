@@ -130,7 +130,7 @@ class Plugins
 	
 	public static function makeName($filename)
 	{
-		$name = preg_replace('/plugin\.(.*?)\.php/', '$1', end(explode('/', $filename)));
+		$name = preg_replace('/plugin\.(.*?)\.php/', '$1', array_last(explode('/', $filename)));
 		return str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
 	}
 }

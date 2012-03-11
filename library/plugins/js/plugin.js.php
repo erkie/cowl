@@ -11,7 +11,7 @@ class JS extends Plugin
 		
 	}
 	
-	public function commandRun(Command $command, $method, RequestData $request)
+	public function commandRun(Command $command, $method, $request)
 	{
 		// Get packages requested by command
 		$js_packages = $command->getJS();
