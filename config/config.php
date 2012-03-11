@@ -50,7 +50,7 @@
 	// JS Handler and Compressor
 	'plugins.js.path'  => "~/library/plugins/js/plugin.js.php",
 	'plugins.js.cache' => "static.js",
-	'plugins.js.force_update' => true,
+	'plugins.js.force_update' => false, // = Performance murderer!!!
 
 	// Routing
 	'plugins.routing.path' => "~/library/plugins/plugin.routing.php",
