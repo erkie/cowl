@@ -18,7 +18,7 @@ class Routing extends Plugin
 		Parse routes from config.ini and reroute <Controller::$path> if necessary.
 	*/
 	
-	public function prePathParse($controller, $server)
+	public function prePathParse(Controller $controller, StaticServer $server)
 	{
 		try {
 			$this->path = $controller->getPath();

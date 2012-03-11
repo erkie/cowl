@@ -81,7 +81,7 @@ class Logging extends Plugin
 	
 	// Plugin hooks
 	
-	public function prePathParse($args)
+	public function prePathParse(Controller $controller, StaticServer $server)
 	{
 		$this->log("request", $_SERVER['REQUEST_URI']);
 	}
