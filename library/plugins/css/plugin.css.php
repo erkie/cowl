@@ -30,6 +30,10 @@ class CSS extends Plugin
 	// However, if set to false, the compiled CSS file will still be updated if the source CSS is updated, but if any dependency is updated, it will not get updated.
 	private $force_update;
 	
+	// Property: CSS::$is_package
+	// Boolean that will be true if the file requested is a packaged file
+	private $is_package = false;
+	
 	/*
 		Constructor
 		
@@ -178,6 +182,11 @@ class CSS extends Plugin
 		
 		$server->setPath($cache->getFile());
 		$controller->setPath($cache->getFile());
+		
+		// Prevent the path from being changed now
+		$server->lockPath();
+		
+		$this->is_package = true;
 	}
 
 	/*
@@ -192,6 +201,9 @@ class CSS extends Plugin
 
 	public function preStaticServe(StaticServer $server)
 	{
+		// If file was a package file, don't do anything
+		if ( $this->is_package ) return;
+		
 		// If the type isn't css we don't touch it
 		if ( $server->getType() != 'css' )
 			return;
@@ -202,7 +214,7 @@ class CSS extends Plugin
 		// Compile and cache CSS file.
 		$cache = new FileCache($cache_path, $path);
 		$cache->setExtension('css');
-
+		
 		if ( $cache->isOutDated() || $this->force_update )
 		{
 			$contents = file_get_contents($path);

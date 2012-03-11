@@ -82,7 +82,7 @@ function css()
 	{
 		foreach ( $stylesheets as $stylesheet )
 		{
-			printf('<link rel="stylesheet" type="text/css" media="all" href="%s" />' . PHP_EOL, $stylesheet);
+			printf('<link rel="stylesheet" type="text/css" media="all" href="%s?%s" />' . PHP_EOL, $stylesheet, Current::$config->get('release_tag'));
 		}
 	}
 }
@@ -109,7 +109,7 @@ function js()
 	{
 		foreach ( $scripts as $script )
 		{
-			printf('<script type="text/javascript" src="%s"></script>', Cowl::url($script));
+			printf('<script type="text/javascript" src="%s?%s"></script>', Cowl::url($script), Current::$config->get('release_tag'));
 		}
 	}
 	
