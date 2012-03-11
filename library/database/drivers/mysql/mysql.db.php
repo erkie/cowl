@@ -54,7 +54,6 @@ class MySQLDB extends DBDriver
 		if ( ! $this->conn )
 		{
 			$this->conn = @mysql_connect($server, $user, $password);
-			
 			if ( ! $this->conn )
 			{
 				throw new MySQLDBConnectionException(mysql_error());

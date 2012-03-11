@@ -95,7 +95,7 @@ class StaticServer
 		}
 		
 		// Get the extension
-		$this->type = strtolower(end(explode('.', $this->path)));
+		$this->type = strtolower(array_last(explode('.', $this->path)));
 		
 		// Bad filetype!
 		if ( in_array($this->type, self::$BAD) )

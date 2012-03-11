@@ -502,7 +502,7 @@ abstract class DataMapper
 		$db = Current::db($this->driver);
 		
 		$query = $this->builder->buildCount($args, $order, $offset, $amount);
-		$ret = end($db->execute($query)->row());
+		$ret = array_last($db->execute($query)->row());
 		
 		Current::$plugins->hook('postDBQuery', $this, $query, $db);
 		
