@@ -374,6 +374,21 @@ abstract class DataMapper
 	
 	/*
 		Method:
+			DataMapper::save
+		
+		Alias for <DataMapper::uptodate>.
+		
+		<DataMapper::uptodate> will be deprecated in favor of <DataMapper::save>.
+	*/
+	
+	public function save()
+	{
+		$args = func_get_args();
+		return call_user_func_array(array($this, 'uptodate'), $args);
+	}
+	
+	/*
+		Method:
 			DataMapper::insert
 		
 		Inserts the $object into the database. It uses the fields with a default value and values present to build the query, so you must properly populate the object before inserting.
