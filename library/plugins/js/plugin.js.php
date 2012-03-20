@@ -42,7 +42,7 @@ class JS extends Plugin
 	{
 		$mode = Current::$config->get('mode');
 		$js_packages = $command->getJS();
-		
+			
 		if ( $mode == 'production' )
 		{
 			$this->packageForProduction($js_packages);
@@ -111,11 +111,14 @@ class JS extends Plugin
 	*/
 	
 	public function packageForProduction($js_packages)
-	{
+	{	
 		$packages = Current::$config->get('js');
 		$this->files = Current::$request->getInfo('js');
 		
-		foreach ( $packages as $package => $files )
+		if ( ! is_array($js_packages) )
+			return;
+			
+		foreach ( $js_packages as $package )
 		{
 			$this->files[] = $this->packaged_dir . $package . '.js';
 		}
@@ -130,6 +133,9 @@ class JS extends Plugin
 	
 	private function setFiles()
 	{
+		if ( ! is_array($this->files) )
+			return;
+		
 		foreach ( $this->files as $file )
 		{
 			Current::$request->setInfo('js[]', $file);
