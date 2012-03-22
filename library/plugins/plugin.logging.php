@@ -83,7 +83,7 @@ class Logging extends Plugin
 	
 	public function prePathParse(Controller $controller, StaticServer $server)
 	{
-		$this->log("request", $_SERVER['REQUEST_URI']);
+		$this->log("request", isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'No URI');
 	}
 		
 	// FrontController-related hooks

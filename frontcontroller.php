@@ -50,7 +50,7 @@ class FrontController
 		Cache::setDir(COWL_CACHE_DIR);
 		Current::initialize(COWL_DIR);
 		
-		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
+		$this->path = isset($_SERVER['argv']) ? @$_SERVER['argv'][1] : str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		
 		Cowl::timer('set_defaults');
 		

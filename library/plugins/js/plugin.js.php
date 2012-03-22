@@ -123,7 +123,15 @@ class JS extends Plugin
 			$this->files[] = $this->packaged_dir . $package . '.js';
 		}
 	}
-	
+
+	public function buildAll()
+	{
+		$packages = array_keys(Current::$config->get('js'));
+		$this->packageForProduction($packages);
+		foreach ( $packages as $package )
+			$this->buildPackage($package);
+	}
+
 	/*
 		Method:
 			JS::setFiles
@@ -184,12 +192,26 @@ class JS extends Plugin
 		
 		// Get package name from request path
 		$package = preg_replace('#\.js$#', '', substr($path, strlen($url_path)));
+		$filepath = $this->buildPackage($package);
+		
+		if ( ! $filepath )
+			return;
+
+		$server->setPath($filepath);
+		$controller->setPath($filepath);
+
+		$server->lockPath();
+		$this->is_package = true;
+	}
+
+	private function buildPackage($package)
+	{
 		$files = $this->getFilesForPackage($package);
 		
 		// Package actually exists
 		if ( ! $files )
 			return;
-		
+
 		$cache_path = $this->cache . '.' . $package;
 		
 		$cache = new Cache($cache_path, 60*60*24*365);
@@ -207,13 +229,6 @@ class JS extends Plugin
 			$updated = JSMin::minify($contents);
 			$cache->update($updated);
 		}
-		
-		$server->setPath($cache->getFile());
-		$controller->setPath($cache->getFile());
-		
-		$server->lockPath();
-		
-		$this->is_package = true;
 	}
 
 	/*

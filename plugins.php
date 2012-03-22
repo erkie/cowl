@@ -48,8 +48,15 @@ class Plugins
 			require($path);
 			
 			$name = Plugins::makeName($path);
-			$this->plugins[] = new $name();
+			$this->plugins[$plugin] = new $name();
 		}
+	}
+
+	public function get($plugin)
+	{
+		if ( ! isset($this->plugins[$plugin]) )
+			return false;
+		return $this->plugins[$plugin];
 	}
 	
 	/*
