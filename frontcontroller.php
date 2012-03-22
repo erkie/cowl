@@ -49,8 +49,11 @@ class FrontController
 		
 		Cache::setDir(COWL_CACHE_DIR);
 		Current::initialize(COWL_DIR);
-		
-		$this->path = isset($_SERVER['argv']) ? @$_SERVER['argv'][1] : str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
+
+		if ( COWL_CLI )
+			$this->parseCLIPath();
+		else
+			$this->parseRequestPath();
 		
 		Cowl::timer('set_defaults');
 		
@@ -89,6 +92,18 @@ class FrontController
 		Helpers::load('standard', 'form');
 		
 		Cowl::timerEnd('init');
+	}
+	
+	private function parseCLIPath()
+	{
+		$this->path = $_SERVER['argv'][1];
+		
+		Controller::$SEPARATOR = ':';
+	}
+	
+	private function parseRequestPath()
+	{
+		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 	}
 	
 	/*

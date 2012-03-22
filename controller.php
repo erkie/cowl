@@ -9,7 +9,7 @@
 
 class Controller
 {
-	const SEPARATOR = '/';
+	public static $SEPARATOR = '/';
 	
 	// Property: Controller::$path
 	// The path to be parsed
@@ -247,7 +247,7 @@ class Controller
 	
 	public function getPiecesFromPath()
 	{
-		return explode('/', trim($this->path, '/'));
+		return explode(self::$SEPARATOR, trim($this->path, '/'));
 	}
 	
 	public function isCommandInBaseDirectory()

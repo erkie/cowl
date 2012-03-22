@@ -1,5 +1,9 @@
 <?php
 
+// Constant: COWL_CLI
+// True if called from terminal/CLI
+define('COWL_CLI', isset($_SERVER['argv']));
+
 // Constant: COWL_DIR
 // Contains the path in which Cowl is set up.
 define('COWL_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);

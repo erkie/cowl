@@ -21,6 +21,8 @@ class JS extends Plugin
 	
 	public function __construct()
 	{
+		// Just set some paths and config options
+		
 		list($packaged_dir, $cache, $release_tag, $force_update) = Current::$config->gets(
 			'paths.urls.js_packaged', 'plugins.js.cache', 'release_tag',
 			'plugins.js.force_update'
@@ -42,7 +44,7 @@ class JS extends Plugin
 	{
 		$mode = Current::$config->get('mode');
 		$js_packages = $command->getJS();
-			
+		
 		if ( $mode == 'production' )
 		{
 			$this->packageForProduction($js_packages);
@@ -115,23 +117,12 @@ class JS extends Plugin
 		$packages = Current::$config->get('js');
 		$this->files = Current::$request->getInfo('js');
 		
-		if ( ! is_array($js_packages) )
-			return;
-			
 		foreach ( $js_packages as $package )
 		{
 			$this->files[] = $this->packaged_dir . $package . '.js';
 		}
 	}
-
-	public function buildAll()
-	{
-		$packages = array_keys(Current::$config->get('js'));
-		$this->packageForProduction($packages);
-		foreach ( $packages as $package )
-			$this->buildPackage($package);
-	}
-
+	
 	/*
 		Method:
 			JS::setFiles
@@ -186,7 +177,7 @@ class JS extends Plugin
 		$path = strtolower($server->getPath());
 		$url_path = COWL_BASE . $this->packaged_dir;
 		
-		// Path begins with release path
+		// Path begins with release path, then we build it if need be
 		if ( strncmp($path, $url_path, strlen($url_path)) !== 0 )
 			return;
 		
@@ -194,15 +185,26 @@ class JS extends Plugin
 		$package = preg_replace('#\.js$#', '', substr($path, strlen($url_path)));
 		$filepath = $this->buildPackage($package);
 		
+		// No package here
 		if ( ! $filepath )
 			return;
-
+		
 		$server->setPath($filepath);
 		$controller->setPath($filepath);
 
 		$server->lockPath();
 		$this->is_package = true;
 	}
+	
+	/*
+		Method:
+			JS::buildPackage
+		
+		Build package. Takes the package name, minifies and combines the related files to one file.
+		
+		Returns:
+			The path to the file on disk
+	*/
 
 	private function buildPackage($package)
 	{
@@ -229,43 +231,25 @@ class JS extends Plugin
 			$updated = JSMin::minify($contents);
 			$cache->update($updated);
 		}
+		
+		return $cache->getFile();
 	}
-
+	
 	/*
 		Method:
-			JS::preStaticServe
+			JS::buildAll
 		
-		This hook will be called when a normal JS file has been requested
-		
-		Parameters:
-			$args - The $argv array of the request.
+		Build all packages at once. Useful for automated building.
 	*/
-
-	public function preStaticServe(StaticServer $server)
+	
+	public function buildAll($force = true)
 	{
-		// If the type isn't js we don't touch it
-		if ( $server->getType() != 'js' || $this->is_package )
-			return;
-
-		$path = $server->getPath();
-		$cache_path = $this->cache . '.' . preg_replace('#\W#', '', $path);
-
-		// Compile and cache JS file.
-		$cache = new FileCache($cache_path, $path);
-		$cache->setExtension('js');
-
-		if ( $cache->isOutDated() || $this->force_update )
-		{
-			$contents = file_get_contents($path);
-
-			$compiler = new JSCompiler($contents);
-			$updated = $compiler->compile();
-
-			$cache->update($updated);
-		}
-
-		// Change the path to be the cached file instead
-		$server->setPath($cache->getFile());
+		$this->force_update = $force;
+		
+		$packages = array_keys(Current::$config->get('js'));
+		
+		$this->packageForProduction($packages);
+		array_walk($packages, array($this, 'buildPackage'));
 	}
 	
 	private function parsePath($path)

@@ -153,35 +153,10 @@ class CSS extends Plugin
 		
 		// Get package name from request path
 		$package = preg_replace('#\.css$#', '', substr($path, strlen($this->packaged_dir)));
-		$files = $this->getFilesForPackage($package);
+		$filepath = $this->buildPackage($package);
 		
-		// Package actually exists
-		if ( ! $files )
-			return;
-		
-		$cache_path = $this->cache . '.' . $package;
-		
-		$cache = new Cache($cache_path, 60*60*24*365);
-		$cache->setExtension('css');
-		
-		if ( $cache->isOutDated() || $this->force_update )
-		{
-			// Make the compiler compile all the files together
-			$contents = '';
-			foreach ( $files as $file )
-			{
-				$contents .= file_get_contents($file);
-			}
-			
-			$compiler = new CSSCompiler($contents);
-			$compiler->compile();
-			$updated = $compiler->compress();
-			
-			$cache->update($updated);
-		}
-		
-		$server->setPath($cache->getFile());
-		$controller->setPath($cache->getFile());
+		$server->setPath($filepath);
+		$controller->setPath($filepath);
 		
 		// Prevent the path from being changed now
 		$server->lockPath();
@@ -227,5 +202,54 @@ class CSS extends Plugin
 
 		// Change the path to be the cached file instead
 		$server->setPath($cache->getFile());
+	}
+	
+	private function buildPackage($package)
+	{
+		$files = $this->getFilesForPackage($package);
+		
+		// Package actually exists
+		if ( ! $files )
+			return;
+		
+		$cache_path = $this->cache . '.' . $package;
+		
+		$cache = new Cache($cache_path, 60*60*24*365);
+		$cache->setExtension('css');
+		
+		if ( $cache->isOutDated() || $this->force_update )
+		{
+			// Make the compiler compile all the files together
+			$contents = '';
+			foreach ( $files as $file )
+			{
+				$contents .= file_get_contents($file);
+			}
+			
+			$compiler = new CSSCompiler($contents);
+			$compiler->compile();
+			$updated = $compiler->compress();
+			
+			$cache->update($updated);
+		}
+		
+		return $cache->getFile();
+	}
+	
+	/*
+		Method:
+			buildAll
+		
+		Build all assets into production files.
+	*/
+	
+	public function buildAll($force = true)
+	{
+		$this->force_update = $force;
+			
+		$packages = array_keys(Current::$config->get('css'));
+		
+		$this->packageForProduction($packages);
+		array_walk($packages, array($this, 'buildPackage'));
 	}
 }
