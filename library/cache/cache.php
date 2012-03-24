@@ -173,10 +173,13 @@ class Cache
 		$directories = substr($name, 0, strrpos($name, '/'));
 		if ( ! is_dir($directories))
 		{
+			$oldmask = umask(0); // If umask isn't 0 mkdir doesn't always set the correct permissions
 			mkdir($directories, 0777, 1);
+			umask($oldmask);
 		}
 		
 		fclose(fopen($name, 'w'));
+		chmod($name, 0777);
 	}
 	
 	/*
