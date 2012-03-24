@@ -49,7 +49,7 @@ function p($str = '')
 function url()
 {
 	$args = func_get_args();
-	echo Cowl::url($args);
+	p(Cowl::url($args));
 }
 
 /*
