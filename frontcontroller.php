@@ -103,7 +103,9 @@ class FrontController
 	
 	private function parseRequestPath()
 	{
-		$this->path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
+		$uri = explode('?', $_SERVER['REQUEST_URI']);
+		$uri = preg_replace('#^/index.php#', '', $uri[0]);
+		$this->path = $uri;
 	}
 	
 	/*
