@@ -29,7 +29,8 @@ abstract class DomainObject
 		Data members to be considered public. A flat numeric array.
 		
 		An empty array means no public data, which is default. This is for security reasons. It
-		can also include members added to the <DomainObject::$rest>.
+		can also include members added to the <DomainObject::$rest> and also getter-methods named
+		"get<valueinarray>" for dynamic getters.
 	*/
 	
 	protected $expose = array();
@@ -343,7 +344,7 @@ abstract class DomainObject
 			<DomainObject::getPublicData>
 		
 		Same as <DomainObject::getData>, but only return data that is considered public. This is set via the
-		<DomainObject::$exposed>
+		<DomainObject::$expose>
 	*/
 	
 	public function getPublicData()
@@ -353,6 +354,8 @@ abstract class DomainObject
 		{
 			if ( isset($this->values[$key]) )
 				$ret[$key] = $this->values[$key];
+			elseif ( method_exists($this, 'get' . $key) )
+				$ret[$key] = $this->{'get' . $key}();
 			elseif ( isset($this->rest[$key]) )
 				$ret[$key] = $this->rest[$key];
 			elseif ( $key == 'id' )
