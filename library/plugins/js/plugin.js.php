@@ -29,7 +29,7 @@ class JS extends Plugin
 		);
 		
 		$this->packaged_dir = $packaged_dir;
-		$this->cache = $release_tag . '.' . $cache;
+		$this->cache = 'tag.' . $release_tag . '.' . $cache;
 		$this->force_update = $force_update;
 	}
 	

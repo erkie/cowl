@@ -50,7 +50,7 @@ class CSS extends Plugin
 		
 		$this->url_dir = COWL_BASE . $url_dir;
 		$this->packaged_dir = COWL_BASE . $packaged_dir;
-		$this->cache = $release_tag . '.' . $cache;
+		$this->cache = 'tag.' . $release_tag . '.' . $cache;
 		$this->force_update = $force_update;
 		
 		Current::$request->setInfo('css', array());
