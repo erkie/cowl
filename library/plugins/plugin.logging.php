@@ -143,7 +143,11 @@ class Logging extends Plugin
 		$time = $db->getQueryTime();
 		$query = str_replace(array("\n", "\t"), array(" ", ""), $query);
 		
-		$this->log($this->tmp, sprintf("%01.6f s. %s", $time, $query));
+		// Only log all queries in non-production
+		if ( Current::$config->get('mode') !== 'production' )
+		{
+			$this->log($this->tmp, sprintf("%01.6f s. %s", $time, $query));
+		}
 		
 		if ( $time > 0.25 )
 		{
