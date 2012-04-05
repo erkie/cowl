@@ -442,8 +442,10 @@ abstract class DataMapper
 		Current::$plugins->hook('dbUpdate', $this, $object);
 		
 		$query = $this->builder->buildUpdate($object);
-		$result = $db->execute($query);
+		if ( $query )
+			$result = $db->execute($query);
 		
+		$object->markAsClean();
 		Current::$plugins->hook('postDBQuery', $this, $query, $db);
 		
 		return $object;
@@ -602,7 +604,7 @@ abstract class DataMapper
 		foreach ( $row as $field => $value )
 		{
 			if ( $field == 'id' ) $object->setID($value);
-			else $object->setRaw($field, $value);
+			else $object->setFromDB($field, $value);
 		}
 		$object->initialize();
 		return $object;

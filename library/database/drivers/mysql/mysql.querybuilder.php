@@ -387,14 +387,19 @@ class MySQLQueryBuilder
 	
 	public  function buildUpdate(DomainObject $object)
 	{
+		$values = $object->fetchDirty();
+		
+		if ( ! count($values) )
+			return false;
+		
 		$query = sprintf('UPDATE `%s` AS %s', $this->table, $this->prefix) . PHP_EOL;
 		
 		$query .= 'SET ';
-		foreach ( $object->fetch() as $key => $value )
+		foreach ( $values as $key => $value )
 		{
 			$query .= PHP_EOL . sprintf('%s = %s, ', $this->quoteField($key), $this->quote($value));
 		}
-		
+	
 		// Remove last ", "
 		$query = substr($query, 0, -2);
 		

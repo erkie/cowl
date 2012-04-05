@@ -42,6 +42,10 @@ abstract class DomainObject
 	// Property: <DomainObject::$rest>
 	// Holds other values that a need a home, but don't have a place in <DomainObject::$members>. This is for queries that fetch more things than just this DomainCollections' values.
 	private $rest = array();
+
+	// Property: <DomainObject::$dirty>
+	// An array of "dirty" values that need to be changed
+	private $dirty = array();
 	
 	// Property: <DomainObject::$validator>
 	// <Validator> for validating input.
@@ -78,7 +82,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::set>
+			DomainObject::set
 		
 		Set a member. If $raw is true, no form of validation will take place. Otherwise validation of input will occur, and on failure a <ValidatorFailException> will be thrown.
 		
@@ -104,15 +108,19 @@ abstract class DomainObject
 			}
 		}
 		// Do not validate until ensure is called
-		else/*if ( $raw || (! $raw && $this->validate($name, $value)) )*/
+		else
 		{
+			$old_value = isset($this->values[$name]) ? $this->values[$name] : null;
 			$this->values[$name] = $value;
+			
+			if ( $old_value != $value )
+				$this->dirty[$name] = true;
 		}
 	}
 	
 	/*
 		Method:
-			<DomainObject::setRaw>
+			DomainObject::setRaw
 		
 		Set a member without validating the new value.
 		
@@ -128,7 +136,25 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::get>
+			DomainObject::setFromDB
+		
+		Set a row with data from the database. 
+	*/
+	
+	public function setFromDB($name, $value)
+	{
+		$this->setRaw($name, $value);
+		
+		// Mark as "un-dirty"
+		if ( isset($this->members[$name]) )
+		{
+			unset($this->dirty[$name]);
+		}
+	}
+	
+	/*
+		Method:
+			DomainObject::get
 		
 		Return the value of a member. If $name is "id", use <DomainObject::getID> to fetch the ID (this is so <DomainObject::__get> will behave correctly).
 		
@@ -163,7 +189,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::__get>
+			DomainObject::__get
 		
 		Alternative form of <DomainObject::get>, for a more intuitive API.
 	*/
@@ -175,7 +201,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::__set>
+			DomainObject::__set
 		
 		Alternative form of <DomainObject::set>, for a more intuitive API.
 	*/
@@ -191,7 +217,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::setID>
+			DomainObject::setID
 		
 		Set the ID of the Object. Must be an integer, else <DOFaultyIDException> is thrown.
 		
@@ -209,23 +235,42 @@ abstract class DomainObject
 		$this->id = $id;
 	}
 	
-	// Method: <DomainObject::getID>
+	// Method: DomainObject::getID
 	// Get <DomainObject::$id>
 	public function getID()
 	{
 		return $this->id;
 	}
 	
-	// Method: <DomainObject::fetch>
+	// Method: DomainObject::fetch
 	// Fetch all values, in key => value form.
 	public function fetch()
 	{
 		return $this->values;
 	}
 	
+	// Method: DomainObject::fetchDirty
+	// Fetch all dirty values as key => value
+	public function fetchDirty()
+	{
+		$ret = array();
+		foreach ( $this->dirty as $key => $is_dirty )
+		{
+			$ret[$key] = $this->values[$key];
+		}
+		return $ret;
+	}
+	
+	// Method: DomainObject::markAsClean
+	// Mark DomainObject as clean
+	public function markAsClean()
+	{
+		$this->dirty = array();
+	}
+	
 	/*
 		Method:
-			<DomainObject::isErroneous>
+			DomainObject::isErroneous
 		
 		Checks if this <DomainObject> has it's <DomainObject::is_erroneous>-flag set.
 		
@@ -238,7 +283,7 @@ abstract class DomainObject
 		return $this->is_erroneous;
 	}
 	
-	// Method: <DomainObject::setError>
+	// Method: DomainObject::setError
 	// Set this to an erronous object.
 	public function setError()
 	{
@@ -247,7 +292,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::validate>
+			DomainObject::validate
 		
 		Try to validate a member against an input, using <Validator::validate>.
 		
@@ -332,7 +377,7 @@ abstract class DomainObject
 		return $this->validator;
 	}
 	
-	// Method: <DomainObject::getData>
+	// Method: DomainObject::getData
 	// Returns the data of the current object. That means a merge of <DomainObject::$values> and <DomainObject::$rest>
 	public function getData()
 	{
@@ -341,7 +386,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::getPublicData>
+			DomainObject::getPublicData
 		
 		Same as <DomainObject::getData>, but only return data that is considered public. This is set via the
 		<DomainObject::$expose>
@@ -366,7 +411,7 @@ abstract class DomainObject
 	
 	/*
 		Method:
-			<DomainObject::initialize>
+			DomainObject::initialize
 		
 		A method that is called when the object is initialized. For example, will be called when populated from the database.
 		
