@@ -232,7 +232,7 @@ abstract class DomainObject
 			throw new DOFaultyIDException();
 		}
 		
-		$this->id = $id;
+		$this->id = (int)$id;
 	}
 	
 	// Method: DomainObject::getID
