@@ -37,7 +37,7 @@
 
 	'paths.validator_messages' => '~/library/validators/error_strings.php',
 
-	'config.other' => array("app/config/user.php"),
+	'config.other' => array("app/config/config.php"),
 
 	// Plugins
 	'plugins.load' => array("css", "js", "routing"),

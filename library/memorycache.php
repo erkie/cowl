@@ -46,6 +46,18 @@ else
 			}
 		}
 		
+		/*
+			Method:
+				MemoryCache::set
+			
+			Store something in memory
+			
+			Parameters:
+				string $key - The key to store the object at
+				mixed $var - The object to store
+				int $expire - Seconds to store it
+		*/
+		
 		public function set($key, $var, $expire)
 		{
 			$this->cache->set($key, $var, 0, $expire);
