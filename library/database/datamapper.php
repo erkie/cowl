@@ -209,17 +209,7 @@ abstract class DataMapper
 		
 		if ( $this->state_dirty )
 		{
-			if ( is_null($args) )
-			{
-				$args = $this->state['args'];
-			}
-			
-			$order = $this->state['order'];
-			$offset = $this->state['offset'];
-			$amount = $this->state['amount'];
-			
-			$this->state_dirty = false;
-			$this->state = array('args' => array(), 'order' => null, 'offset' => null, 'amount' => null);
+			list($args, $order, $offset, $amount) = $this->getState($args);
 		}
 		
 		$query = $this->builder->buildFind($args, $order, $offset, $amount);
@@ -507,13 +497,7 @@ abstract class DataMapper
 	{
 		if ( $this->state_dirty )
 		{
-			if ( is_null($args) )
-			{
-				$args = $this->state['args'];
-			}
-			$order = $this->state['order'];
-			$offset = $this->state['offset'];
-			$amount = $this->state['amount'];
+			list($args, $order, $offset, $amount) = $this->getStateWithoutResetting($args);
 		}
 		
 		$db = Current::db($this->driver);
@@ -556,6 +540,16 @@ abstract class DataMapper
 			$data = func_get_args();
 			$data = array_slice($data, 1);
 		}
+		
+		if ( $this->state_dirty )
+		{
+			list($args, $order, $offset, $amount) = $this->getState();
+			$data['args'] = $args;
+			$data['order'] = $order;
+			$data['offset'] = $offset;
+			$data['amount'] = $amount;
+		}
+		
 		$query = $this->builder->format($query, $data);
 		$result = $db->execute($query);
 		
@@ -638,6 +632,59 @@ abstract class DataMapper
 	public function getTable()
 	{
 		return $this->table;
+	}
+	
+	/*
+		Method:
+			DataMapper::getState
+		
+		Convenience method for getting the state data. Will fetch the <DataMapper::$state> and reset it <DataMapper::$state_dirty>.
+		
+		To be used as:
+		
+			> $datamapper->filter(array('id >' => 10))->by('id desc')->limit(10, 20);
+			> list($args, $order, $offset, $amount) = $datamapper->getState();
+			
+				array(array('id >' => 10), 'id desc', 10, 20)
+		
+		Parameters:
+			$args - Override $state['args'] if passed in, useful if <DataMapper::$filter> is optional
+			(bool) $reset - Reset the state afterwords, default: true
+		
+		Returns:
+			array of values in order: args, order, offset and amount
+	*/
+	
+	public function getState($args = null, $reset = true)
+	{
+		if ( is_null($args) )
+		{
+			$args = $this->state['args'];
+		}
+		
+		$order = $this->state['order'];
+		$offset = $this->state['offset'];
+		$amount = $this->state['amount'];
+		
+		if ( $reset )
+		{
+			$this->state_dirty = false;
+			$this->state = array('args' => array(), 'order' => null, 'offset' => null, 'amount' => null);
+		}
+		
+		return array($args, $order, $offset, $amount);
+	}
+	
+	/*
+		Method:
+			DataMapper::getStateWithoutResetting
+		
+		Same as <DataMapper::getState> but doesn't reset the state.
+	*/
+	
+	public function getStateWithoutResetting($args = null)
+	{
+		return $this->getState($args, false);
 	}
 	
 	/*
