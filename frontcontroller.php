@@ -4,7 +4,7 @@ require('cowl.php');
 
 set_include_path(COWL_DIR . PATH_SEPARATOR . get_include_path());
 
-Cowl::timer('require system');
+Cowl::timer('cowl require system');
 
 require('controller.php');
 require('staticserver.php');
@@ -19,7 +19,7 @@ require('helpers.php');
 require('library/cache/cache.php');
 require('library/database/database.php');
 
-Cowl::timerEnd('require system');
+Cowl::timerEnd('cowl require system');
 
 /*
 	Class:
@@ -43,7 +43,7 @@ class FrontController
 	
 	public function __construct()
 	{
-		Cowl::timer('init');
+		Cowl::timer('cowl init');
 		
 		@session_start(); // I know that the @-notation is frowned upon, but adding it to session_start saves us unnecessary warnings
 		
@@ -55,16 +55,16 @@ class FrontController
 		else
 			$this->parseRequestPath();
 		
-		Cowl::timer('set_defaults');
+		Cowl::timer('cowl set defaults');
 		
 		// Get and set all directories for various things.
 		list(
-			$commands_dir, $plugins_dir, $model_dir,
-			$validators_dir, $library_dir, $view_dir,
-			$helpers_dir, $helpers_app_dir, $drivers_dir,
-			$app_dir, $view_layout_dir, $validator_error_messages)
+			$commands_dir, $model_dir, $validators_dir,
+			$library_dir, $view_dir, $helpers_dir,
+			$helpers_app_dir, $drivers_dir, $app_dir,
+			$view_layout_dir, $validator_error_messages)
 		= 
-			Current::$config->gets('paths.commands', 'paths.plugins', 'paths.model',
+			Current::$config->gets('paths.commands', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
 				'paths.helpers', 'paths.helpers_app', 'paths.drivers', 'paths.app',
 				'paths.layouts', 'paths.validator_messages');
@@ -82,16 +82,16 @@ class FrontController
 		Database::setPath($drivers_dir);
 		StaticServer::setDir($app_dir);
 		
-		Cowl::timerEnd('set_defaults');
+		Cowl::timerEnd('cowl set defaults');
 		
-		Cowl::timer('plugins_load');
-		Current::$plugins = new Plugins($plugins_dir);
-		Cowl::timerEnd('plugins_load');
+		Cowl::timer('cowl plugins load');
+		Current::$plugins = new Plugins();
+		Cowl::timerEnd('cowl plugins load');
 		
 		// Load default helper
 		Helpers::load('standard', 'form');
 		
-		Cowl::timerEnd('init');
+		Cowl::timerEnd('cowl init');
 	}
 	
 	private function parseCLIPath()
@@ -135,9 +135,9 @@ class FrontController
 		}
 		
 		// Parse arguments from path and call appropriate command
-		Cowl::timer('parse');
+		Cowl::timer('cowl parse');
 		$request = $this->controller->parse();
-		Cowl::timerEnd('parse');
+		Cowl::timerEnd('cowl parse');
 		
 		$command = new $request->argv[0];
 		
@@ -146,9 +146,9 @@ class FrontController
 		
 		Current::$plugins->hook('postPathParse', $request);
 		
-		Cowl::timer('command_run');
+		Cowl::timer('cowl command run');
 		$ret = $command->run($request);
-		Cowl::timerEnd('command_run');
+		Cowl::timerEnd('cowl command run');
 		
 		Current::$plugins->hook('postRun');
 		

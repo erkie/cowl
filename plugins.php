@@ -17,28 +17,22 @@ class Plugins
 		Constructor:
 			<Plugins::__construct>
 		
-		Calling the constructor loads and instansiates every plugin.
-		
-		Parameters:
-			$plugins_dir - An existing directory containing the plugins.
+		Calling the constructor loads and instansiates every plugin specified in plugins.load
 	*/
 	
-	public function __construct($plugins_dir = 'plugins/')
+	public function __construct()
 	{
-		$this->loadPlugins($plugins_dir);
+		$this->loadPlugins();
 	}
 	
 	/*
 		Method:
 			<Plugns::loadPlugins>
 		
-		Load plugins from a $dir, will instansiate them too.
-		
-		Parameters:
-			$dir - Directory to scan
+		Load plugins
 	*/
 	
-	private function loadPlugins($dir)
+	private function loadPlugins()
 	{
 		$plugins = Current::$config->get('plugins.load');
 		

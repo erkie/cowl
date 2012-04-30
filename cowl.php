@@ -24,8 +24,24 @@ if ( ! defined('COWL_BASE') )
 define('COWL_START_TIME', microtime(true));
 
 // Constant: COWL_DEBUG_MODE
-// Define to true if you want to debug Cowl. For example activate timers.
+// Define to true if you want to debug Cowl.
 define('COWL_DEBUG_MODE', false);
+
+/*
+	Function:
+		array_last
+	
+	Nice clean way of getting the last element of an array in one line.
+	
+	Parameters:
+		$arr - The array
+*/
+
+function array_last($arr)
+{
+	$last = end($arr);
+	return $last;
+}
 
 /*
 	Class:
@@ -126,7 +142,6 @@ class Cowl
 	
 	public static function timer($label)
 	{
-		if ( ! COWL_DEBUG_MODE ) return;
 		self::$timers[$label] = microtime(true);
 	}
 	
@@ -142,7 +157,6 @@ class Cowl
 	
 	public static function timerEnd($label)
 	{
-		if ( ! COWL_DEBUG_MODE ) return;
 		self::$timers[$label] = microtime(true) - self::$timers[$label];
 		return self::$timers[$label];
 	}
@@ -162,7 +176,6 @@ class Cowl
 	
 	public static function getTimer($label)
 	{
-		if ( ! COWL_DEBUG_MODE ) return;
 		return self::$timers[$label];
 	}
 	
@@ -178,23 +191,6 @@ class Cowl
 	
 	public static function getTimers()
 	{
-		if ( ! COWL_DEBUG_MODE ) return array();
 		return self::$timers;
 	}
-}
-
-/*
-	Function:
-		array_last
-	
-	Nice clean way of getting the last element of an array in one line.
-	
-	Parameters:
-		$arr - The array
-*/
-
-function array_last($arr)
-{
-	$last = end($arr);
-	return $last;
 }

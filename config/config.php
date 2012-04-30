@@ -20,7 +20,6 @@
 	'paths.app_css'    => "app/css/",
 
 	'paths.library'     => "~/library/",
-	'paths.plugins'     => "~/library/plugins/",
 	'paths.validators'  => "~/library/validators/",
 	'paths.registries'  => "~/library/registries/",
 	'paths.database'    => "~/library/database/",
