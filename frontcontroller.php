@@ -110,6 +110,31 @@ class FrontController
 	
 	/*
 		Method:
+			fixRequestForCLI
+	
+	 	When running through CLI the script is called as follows:
+			
+			$ php index.php forum:post about-bacon
+			... 
+			$ <cowl> subcommand:command:action param1 param2 ...
+		
+		So instead of the conventional URLs that are /subcommand/command/param1/param2/action
+		
+		Thusly the arguments for the method has to be interlaced correctly.
+	*/
+	
+	private function fixRequestForCLI($request)
+	{		
+		$args = array_slice($_SERVER['argv'], 2);
+		$argv = $request->argv;
+		$request->argv = array_merge(array_slice($argv, 0, count($argv)-1 ?: 1), $args);
+		
+		if ( count($argv) > 1 )
+		 	$request->argv[] = $argv[count($argv)-1];
+	}
+	
+	/*
+		Method:
 			<FrontController::execute>
 		
 		Use <Controller::parse> to parse the path, and call some plugin hooks on the way.
@@ -138,6 +163,11 @@ class FrontController
 		Cowl::timer('cowl parse');
 		$request = $this->controller->parse();
 		Cowl::timerEnd('cowl parse');
+	
+		if ( COWL_CLI )
+		{
+			$this->fixRequestForCLI($request);
+		}
 		
 		$command = new $request->argv[0];
 		
