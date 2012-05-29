@@ -358,7 +358,7 @@ abstract class DomainObject
 		
 		if ( count($this->validator->getErrors()) )
 		{
-			throw new ValidatorFailException($this->validator);
+			throw new ValidatorFailException($this->validator, print_r($this->validator->getErrors(), true));
 		}
 	}
 	
