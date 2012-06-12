@@ -7,8 +7,9 @@ class ValidatorFailException extends ValidatorException
 {
 	public $validator;
 	
-	public function __construct($validator)
+	public function __construct($validator, $message)
 	{
+		parent::__construct($message);
 		$this->validator = $validator;
 	}
 	
@@ -101,7 +102,7 @@ class Validator
 			}
 			else
 			{
-				throw new ValidatorFailException($funcname . ': "' . $input . '"');
+				throw new ValidatorFailException($this, $funcname . ': "' . $input . '"');
 			}
 		}
 		

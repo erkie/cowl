@@ -1,7 +1,6 @@
 <?php
 
 class LibraryNotFoundException extends Exception {}
-class LibraryAlreadyExistsException extends Exception {}
 
 /*
 	Class:
@@ -20,7 +19,7 @@ class Library
 		Method:
 			Library::load
 		
-		Loads all libraries. If they are not found in <Library::$path> a <LibraryNotFoundException> is thrown. If it already has been included, a <LibraryAlreadyExistsException> is thrown.
+		Loads all libraries. If they are not found in <Library::$path> a <LibraryNotFoundException> is thrown. 
 		
 		Parameters:
 			string $library1 - The name of the library to load
@@ -33,14 +32,11 @@ class Library
 		{
 			$name = self::$path . strtolower($library) . '.php';
 			if ( ! file_exists($name) )
-			{
 				throw new LibraryNotFoundException($library);
-			}
 			
+			// Already exists?
 			if ( class_exists($library) )
-			{
-				throw new LibraryAlreadyExistsException($library);
-			}
+				return true;
 			
 			require($name);
 		}
