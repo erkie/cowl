@@ -62,18 +62,18 @@ class FrontController
 			$commands_dir, $model_dir, $validators_dir,
 			$library_dir, $view_dir, $helpers_dir,
 			$helpers_app_dir, $drivers_dir, $app_dir,
-			$view_layout_dir, $validator_error_messages)
+			$view_layout_dir, $validator_error_messages, $lang)
 		= 
 			Current::$config->gets('paths.commands', 'paths.model',
 				'paths.validators', 'paths.library', 'paths.view',
 				'paths.helpers', 'paths.helpers_app', 'paths.drivers', 'paths.app',
-				'paths.layouts', 'paths.validator_messages');
+				'paths.layouts', 'paths.validator_messages', 'lang');
 		
 		Controller::setDir($commands_dir);	
 		DataMapper::setMappersDir($model_dir);
 		DataMapper::setObjectsDir($model_dir);
 		Validator::setPath($validators_dir);
-		Validator::loadStrings($validator_error_messages);
+		Validator::loadStrings($validator_error_messages, $lang);
 		Templater::setBaseDir($view_dir);
 		Templater::setLayoutDir($view_layout_dir);
 		Library::setPath($library_dir);	
@@ -105,6 +105,7 @@ class FrontController
 	{
 		$uri = explode('?', $_SERVER['REQUEST_URI']);
 		$uri = preg_replace('#^/index.php#', '', $uri[0]);
+		$uri = substr($uri, strlen(COWL_BASE)-1);
 		$this->path = $uri;
 	}
 	

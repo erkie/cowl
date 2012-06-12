@@ -337,14 +337,22 @@ abstract class DomainObject
 		and throwing a ValidatorFailException for all failed keys.
 		
 		If it comes across a bad value that value will be unset.
+		
+		Parameters:
+			(optional) $key1 - A list of keys to check
+			(optional) $keyN - ...
 	*/
 	
 	public function ensure()
 	{
+		$check = func_get_args();
+		$check = count($check) ? $check : false;
+		
 		foreach ( $this->members as $key => $value )
 		{
 			if ( isset($this->values[$key]) )
 				$val = $this->values[$key];
+			
 			elseif ( isset($value['default']) )
 			{
 				$val = $value['default'];
@@ -352,6 +360,10 @@ abstract class DomainObject
 			}
 			else
 				$val = null;
+			
+			// If specified by arguments not to check, skip it
+			if ( $check && ! in_array($key, $check) )
+				continue;
 			
 			$this->validate($key, $val);
 		}

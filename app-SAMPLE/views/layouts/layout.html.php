@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="content-type" content="text/html;charset=UTF-8" /> 
-		<title>Cowl</title>
+		<meta charset="UTF-8" />
+		<title>Your site</title>
 		
 		<?php css(); ?>
 	</head>
 	
-	<body>
+	<body id="page-<?php p($request->pieces[0]); ?>">
 		<div id="wrapper">
-			<h1><a href="<?php url(); ?>">Cowl</a></h1>
+			<h1><a href="<?php url(); ?>">Welcome, to your site</a></h1>
 			
 			<?php flash(); ?>
 			

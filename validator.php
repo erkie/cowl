@@ -66,10 +66,10 @@ class Validator
 			The path to load error messages from.
 	*/
 	
-	public static function loadStrings($path)
+	public static function loadStrings($path, $lang = 'en')
 	{
 		self::$error_messages = require($path);
-		self::$error_messages = self::$error_messages['en'];
+		self::$error_messages = self::$error_messages[$lang];
 	}
 	
 	/*

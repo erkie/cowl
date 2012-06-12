@@ -66,20 +66,16 @@ class Cowl
 		
 		It is useful because you do not have to worry about COWL_BASE everywhere. But in templates <url> should be used. (It's prettier)
 		
+		If the last parameter is an array, it will be used as query string parameters. 
+		
 		Example:
 			// COWL_BASE is /
-			
-			// Echoes /forum/topic/narwhals-and-me
 			echo Cowl::url('forum', 'topic', 'narwhals-and-me');
-			// Echoes /
+			 => /forum/topic/narwhals-and-me
 			echo Cowl::url()
-		
-			// COWL_BASE is /my-site/
-			
-			// Echoes /my-site/forum/topic/eat-cowl
-			echo Cowl::url('forum', 'topic', 'eat-cowl');
-			// Echoes /my-site/
-			echo Cowl::url();
+			 => /
+			echo Cowl::url('forum', array('sort' => 'desc'));
+			=> /forum?sort=desc
 		
 		Parameters:
 			(optional) $url - An array of pieces, if an array is passed all pieces will be ignored.
@@ -92,7 +88,20 @@ class Cowl
 	public static function url($url = null)
 	{
 		$args = is_array($url) ? $url : func_get_args();
-		return COWL_BASE . implode('/', $args);
+		
+		// Fetch params
+		if ( is_array(array_last($args)) )
+		{
+			$params = array_pop($args);
+			$params = array_map('urlencode', $params);
+			$query_string = '?' . fimplode('%__key__;=%__val__;', $params, '&');
+		}
+		else
+		{
+			$query_string = '';
+		}
+		
+		return COWL_BASE . implode('/', $args) . $query_string;
 	}
 	
 	/*
@@ -193,4 +202,95 @@ class Cowl
 	{
 		return self::$timers;
 	}
+}
+
+/*
+	Function:
+		fimplode
+	
+	Formatted implode. Implode an array of associative of arrays, replacing instances
+	of %key; with the value of the key. If the passed array is not associative, the variables
+	%__key__; and %__val__; are available.
+	
+	Examples:
+		$arr = array(
+			array(
+				'id' => 1,
+				'name' => 'Foo'
+			),
+			
+			array(
+				'id' => 2,
+				'name' => 'Bar'
+			)
+		);
+		
+		echo fimplode('<a href="?id=%id;">%name;</a>', $arr, ', ');
+		// <a href="?id=1">Foo</a>, <a href="?id=2">Bar</a>
+	
+	Parameters:
+		string $format_string - The string to use as template
+		array $arr - The array to implode
+		string $format_end - A string that shouldn't be added to the last element.
+					Subject to the same formatting rules as $format_string
+	
+	Returns:
+		The formatted string.
+*/
+
+function fimplode($format_string, $arr, $format_end = '')
+{
+	if ( ! is_string($format_string) )
+	{
+		user_error('Format string must be string', E_USER_WARNING);
+		die;
+	}
+	
+	if ( ! is_array($arr) )
+	{
+		user_error('Array must be array', E_USER_WARNING);
+		die;
+	}
+	
+	if ( ! is_string($format_end) )
+	{
+		user_error('Format end must be string, leave empty if you don\'t intend to use it', E_USER_WARNING);
+		die;
+	}
+	
+	$len = count($arr);
+	$index = 0;
+	$string = '';
+	foreach ( $arr as $key => $element )
+	{
+		if ( is_array($element) )
+		{
+			$keys = array_keys($element);
+			$values = array_values($element);
+			
+			foreach ( $values as $key => $value )
+			{
+				if ( ! is_string($value) )
+				{
+					unset($values[$key], $keys[$key]);
+				}
+			}
+		}
+		else
+		{
+			$keys = array('__key__', '__val__');
+			$values = array($key, $element);
+		}
+		foreach ( $keys as $k => $v )
+		{
+			$keys[$k] = '%' . $v . ';';
+		}
+		$string .= str_replace($keys, $values, $format_string);
+		if ( $index < $len-1 )
+		{
+			$string .= str_replace($keys, $values, $format_end);
+		}
+		$index++;
+	}
+	return $string;
 }

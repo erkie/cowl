@@ -61,6 +61,14 @@ function hidden_field_for($key, $html_attrs = array(), $options = array())
 	echo $form->input('input', $key, $html_attrs, array_merge(array('no_container' => true), $options));
 }
 
+function upload_field_for($key, $label, $html_attrs = array(), $options = array())
+{
+	$form = Current::$request->getInfo('active_form');
+	
+	$html_attrs['type'] = 'file';
+	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
+}
+
 function submit_button($value, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');

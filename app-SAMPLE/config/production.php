@@ -6,6 +6,6 @@
 	// Database
 	'db.server' =>   "localhost",
 	'db.user' =>   "root",
-	'db.password' => "",
-	'db.database' => "kickass"
+	'db.password' => "a|>4ssword",
+	'db.database' => "cowl"
 );

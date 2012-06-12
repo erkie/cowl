@@ -7,5 +7,5 @@
 	'db.server' =>   "localhost",
 	'db.user' =>   "root",
 	'db.password' => "",
-	'db.database' => "kickass"
+	'db.database' => "cowl"
 );
