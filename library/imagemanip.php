@@ -276,6 +276,7 @@ class ImageManip
 		list($img_w, $img_h) = $this->getSizeOnDisk();
 		
 		imagecopyresampled($this->res, $this->im, $this->dest_pos[0], $this->dest_pos[1], 0, 0, $w, $h, $img_w, $img_h);
+		imagedestroy($this->im);
 	}
 	
 	private function saveToDisk($filename)
@@ -286,6 +287,7 @@ class ImageManip
 			imagepng($this->res, $filename);
 		elseif ( $this->format == 'gif' )
 			imagegif($this->res, $filename);
+		imagedestroy($this->im);
 	}
 	
 	private function getSizeOnDisk()
