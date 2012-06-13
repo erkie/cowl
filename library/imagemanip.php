@@ -178,6 +178,7 @@ class ImageManip
 		if ( ! $this->max_allowed_size )
 			return false;
 		
+		list($sw, $sh) = $this->getSizeOnDisk();
 		return $sw > $this->max_allowed_size[0] || $sh > $this->max_allowed_size[1];
 	}
 	
