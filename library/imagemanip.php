@@ -16,6 +16,8 @@ class ImageManip
 	private $size = false;
 	private $max_size = false;
 	
+	private $max_allowed_size = array(4000, 4000);
+	
 	// Crop options
 	private $crop_gravity = array('center', 'center');
 	
@@ -85,6 +87,18 @@ class ImageManip
 	
 	/*
 		Method:
+			setMaxImageSize
+		
+		Set the max size allowed for an image. If it is larger than this <save> will return false.
+	*/
+	
+	public function setMaxImageSize($w, $h)
+	{
+		$this->max_allowed_size = array($w, $h);
+	}
+	
+	/*
+		Method:
 			setFormat
 		
 		Force a specific image format.
@@ -142,6 +156,9 @@ class ImageManip
 	
 	public function save($filename = false)
 	{
+		if ( $this->sourceImageIsTooLarge() )
+			return false;
+		
 		$this->openImage();
 		
 		if ( $this->max_size )
@@ -154,6 +171,14 @@ class ImageManip
 		$this->saveToDisk($filename ?: $this->path);
 		
 		return true;
+	}
+	
+	public function sourceImageIsTooLarge()
+	{
+		if ( ! $this->max_allowed_size )
+			return false;
+		
+		return $sw > $this->max_allowed_size[0] || $sh > $this->max_allowed_size[1];
 	}
 	
 	private function openImage()
