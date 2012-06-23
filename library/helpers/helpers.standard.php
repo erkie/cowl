@@ -28,7 +28,18 @@ function p($str = '')
 	else
 		$html = vsprintf($str, $args);
 	
-	echo htmlentities($html, ENT_COMPAT, 'UTF-8');
+	// We check that the passed $str is instance of HTMLSafeString because of the printf aspect of this function
+	if ( $str instanceof HTMLSafeString )
+		echo $html;
+	else
+		echo escape_html($html);
+}
+
+function escape_html($html)
+{
+	if ( $html instanceof HTMLSafeString )
+		return $html;
+	return htmlentities($html, ENT_COMPAT, 'UTF-8');
 }
 
 /*
@@ -182,7 +193,7 @@ function to_options(DomainCollection $collection, $key_value, $key_text, $select
 		$value = $object->get($key_value);
 		$is_selected = ($value == $selected) ? 'selected="selected" ' : '';
 		
-		$html .= sprintf('<option %svalue="%s">%s</option>', $is_selected, $value, $object->get($key_text));
+		$html .= sprintf('<option %svalue="%s">%s</option>', $is_selected, $value, escape_html($object->get($key_text)));
 	}
 	echo $html;
 }
@@ -219,5 +230,111 @@ function flash()
 		
 		// Remove the message from the flash as it has now been displayed
 		Current::$request->setInfo($key, false);
+	}
+}
+
+/*
+	Private class:
+	 	HTMLBuilder
+	
+	Used for building HTML
+*/
+
+class HTMLBuilder
+{
+	public $tag;
+	public $self_close = false;
+	public $value = '';
+	
+	private $attributes = array();
+	
+	public function __construct($tag, $self_close = false)
+	{
+		$this->tag = $tag;
+		$this->self_close = $self_close;
+	}
+	
+	public function setValue($val)
+	{
+		$this->value = $val;
+	}
+	
+	public function addAttributes($attrs)
+	{
+		foreach ( $attrs as $key => $val )
+		{
+			$this->addAttribute($key, $val);
+		}
+	}
+	
+	public function addAttribute($name, $value)
+	{
+		$this->attributes[$name] = escape_html($value);
+	}
+	
+	public function build()
+	{
+		$html = sprintf('<%s %s', $this->tag, $this->buildAttributes());
+		
+		if ( $this->self_close )
+			$html .= ' />';
+		else
+			$html .= sprintf('>%s</%s>', escape_html($this->value), $this->tag);
+		
+		return $html;
+	}
+	
+	private function buildAttributes()
+	{
+		return fimplode('%__key__;="%__val__;"', $this->attributes, ' ');
+	}
+}
+
+/*
+	Function:
+		link_to
+	
+	Output an HTML link.
+	
+	Parameters:
+		$text - Text to be linkified
+		$url - The URL to link to
+		(optional) $html_options - Array of HTML options
+*/
+
+function link_to($text, $url, $html_options = array())
+{
+	$builder = new HTMLBuilder('a');
+	$builder->addAttribute('href', $url);
+	$builder->addAttributes($html_options);
+	$builder->setValue($text);
+	echo $builder->build();
+}
+
+/*
+	Function:
+		safe
+	
+	Indicate that a string is safe to print out without escaping. This can be used with <p>, <link_to>,
+	and any other <HTMLBuilder> helper method.
+*/
+
+function safe($text)
+{
+	return new HTMLSafeString($text);
+}
+
+class HTMLSafeString
+{
+	public $text = '';
+	
+	public function __construct($text)
+	{
+		$this->text = $text;
+	}
+	
+	public function __toString()
+	{
+		return $this->text;
 	}
 }
