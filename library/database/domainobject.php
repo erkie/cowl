@@ -59,6 +59,10 @@ abstract class DomainObject
 	// A flag set to true if the <DomainObject> did not exist.
 	private $is_erroneous;
 	
+	// Property: <DomainObject::$mapper>
+	// The mapper for this particular <DomainObject>
+	public $mapper;
+	
 	/*
 		Constructor:
 			<DomainObject::__construct>
@@ -78,6 +82,8 @@ abstract class DomainObject
 		
 		$this->validator = new Validator();
 		$this->validator->setStoreErrors(true);
+		
+		$this->mapper = DataMapper::get(get_class($this));
 	}
 	
 	/*
