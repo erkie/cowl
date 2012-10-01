@@ -158,18 +158,34 @@ abstract class Command
 		// Prepare some stuff before firing the command
 		$this->requestBegan();
 		
-		// _This_ is where all the magic happens
-		$ret = call_user_func_array(array($this, $method), $args);
+		$this->error_occured = false;
 		
-		// If an array is returned it is used as pieces for a <Cowl::url> redirect
-		if ( is_array($ret) || (is_string($ret) && strlen($ret)) )
+		// _This_ is where all the magic happens
+		try {
+			$ret = call_user_func_array(array($this, $method), $args);
+			
+			// If an array is returned it is used as pieces for a <Cowl::url> redirect
+			if ( is_array($ret) || (is_string($ret) && strlen($ret)) )
+			{
+				$this->requestEnded();
+				return is_array($ret) ? Cowl::url($ret) : $ret;
+			}
+		}
+		catch (RegistryMemberNotFoundException $e)
 		{
-			$this->requestEnded();
-			return is_array($ret) ? Cowl::url($ret) : $ret;
+			header("HTTP/1.1 400 Bad Request");
+			$this->error_occured = 400;
 		}
 		
 		// Render the template
-		$this->template->render($this->view);
+		if ( ! $this->error_occured )
+		{
+			$this->template->render($this->view);
+		}
+		else
+		{
+			$this->template->renderError($this->error_occured);
+		}
 		
 		$this->requestEnded();
 	}
@@ -391,6 +407,23 @@ abstract class Command
 		// This is hard-coded as mysql, because the only supported DB is mysql.
 		// Change this if that ever changes.
 		Current::db('mysql')->output_query = true;
+	}
+	
+	/*
+		Method:
+			abort
+		
+		Set error flag with error code specified. Will _not_ abort current command. You must run 
+		
+		return $this->abort(500);
+		
+		For it to stop execution.
+	*/
+		
+	public function abort($code)
+	{
+		$this->error_occured = $code;
+		header("HTTP/1.1", true, $code);
 	}
 	
 	public abstract function index();

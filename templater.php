@@ -129,6 +129,34 @@ class Templater
 	
 	/*
 		Method:
+			<Templater::renderError>
+
+		Render an error page.
+	*/
+	
+	public function renderError($error_code)
+	{
+		$error_name = sprintf("error.%s.php", $error_code);
+		$generic_name = "error.500.php";
+		
+		if ( file_exists(self::$base_dir . $error_name) )
+			$this->template = self::$base_dir . $error_name;
+		elseif ( file_exists(self::$base_dir . $generic_name) )
+			$this->template = self::$base_dir . $generic_name;
+		
+		if ( $this->template )
+		{
+			extract($this->vars);
+			include($this->layout);
+		}
+		else
+		{
+			printf('<!DOCTYPE><title>%s - Error</title><h1>%s - error</h1><p>Something went wrong</p>', $error_code, $error_code);
+		}
+	}
+	
+	/*
+		Method:
 			<Templater::isOutDated>
 		
 		If the cache needs updating.
