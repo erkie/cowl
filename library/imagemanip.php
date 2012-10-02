@@ -300,7 +300,7 @@ class ImageManip
 			imagedestroy($this->im);
 	}
 	
-	private function getSizeOnDisk()
+	public function getSizeOnDisk()
 	{
 		list($width, $height) = getimagesize($this->path);
 		return array($width, $height);
