@@ -30,8 +30,15 @@ class ImageManip
 	private $res_size = array(0, 0);
 	private $dest_pos = array(0, 0);
 	
-	public function __construct($path)
+	public function __construct($path = false)
 	{
+		if ( ! $path )
+			return;
+		$this->setPath($path);
+	}
+	
+	public function setPath($path)
+	{	
 		if ( ! file_exists($path) )
 		{
 			throw new ImageManipFileNotFoundException($path);
