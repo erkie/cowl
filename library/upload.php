@@ -156,9 +156,8 @@ class Upload
 	
 	private function resolveCollisionWithRandomName()
 	{
-		$ext = $this->getExtension();
 		do {
-			$this->name = random(1111111, 9999999) . time() . uniqid() . '.' . $ext;
+			$this->setRandomName();
 		} while ( file_exists($this->getPath()) );
 	}
 	
@@ -170,6 +169,13 @@ class Upload
 			
 			$this->name = $this->addNumberToName();
 		} while ( file_exists($this->getPath()) );
+	}
+	
+	public function setRandomName()
+	{
+		$ext = $this->getExtension();
+		$this->name = rand(1111111, 9999999) . time() . uniqid() . '.' . $ext;
+		$this->name_collision_strategy = Upload::RANDOM;
 	}
 	
 	public function getPath()

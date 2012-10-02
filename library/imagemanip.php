@@ -232,6 +232,8 @@ class ImageManip
 		}
 		
 		$this->setSize($w, $h);
+		if ( ! $this->canvas_size )
+			$this->setCanvasSize($w, $h);
 	}
 	
 	private function makeCanvas()
@@ -294,7 +296,8 @@ class ImageManip
 			imagepng($this->res, $filename);
 		elseif ( $this->format == 'gif' )
 			imagegif($this->res, $filename);
-		imagedestroy($this->im);
+		else
+			imagedestroy($this->im);
 	}
 	
 	private function getSizeOnDisk()
