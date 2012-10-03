@@ -91,7 +91,7 @@ class Logging extends Plugin
 	{
 		$request_time = microtime(true) - COWL_START_TIME;
 				
-		$this->log("request_done", sprintf("took %01.6f s. %s", $request_time, $_SERVER['REQUEST_URI']));
+		$this->log("request_done", sprintf("took %01.6f s. %s", $request_time, ! COWL_CLI ? $_SERVER['REQUEST_URI'] : $_SERVER['argv'][1]));
 		$this->save();
 	}
 	

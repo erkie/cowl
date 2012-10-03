@@ -177,14 +177,17 @@ abstract class Command
 			$this->error_occured = 400;
 		}
 		
-		// Render the template
-		if ( ! $this->error_occured )
+		// Render the template if not in CLI environment
+		if ( ! COWL_CLI )
 		{
-			$this->template->render($this->view);
-		}
-		else
-		{
-			$this->template->renderError($this->error_occured);
+			if ( ! $this->error_occured )
+			{
+				$this->template->render($this->view);
+			}
+			else
+			{
+				$this->template->renderError($this->error_occured);
+			}
 		}
 		
 		$this->requestEnded();
