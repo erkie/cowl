@@ -26,7 +26,7 @@ function form_for($model, $path, $html_attrs = array())
 	$form = new FormHelper($model, $path, $html_attrs);
 	Current::$request->setInfo('active_form', $form);
 	
-	echo $form->start();
+	$form->output($form->start());
 	return $form;
 }
 
@@ -35,14 +35,14 @@ function text_field_for($key, $label, $html_attrs = array(), $options = array())
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'text';
-	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
+	$form->output($form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options)));
 }
 
 function text_area_for($key, $label, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
 	
-	echo $form->input('textarea', $key, $html_attrs, array_merge(array('label' => $label), $options));
+	$form->output($form->input('textarea', $key, $html_attrs, array_merge(array('label' => $label), $options)));
 }
 
 function password_field_for($key, $label, $html_attrs = array(), $options = array())
@@ -50,7 +50,7 @@ function password_field_for($key, $label, $html_attrs = array(), $options = arra
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'password';
-	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
+	$form->output($form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options)));
 }
 
 function hidden_field_for($key, $html_attrs = array(), $options = array())
@@ -58,7 +58,7 @@ function hidden_field_for($key, $html_attrs = array(), $options = array())
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'hidden';
-	echo $form->input('input', $key, $html_attrs, array_merge(array('no_container' => true), $options));
+	$form->output($form->input('input', $key, $html_attrs, array_merge(array('no_container' => true), $options)));
 }
 
 function upload_field_for($key, $label, $html_attrs = array(), $options = array())
@@ -66,7 +66,7 @@ function upload_field_for($key, $label, $html_attrs = array(), $options = array(
 	$form = Current::$request->getInfo('active_form');
 	
 	$html_attrs['type'] = 'file';
-	echo $form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options));
+	$form->output($form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options)));
 }
 
 function submit_button($value, $html_attrs = array(), $options = array())
@@ -76,13 +76,21 @@ function submit_button($value, $html_attrs = array(), $options = array())
 	$html_attrs['value'] = $value;
 	$html_attrs['type'] = 'submit';
 	
-	echo $form->field('input', $html_attrs, array_merge(array('key' => 'submit'), $options));
+	$form->output($form->field('input', $html_attrs, array_merge(array('key' => 'submit'), $options)));
 }
 
 function form_end()
 {
 	$form = Current::$request->getInfo('active_form');
-	echo $form->end();
+	$form->output($form->end());
+	
+	echo $form->buildOutput();
+}
+
+function form_errors()
+{
+	$form = Current::$request->getInfo('active_form');
+	$form->output(array($form, 'getUnprintedErrors'));
 }
 
 /*
@@ -112,6 +120,14 @@ class FormHelper
 	// The path that the form maps to
 	private $path;
 	
+	// Property: FormHelper::$printed_errors
+	// Keeps track of which fields have printed their errors, so we can spit out the rest too
+	private $printed_errors = array();
+	
+	// Property: FormHelper::$output
+	// An array of strings to be outputted
+	public $output = array();
+	
 	public function __construct($model, $path, $attributes = array(), $name = false)
 	{
 		$this->model = $model;
@@ -129,6 +145,12 @@ class FormHelper
 	
 	public function start()
 	{
+		$form = $this;
+		ob_start(function($a) use($form) {
+			$form->outputNoFlush($a);
+			return '';
+		});
+		
 		$attributes = $this->attributes;
 		$attributes['action'] = $this->path;
 		
@@ -244,6 +266,7 @@ class FormHelper
 			if ( isset($options['errors']) && count($options['errors']) )
 			{
 				$html .= ' ' . $this->buildErrors($options['errors']);
+				$this->printed_errors[] = $options['key'];
 			}
 		
 			$html .= sprintf('</%s>', $container_type);
@@ -281,6 +304,38 @@ class FormHelper
 		return $html;
 	}
 	
+	public function getUnprintedErrors()
+	{
+		$all_errors = $this->model->getValidator()->getErrors();
+		$all_keys = array_keys($all_errors);
+		
+		$unprinted_errors = array_diff($all_keys, $this->printed_errors);
+		
+		if ( ! count($unprinted_errors) )
+			return '';
+		
+		$errors = array();
+		foreach ( $unprinted_errors as $key )
+		{
+			$errors[$key] = $all_errors[$key];
+		}
+		
+		$errors = $this->model->getValidator()->getErrorMessages($errors);
+		
+		return $this->buildErrors($errors);
+	}
+	
+	public function output($str)
+	{
+		ob_flush();
+		$this->output[] = $str;
+	}
+	
+	public function outputNoFlush($str)
+	{
+		$this->output[] = $str;
+	}
+	
 	/*
 		Method:
 			FormHelper::end
@@ -290,6 +345,17 @@ class FormHelper
 	
 	public function end()
 	{
+		ob_end_clean();
 		return sprintf('</form>');
+	}
+	
+	public function buildOutput()
+	{
+		foreach ( $this->output as $key => $val )
+		{
+			if ( is_callable($val) )
+				$this->output[$key] = call_user_func_array($val, array());
+		}
+		return implode('', $this->output);
 	}
 }

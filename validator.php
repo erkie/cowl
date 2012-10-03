@@ -253,13 +253,17 @@ class Validator
 				'Display type must be either: list, grid'
 			)
 		
+		Parameters:
+			(optional) $errors - An array of errors to turn into messages. If not specified <Validator::getErrors> is used.
+		
 		Returns:
 			An array of strings
 	*/
 	
-	public function getErrorMessages()
+	public function getErrorMessages($errors = false)
 	{
-		$errors = $this->getErrors();
+		if ( ! $errors )
+			$errors = $this->getErrors();
 		$ret = array();
 		
 		foreach ( $errors as $key => $errs )
