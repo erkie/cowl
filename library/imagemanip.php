@@ -244,6 +244,9 @@ class ImageManip
 		// Create GD canvas
 		$this->res = imagecreatetruecolor($w, $h);
 		$this->res_size = array($w, $h);
+		
+		imagealphablending($this->res, false);
+		imagesavealpha($this->res, true);
 	}
 	
 	private function calculateCrop()

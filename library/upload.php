@@ -140,13 +140,13 @@ class Upload
 				
 				if ( ! $this->imanip->save() )
 				{
-					unlink($this->path);
+					unlink($this->getPath());
 					return $this->setError("no_imagemanip");
 				}
 			}
 			catch (ImageManipException $e)
 			{
-				unlink($this->path);
+				unlink($this->getPath());
 				return $this->setError("imagemanip_error");
 			}
 		}
