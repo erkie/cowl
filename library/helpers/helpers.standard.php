@@ -91,9 +91,14 @@ function css()
 	
 	if ( is_array($stylesheets) )
 	{
+		$tag = Current::$config->get('release_tag');
+		
+		if ( $tag === 'dev' )
+			$tag .= time();
+		
 		foreach ( $stylesheets as $stylesheet )
 		{
-			printf('<link rel="stylesheet" type="text/css" media="all" href="%s?%s" />' . PHP_EOL, $stylesheet, Current::$config->get('release_tag'));
+			printf('<link rel="stylesheet" type="text/css" media="all" href="%s?%s" />' . PHP_EOL, $stylesheet, $tag);
 		}
 	}
 }
@@ -118,9 +123,14 @@ function js()
 	
 	if ( is_array($scripts) )
 	{
+		$tag = Current::$config->get('release_tag');
+		
+		if ( $tag === 'dev' )
+			$tag .= time();
+		
 		foreach ( $scripts as $script )
 		{
-			printf('<script type="text/javascript" src="%s?%s"></script>', Cowl::url($script), Current::$config->get('release_tag'));
+			printf('<script type="text/javascript" src="%s?%s"></script>', Cowl::url($script), $tag);
 		}
 	}
 	
