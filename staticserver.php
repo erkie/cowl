@@ -23,7 +23,7 @@ class StaticServer
 	protected static $MIMES = array(
 		'json' => 'text/json',
 		'css' => 'text/css',
-		'js' => 'text/x-javascript',
+		'js' => 'application/javascript',
 		'jpg' => 'image/jpeg',
 		'jpeg' => 'image/jpeg',
 		'gif' => 'image/gif',
