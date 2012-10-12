@@ -281,7 +281,7 @@ class FormHelper
 		
 		$options['key'] = $key;
 		
-		if ( $this->model->get($key) )
+		if ( ! is_null($this->model->get($key)) )
 			$html_attrs['value'] = $this->model->get($key);
 		
 		// Errors?
