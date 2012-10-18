@@ -277,4 +277,5 @@ $self-clear:after {
     height: 0;
     visibility: hidden;
     clear: both;
+    overflow: hidden;
 }
