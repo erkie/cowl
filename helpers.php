@@ -19,6 +19,8 @@ class Helpers
 	// Path to app-wide helper files
 	private static $app_path = 'app/helpers/';
 	
+	private static $loaded = array();
+	
 	/*
 		Method:
 			Helpers::load
@@ -53,6 +55,11 @@ class Helpers
 	
 	private static function fetch($helper)
 	{
+		if ( in_array($helper, self::$loaded) )
+			return;
+		
+		self::$loaded[] = $helper;
+		
 		$pieces = explode('/', $helper);
 		$name = array_pop($pieces);
 		
