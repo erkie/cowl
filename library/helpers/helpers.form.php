@@ -69,6 +69,19 @@ function upload_field_for($key, $label, $html_attrs = array(), $options = array(
 	$form->output($form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options)));
 }
 
+function checkbox_for($key, $label, $html_attrs = array(), $options = array())
+{
+	$form = Current::$request->getInfo('active_form');
+	
+	$html_attrs['type'] = 'checkbox';
+	if ( $form->model->get($key) )
+		$html_attrs['checked'] = 'checked';
+	if ( ! isset($html_attrs['value']))
+		$html_attrs['value'] = '1';
+	
+	$form->output($form->input('input', $key, $html_attrs, array_merge(array('label' => $label), $options)));
+}
+
 function submit_button($value, $html_attrs = array(), $options = array())
 {
 	$form = Current::$request->getInfo('active_form');
@@ -106,7 +119,7 @@ class FormHelper
 	
 	// Property: FormHelper::$model
 	// The model we are modeling a form for.
-	private $model;
+	public $model;
 	
 	// Property: FormHelper::$model_name
 	// The canonical name of the model, can be used in HTML
@@ -281,7 +294,7 @@ class FormHelper
 		
 		$options['key'] = $key;
 		
-		if ( ! is_null($this->model->get($key)) )
+		if ( ! isset($html_attrs['value']) && ! is_null($this->model->get($key)) )
 			$html_attrs['value'] = $this->model->get($key);
 		
 		// Errors?
