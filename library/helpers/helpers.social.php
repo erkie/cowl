@@ -61,7 +61,7 @@ function share_url($name, $url, $title, $short_title)
 	$db = array(
 		'facebook' => sprintf('https://www.facebook.com/sharer/sharer.php?s=100&p%%5Bsummary%%5D=%s&p%%5Burl%%5D=%s&p%%5Btitle%%5D=%s', $title, $url, $short_title),
 		'twitter' => sprintf('http://twitter.com/share?text=%s&url=%s', $title, $url),
-		'googleplus' => sprintf('https://m.google.com/app/plus/x/?v=compose&hideloc=1&content=%s%%20%s', $url, $title),
+		'googleplus' => sprintf('https://plus.google.com/share?url=%s&h1=%s', $url, $title),
 		'reddit' => sprintf('http://reddit.com/submit?url=%s&title=%s', $url, $title)
 	);
 	
