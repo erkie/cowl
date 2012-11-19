@@ -20,14 +20,14 @@
 		(string) $short_title - A short title used where possible
 */
 
-function share_links($limit = 4, $url = '', $title = '', $short_title = '')
+function share_links($limit = 4, $url = '', $title = '', $short_title = '', $image = '')
 {
 	$db = array('facebook', 'twitter', 'googleplus', 'reddit');
 	
 	$ret = array();
 	foreach ( $db as $key )
 	{
-		$ret[$key] = share_url($key, $url, $title, $short_title);
+		$ret[$key] = share_url($key, $url, $title, $short_title, $image);
 	}
 	
 	return array_slice($ret, 0, $limit);
@@ -52,7 +52,7 @@ function share_links($limit = 4, $url = '', $title = '', $short_title = '')
 		$short_title - A short title used where possible
 */
 
-function share_url($name, $url, $title, $short_title)
+function share_url($name, $url, $title, $short_title, $image = '')
 {
 	$url = urlencode($url);
 	$title = urlencode($title);
@@ -65,5 +65,12 @@ function share_url($name, $url, $title, $short_title)
 		'reddit' => sprintf('http://reddit.com/submit?url=%s&title=%s', $url, $title)
 	);
 	
-	return $db[$name];
+	$share_url = $db[$name];
+	
+	if ( strlen($image) && $name === "facebook" )
+	{
+		$share_url .= sprintf('&p[images][0]=%s', $image);
+	}
+	
+	return $share_url;
 }
