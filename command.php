@@ -1,6 +1,7 @@
 <?php
 
 class TPLNotAllowedHereException extends Exception {}
+class AbortCommand extends Exception {}
 
 /*
 	Abstract Class:
@@ -173,8 +174,15 @@ abstract class Command
 		}
 		catch (RegistryMemberNotFoundException $e)
 		{
-			header("HTTP/1.1 400 Bad Request");
 			$this->error_occured = 400;
+			header("HTTP/1.1", true, 400);
+		}
+		catch (AbortCommand $e)
+		{
+			$code = $e->getMessage();
+
+			$this->error_occured = $code;
+			header("HTTP/1.1", true, $code);
 		}
 		
 		// Render the template if not in CLI environment
@@ -427,6 +435,8 @@ abstract class Command
 	{
 		$this->error_occured = $code;
 		header("HTTP/1.1", true, $code);
+		
+		throw new AbortCommand($code);
 	}
 	
 	public abstract function index();
