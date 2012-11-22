@@ -40,7 +40,7 @@ class JS extends Plugin
 		This method is called after a command is run to determine which JS files to be included.
 	*/
 
-	public function commandRun(Command $command, $method, $request)
+	public function postCommandRun(Command $command, $method, $request)
 	{
 		$mode = Current::$config->get('mode');
 		$js_packages = $command->getJS();

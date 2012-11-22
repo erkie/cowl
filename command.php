@@ -148,9 +148,6 @@ abstract class Command
 			$request->response_type = 'html';
 		}
 		
-		// Set cache path, if the user wants to activate cacheing
-		$this->template->setCachePath($this->getCachePath(), 600);
-		
 		$this->template->add('request', $request);
 		Current::$request->setInfo('request', $request);
 		
@@ -161,8 +158,8 @@ abstract class Command
 		
 		$this->error_occured = false;
 		
-		// _This_ is where all the magic happens
 		try {
+			// _This_ is where all the magic happens
 			$ret = call_user_func_array(array($this, $method), $args);
 			
 			// If an array is returned it is used as pieces for a <Cowl::url> redirect
@@ -184,6 +181,12 @@ abstract class Command
 			$this->error_occured = $code;
 			header("HTTP/1.1", true, $code);
 		}
+		
+
+		if ( $this->error_occured )
+			if ( method_exists($this, 'onError') )
+				$this->onError();
+		Current::$plugins->hook('postCommandRun', $this, $method, $request);
 		
 		// Render the template if not in CLI environment
 		if ( ! COWL_CLI )
@@ -276,24 +279,6 @@ abstract class Command
 		$path = implode('/', array_slice($args, 0, -1));
 		$path .= 'view.' . end($args) . '.php';
 		$this->view = $path;
-	}
-	
-	/*
-		Method:
-			<Command::getCachePath>
-		
-		Returns:
-			A path that can be used for any <Cache> that is specific to the method run and arguments passed.
-	*/
-	
-	public function getCachePath()
-	{
-		$argv = $this->request->argv;
-		$pieces = $this->request->pieces;
-		array_shift($argv);
-		$pieces = array_merge($pieces, $argv);
-
-		return 'command.' . implode('.', $pieces);
 	}
 	
 	// Method: <Command::getJS>

@@ -63,7 +63,7 @@ class CSS extends Plugin
 		Get the commands specified and CSS packages
 	*/
 	
-	public function commandRun(Command $command, $method, $args)
+	public function postCommandRun(Command $command, $method, $args)
 	{
 		$mode = Current::$config->get('mode');
 		
