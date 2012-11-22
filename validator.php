@@ -102,7 +102,7 @@ class Validator
 			}
 			else
 			{
-				throw new ValidatorFailException($this, $funcname . ': "' . $input . '"');
+				throw new ValidatorFailException($this, $func . ': "' . $input . '"');
 			}
 		}
 		
