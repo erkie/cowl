@@ -175,7 +175,7 @@ class ImageManip
 		$this->calculateCrop();
 		$this->perform();
 		
-		$this->saveToDisk($filename ?: $this->path);
+		$this->saveToDisk($filename ? $filename : $this->path);
 		
 		return true;
 	}
@@ -239,7 +239,7 @@ class ImageManip
 	private function makeCanvas()
 	{	
 		// Get size of canvas
-		list($w, $h) = $this->canvas_size ?: $this->getSizeOnDisk();
+		list($w, $h) = $this->canvas_size ? $this->canvas_size : $this->getSizeOnDisk();
 		
 		// Create GD canvas
 		$this->res = imagecreatetruecolor($w, $h);
@@ -284,7 +284,7 @@ class ImageManip
 
 	private function perform()
 	{
-		list($w, $h) = $this->size ?: $this->res_size;
+		list($w, $h) = $this->size ? $this->size : $this->res_size;
 		list($img_w, $img_h) = $this->getSizeOnDisk();
 		
 		imagecopyresampled($this->res, $this->im, $this->dest_pos[0], $this->dest_pos[1], 0, 0, $w, $h, $img_w, $img_h);

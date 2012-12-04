@@ -128,7 +128,7 @@ class FrontController
 	{		
 		$args = array_slice($_SERVER['argv'], 2);
 		$argv = $request->argv;
-		$request->argv = array_merge(array_slice($argv, 0, count($argv)-1 ?: 1), $args);
+		$request->argv = array_merge(array_slice($argv, 0, count($argv)-1 ? count($argv)-1 : 1), $args);
 		
 		if ( count($argv) > 1 )
 		 	$request->argv[] = $argv[count($argv)-1];
