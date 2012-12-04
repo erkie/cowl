@@ -343,6 +343,7 @@ class FormHelper
 	
 	public function output($str)
 	{
+		@ob_flush();
 		$this->output[] = $str;
 	}
 	
