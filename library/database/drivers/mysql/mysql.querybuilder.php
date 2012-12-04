@@ -272,7 +272,10 @@ class MySQLQueryBuilder
 			{
 				if ( is_array($val) )
 				{
-					$args[$key] = $key . implode(' AND ' . $key, $val);
+					if ( ! $this->isIn($key) )
+						$args[$key] = $key . implode(' AND ' . $key, $val);
+					else
+						$args[$key] = sprintf('%s(%s)', $this->quoteStatement($key), join(', ', $val));
 				}
 				else
 				{
@@ -579,5 +582,17 @@ class MySQLQueryBuilder
 	public static function escape($str)
 	{
 		return mysql_real_escape_string($str);
+	}
+	
+	/*
+		Method:
+			isIn
+		Check if it is an IN(a, b, c) field. Which will be in the format of "foo in"
+	*/
+	
+	public function isIn($field)
+	{
+		$pieces = explode(' ', trim($field));
+		return isset($pieces[1]) && strtolower($pieces[1]) == 'in';
 	}
 }
