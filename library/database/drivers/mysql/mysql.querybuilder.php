@@ -331,11 +331,11 @@ class MySQLQueryBuilder
 		$query = '';
 		if ( is_array($orderby) )
 		{
-			$query .= 'ORDER BY ' . implode(', ', array_map(array($this, 'quoteStatement'), $orderby)) . PHP_EOL;
+			$query .= 'ORDER BY ' . implode(', ', array_map(array($this, 'quoteOrder'), $orderby)) . PHP_EOL;
 		}
 		elseif (! empty($orderby) )
 		{
-			$query .= 'ORDER BY ' . $this->quoteStatement($orderby) . PHP_EOL;
+			$query .= 'ORDER BY ' . $this->quoteOrder($orderby) . PHP_EOL;
 		}
 		return $query;
 	}
@@ -516,6 +516,18 @@ class MySQLQueryBuilder
 		if ( count($pieces) == 1 )
 		{
 			return $this->quoteField($pieces[0]) . ' = ';
+		}
+		
+		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
+	}
+	
+	public function quoteOrder($field)
+	{
+		$pieces = explode(' ', trim($field));
+		
+		if ( count($pieces) == 1 )
+		{
+			return $this->quoteField($pieces[0]);
 		}
 		
 		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
