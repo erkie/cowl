@@ -159,10 +159,7 @@ class FormHelper
 	public function start()
 	{
 		$form = $this;
-		ob_start(function($a) use($form) {
-			$form->outputNoFlush($a);
-			return '';
-		});
+		ob_start(array($this, 'obCallback'));
 		
 		$attributes = $this->attributes;
 		$attributes['action'] = $this->path;
@@ -177,6 +174,12 @@ class FormHelper
 		
 		$attributes = fimplode('%__key__;="%__val__;"', $attributes, ' ');
 		return sprintf('<form %s>', $attributes);
+	}
+	
+	private function obCallback($a)
+	{
+		$this->outputNoFlush($a);
+		return '';
 	}
 	
 	/*
@@ -340,7 +343,7 @@ class FormHelper
 	
 	public function output($str)
 	{
-		ob_flush();
+		@ob_flush();
 		$this->output[] = $str;
 	}
 	

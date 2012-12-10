@@ -272,7 +272,10 @@ class MySQLQueryBuilder
 			{
 				if ( is_array($val) )
 				{
-					$args[$key] = $key . implode(' AND ' . $key, $val);
+					if ( ! $this->isIn($key) )
+						$args[$key] = $key . implode(' AND ' . $key, $val);
+					else
+						$args[$key] = sprintf('%s(%s)', $this->quoteStatement($key), join(', ', $val));
 				}
 				else
 				{
@@ -328,11 +331,11 @@ class MySQLQueryBuilder
 		$query = '';
 		if ( is_array($orderby) )
 		{
-			$query .= 'ORDER BY ' . implode(', ', array_map(array($this, 'quoteStatement'), $orderby)) . PHP_EOL;
+			$query .= 'ORDER BY ' . implode(', ', array_map(array($this, 'quoteOrder'), $orderby)) . PHP_EOL;
 		}
 		elseif (! empty($orderby) )
 		{
-			$query .= 'ORDER BY ' . $this->quoteStatement($orderby) . PHP_EOL;
+			$query .= 'ORDER BY ' . $this->quoteOrder($orderby) . PHP_EOL;
 		}
 		return $query;
 	}
@@ -518,6 +521,18 @@ class MySQLQueryBuilder
 		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
 	}
 	
+	public function quoteOrder($field)
+	{
+		$pieces = explode(' ', trim($field));
+		
+		if ( count($pieces) == 1 )
+		{
+			return $this->quoteField($pieces[0]);
+		}
+		
+		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
+	}
+	
 	/*
 		Method:
 			QueryBuilder::quoteValue
@@ -579,5 +594,17 @@ class MySQLQueryBuilder
 	public static function escape($str)
 	{
 		return mysql_real_escape_string($str);
+	}
+	
+	/*
+		Method:
+			isIn
+		Check if it is an IN(a, b, c) field. Which will be in the format of "foo in"
+	*/
+	
+	public function isIn($field)
+	{
+		$pieces = explode(' ', trim($field));
+		return isset($pieces[1]) && strtolower($pieces[1]) == 'in';
 	}
 }

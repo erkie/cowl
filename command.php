@@ -84,81 +84,81 @@ abstract class Command
 		$args = array_slice($request->argv, 1);
 		$method = (count($args)) ? $args[count($args) - 1] : false;
 		
-		// Call initialize method, if one exists
-		if ( method_exists($this, 'initialize') )
-		{
-			$redirect = call_user_func_array(array($this, 'initialize'), $args);
-			if ( is_array($redirect) || is_string($redirect) )
-			{
-				$url = is_array($redirect) ? Cowl::url($redirect) : $redirect;
-				return $url;
-			}
-		}
-		
-		// If aliases exists, "reroute" the method
-		if ( isset($this->aliases[$method]) && method_exists($this, $this->aliases[$method]) )
-		{
-			$method = $this->aliases[$method];
-		}
-		elseif ( ! $method || $method == 'run' || ! method_exists($this, $method) )
-		{
-			$method = 'index';
-		}
-		
-		// Ensure that method is public
-		$reflection = new ReflectionMethod(get_class($this), $method);
-		if ( ! $reflection->isPublic() )
-		{
-			$method = 'index';
-		}
-		
-		$request->method = $method;
-		
-		// Set view to either the base-name of the class, which is default or the name of the method
-		if ( is_null($this->view) && $this->template->exists('view.' . $method . '.php') )
-		{
-			$this->setView($method);
-		}
-		else if ( is_null($this->view) )
-		{
-			$this->setView($view);
-		}
-		
-		// If a global layout type has defined use that
-		
-		// Set the appropriate layout for the response type
 		try {
-			$type = isset($this->layouts['*']) ? $this->layouts['*'] : $request->response_type;
-			$type = isset($this->layouts[$type]) ? $this->layouts[$type] : $type;
-			
-			// Check if the user has restricted which layouts can automatically be set
-			$allowed_types = Current::$config->getOr('allowed_layouts', true);
-			
-			if ( is_array($allowed_types) && ! in_array($type, $allowed_types) )
+			// Call initialize method, if one exists
+			if ( method_exists($this, 'initialize') )
 			{
-				throw new TPLNotAllowedHereException($type);
+				$redirect = call_user_func_array(array($this, 'initialize'), $args);
+				if ( is_array($redirect) || is_string($redirect) )
+				{
+					$url = is_array($redirect) ? Cowl::url($redirect) : $redirect;
+					return $url;
+				}
 			}
-			$this->template->setType($type);
-		}
-		catch ( Exception $e )
-		{
-			$html_type = isset($this->layouts['html']) ? $this->layouts['html'] : 'html';
-			$this->template->setType($html_type);
+		
+			// If aliases exists, "reroute" the method
+			if ( isset($this->aliases[$method]) && method_exists($this, $this->aliases[$method]) )
+			{
+				$method = $this->aliases[$method];
+			}
+			elseif ( ! $method || $method == 'run' || ! method_exists($this, $method) )
+			{
+				$method = 'index';
+			}
+		
+			// Ensure that method is public
+			$reflection = new ReflectionMethod(get_class($this), $method);
+			if ( ! $reflection->isPublic() )
+			{
+				$method = 'index';
+			}
+		
+			$request->method = $method;
+		
+			// Set view to either the base-name of the class, which is default or the name of the method
+			if ( is_null($this->view) && $this->template->exists('view.' . $method . '.php') )
+			{
+				$this->setView($method);
+			}
+			else if ( is_null($this->view) )
+			{
+				$this->setView($view);
+			}
+		
+			// If a global layout type has defined use that
+		
+			// Set the appropriate layout for the response type
+			try {
+				$type = isset($this->layouts['*']) ? $this->layouts['*'] : $request->response_type;
+				$type = isset($this->layouts[$type]) ? $this->layouts[$type] : $type;
 			
-			$request->response_type = 'html';
-		}
+				// Check if the user has restricted which layouts can automatically be set
+				$allowed_types = Current::$config->getOr('allowed_layouts', true);
+			
+				if ( is_array($allowed_types) && ! in_array($type, $allowed_types) )
+				{
+					throw new TPLNotAllowedHereException($type);
+				}
+				$this->template->setType($type);
+			}
+			catch ( Exception $e )
+			{
+				$html_type = isset($this->layouts['html']) ? $this->layouts['html'] : 'html';
+				$this->template->setType($html_type);
+			
+				$request->response_type = 'html';
+			}
 		
-		$this->template->add('request', $request);
-		Current::$request->setInfo('request', $request);
+			$this->template->add('request', $request);
+			Current::$request->setInfo('request', $request);
 		
-		Current::$plugins->hook('commandRun', $this, $method, $request);
+			Current::$plugins->hook('commandRun', $this, $method, $request);
 		
-		// Prepare some stuff before firing the command
-		$this->requestBegan();
+			// Prepare some stuff before firing the command
+			$this->requestBegan();
 		
-		$this->error_occured = false;
+			$this->error_occured = false;
 		
-		try {
 			// _This_ is where all the magic happens
 			$ret = call_user_func_array(array($this, $method), $args);
 			
