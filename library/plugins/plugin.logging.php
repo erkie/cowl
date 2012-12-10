@@ -36,7 +36,7 @@ class Logging extends Plugin
 	
 	private function formatMessage($type, $message)
 	{
-		return sprintf("(%s) %-12s = %s", date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']), $type, $message);
+		return sprintf("(%s) %-12s = %s (%s)", date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']), $type, $message, $_SERVER['REMOTE_ADDR']);
 	}
 	
 	/*
