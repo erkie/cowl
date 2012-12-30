@@ -427,6 +427,11 @@ abstract class DomainObject
 		return $ret;
 	}
 	
+	public function getMemberInfo($key)
+	{
+		return $this->members[$key];
+	}
+	
 	/*
 		Method:
 			DomainObject::initialize

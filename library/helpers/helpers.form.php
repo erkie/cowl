@@ -106,6 +106,17 @@ function form_errors()
 	$form->output(array($form, 'getUnprintedErrors'));
 }
 
+function form_errors_for($key)
+{
+	$form = Current::$request->getInfo('active_form');
+	$form->output($form->buildErrorsForKey($key));
+}
+
+function current_form()
+{
+	return Current::$request->getInfo('active_form');
+}
+
 /*
 	Class:
 		FormHelper
@@ -318,6 +329,15 @@ class FormHelper
 		$html .= '</ul>';
 		
 		return $html;
+	}
+	
+	public function buildErrorsForKey($key)
+	{
+		$this->printed_errors[] = $key;
+		$errors = $this->model->getValidator()->getErrors($key);
+		if ( ! count($errors) )
+			return '';
+		return $this->buildErrors($errors);
 	}
 	
 	public function getUnprintedErrors()
