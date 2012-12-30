@@ -181,11 +181,22 @@ abstract class Command
 			$this->error_occured = $code;
 			header("HTTP/1.1", true, $code);
 		}
+		catch (CowlRedirectCommand $e)
+		{
+			$url = $e->getURL();
+			
+			if ( is_array($url) || (is_string($url) && strlen($url)) )
+			{
+				$this->requestEnded();
+				return is_array($url) ? Cowl::url($url) : $url;
+			}
+		}
 		
 
 		if ( $this->error_occured )
 			if ( method_exists($this, 'onError') )
 				$this->onError();
+		
 		Current::$plugins->hook('postCommandRun', $this, $method, $request);
 		
 		// Render the template if not in CLI environment
@@ -409,11 +420,7 @@ abstract class Command
 		Method:
 			abort
 		
-		Set error flag with error code specified. Will _not_ abort current command. You must run 
-		
-		return $this->abort(500);
-		
-		For it to stop execution.
+		Set error flag with error code specified. Will stop execution of current command, if not in try {} catch {} block.
 	*/
 		
 	public function abort($code)
@@ -424,6 +431,33 @@ abstract class Command
 		throw new AbortCommand($code);
 	}
 	
+	/*
+		Method:
+			redirect
+		
+		Redirect the user without having to return anything.
+	*/
+	
+	public function redirect($url)
+	{
+		throw new CowlRedirectCommand($url);
+	}
+	
 	public abstract function index();
 }
 
+
+class CowlRedirectCommand extends Exception
+{
+	private $url;
+	
+	public function __construct($url)
+	{
+		$this->url = $url;
+	}
+	
+	public function getURL()
+	{
+		return $this->url;
+	}
+}
