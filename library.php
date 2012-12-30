@@ -15,6 +15,10 @@ class Library
 	// The directory in which library files are contained.
 	private static $path = 'library/';
 	
+	// Property: Library::$app_path
+	// Path to app-wide libraries
+	private static $app_path = 'app/library/';
+	
 	/*
 		Method:
 			Library::load
@@ -30,13 +34,21 @@ class Library
 	{
 		foreach ( func_get_args() as $library )
 		{
-			$name = self::$path . strtolower($library) . '.php';
+			$lib = explode("/", $library);
+			$path = self::$path;
+			if ( $lib[0] == "app" && count($lib) > 1 )
+			{
+				$library = $lib[1];
+				$path = self::$app_path;
+			}
+			
+			$name = $path . strtolower($library) . '.php';
 			if ( ! file_exists($name) )
 				throw new LibraryNotFoundException($library);
 			
 			// Already exists?
 			if ( class_exists($library) )
-				return true;
+				continue;
 			
 			require($name);
 		}
