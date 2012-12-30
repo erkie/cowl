@@ -44,6 +44,8 @@ abstract class Command
 	// Translation table for layout types. Add a * (start) key for it to be used for every request type
 	protected $layouts = array();
 	
+	protected $add_request_to_template = true;
+	
 	/*
 		Constructor:
 			<Command::__construct>
@@ -149,7 +151,11 @@ abstract class Command
 				$request->response_type = 'html';
 			}
 		
-			$this->template->add('request', $request);
+			if ( $this->add_request_to_template )
+			{
+				$this->template->add('request', $request);
+			}
+			
 			Current::$request->setInfo('request', $request);
 		
 			Current::$plugins->hook('commandRun', $this, $method, $request);
