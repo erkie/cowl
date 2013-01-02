@@ -87,6 +87,8 @@ abstract class Command
 		$method = (count($args)) ? $args[count($args) - 1] : false;
 		
 		try {
+			$this->template->setType("html");
+			
 			// Call initialize method, if one exists
 			if ( method_exists($this, 'initialize') )
 			{
