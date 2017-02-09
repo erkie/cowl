@@ -118,7 +118,7 @@ class MySQLDB extends DBDriver
     {
       $bind_args = array('');
 
-      foreach ($args as $arg)
+      foreach ($args as &$arg)
       {
         $bind_args[0] .= $arg[0];
         $bind_args[] = &$arg[1];
