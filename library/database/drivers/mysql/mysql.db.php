@@ -7,7 +7,7 @@ class MySQLDBQueryException extends Exception {}
 /*
 	Class:
 		<DB>
-	
+
 	MySQL database wrapper with built in data sanitation.
 */
 
@@ -18,143 +18,120 @@ class MySQLDB extends DBDriver
 	public $output_query = false;
 
 	// Property: <MySQLDB::$conn>
-	// Holds the connection ID returned by mysql_query.
+	// Holds the connection instance.
 	private $conn;
 
 	/*
 		Constructor:
 			<MySQLDB::__construct>
-		
+
 		Connect to MySQL server. This should ideally only be created once, so be sure to keep track of all instances created.
-		
+
 		Parameters:
 			See <MySQLDB::connect> parameter list.
 	*/
-	
+
 	public function __construct($server, $user, $password, $database)
 	{
 		$this->connect($server, $user, $password, $database);
 	}
-	
+
 	/*
 		Method:
 			<MySQLDB::connect>
-		
+
 		Create connection to server. Will throw a <DBConnectionException> if there was a problem connecting. Will throw a <DBDatabaseSelectException> will be thrown if the chosen database could not be selected.
-		
+
 		Parameters:
 			string $server - The server to connect to.
 			string $user - The user for which the connection is owned.
 			string $password - Super secret password.
 			string $database - The name of the database to connect to.
 	*/
-	
+
 	private function connect($server, $user, $password, $database)
 	{
 		if ( ! $this->conn )
 		{
-			$this->conn = @mysql_connect($server, $user, $password);
-			if ( ! $this->conn )
+			$this->conn = new mysqli($server, $user, $password, $database);
+			if ( $this->conn->connect_errno > 0 )
 			{
-				throw new MySQLDBConnectionException(mysql_error());
-			}
-			
-			if ( ! mysql_select_db($database) )
-			{
-				throw new MySQLDBDatabaseSelectException(mysql_error());
+				throw new MySQLDBConnectionException($this->conn->connect_error);
 			}
 		}
 	}
-	
+
 	/*
 		Method:
 			<MySQLDB::execute>
-		
-		Execute a query. All input variables are sanitized by <DB::sanitize>.
-		
+
+		Execute a query.
+
 		Parameters:
 			string $query - The query to execute.
-			mixed $arg1 - An argument to be inserted into the query.
-			mixed $argN - ...
-		
+
 		Returns:
 			An instance to <DBResult> with the insert ID and affected rows.
 	*/
-	
+
 	public function execute($query)
 	{
-		$args = func_get_args();
-		$args = array_slice($args, 1);
-		
 		$this->startTimer();
-		$res = $this->query($query, $args);
+		$statement = $this->query($query);
 		$this->endTimer();
-		
-		$result = new MySQLDBResult($res);
-		$result->setID(mysql_insert_id());
-		$result->setAffected(mysql_affected_rows());
-		
+
+		$result = new MySQLDBResult($statement);
+		$result->setID($this->conn->insert_id);
+		$result->setAffected($this->conn->affected_rows);
+
 		return $result;
 	}
-	
+
 	/*
 		Method:
 			<MySQLDB::query>
-		
+
 		Execute a query, throwing a DBQueryExecption on failure. Sanitizes input.
-		
+
 		Parameters:
 			string $query - The query to execute.
-			array $args - An array of arguments to be passed to the query.
-		
-		Returns:
-			The result ID returned by mysql_query.
 	*/
-	
-	private function query($query, $args)
+
+	private function query($query_object)
 	{
-		$query = $query;
+    $query = $query_object->getQuery();
+    $args = $query_object->getArgs();
+
 		if ( $this->output_query )
 		{
 			var_dump($query);
 			$this->output_query = false;
 		}
-		
-		$ret = mysql_query($query);
-		if ( ! $ret )
+
+    $statement = $this->conn->prepare($query);
+    if ( ! $statement )
 		{
-			throw new MySQLDBQueryException(mysql_error() . ': ' . $query);
+			throw new MySQLDBQueryException($this->conn->error . ': ' . $query);
 		}
-		return $ret;
-	}
-	
-	/*
-		Method:
-			<MySQLDB::sanitize>
-		
-		Sanitize input by removing slashes and mysql_real_escape_string:ing. This is done recursively on an array.
-		
-		Parameters:
-			mixed $data - The data to sanitize. If $data is an array it will be recursively sanitized.
-	*/
-	
-	private static function sanitize($data)
-	{
-		// Recursively sanitize arrays.
-		if ( is_array($data) )
+
+    if ( count($args) > 0 )
+    {
+      $bind_args = array('');
+
+      foreach ($args as $arg)
+      {
+        $bind_args[0] .= $arg[0];
+        $bind_args[] = &$arg[1];
+      }
+
+      call_user_func_array(array($statement, 'bind_param'), $bind_args);
+    }
+
+		$success = $statement->execute();
+		if ( ! $success )
 		{
-			foreach ( $data as $key => $value )
-			{
-				$data[$key] = self::sanitize($value);
-			}
-			return $data;
+			throw new MySQLDBQueryException($this->conn->error . ': ' . $query);
 		}
-		
-		// Remove slashes added by PHP
-		if ( get_magic_quotes_gpc() )
-		{
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data);
+		return $statement;
 	}
 }
