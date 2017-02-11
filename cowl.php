@@ -4,7 +4,7 @@
 // True if called from terminal/CLI
 if (! defined('COWL_CLI') )
 {
-	define('COWL_CLI', isset($_SERVER['argv']));
+	define('COWL_CLI', php_sapi_name() === 'cli');
 }
 
 // Constant: COWL_DIR
