@@ -325,11 +325,6 @@ class MySQLQueryBuilder
 			{
 				if ( is_array($val) )
 				{
-					if ( ! $this->isIn($key) )
-						$args[$key] = $key . implode(' AND ' . $key, $val);
-					else
-						$args[$key] = sprintf('%s(%s)', $this->quoteStatement($key), join(', ', $val));
-
 					if ( $this->isIn($key) )
 					{
 						if (count($val) > 0)
@@ -701,6 +696,18 @@ class MySQLQueryBuilder
 			return array('s', $value);
 		}
 	}
+
+	/*
+		Method:
+			isIn
+		Check if it is an IN(a, b, c) field. Which will be in the format of "foo in"
+	*/
+
+	public function isIn($field)
+	{
+		$pieces = explode(' ', trim($field));
+		return isset($pieces[1]) && strtolower($pieces[1]) == 'in';
+	}
 }
 
 class MySQLQueryPart
@@ -733,17 +740,5 @@ class MySQLQueryPart
 	public function __toString()
 	{
 		return $this->getQuery();
-	}
-
-	/*
-		Method:
-			isIn
-		Check if it is an IN(a, b, c) field. Which will be in the format of "foo in"
-	*/
-
-	public function isIn($field)
-	{
-		$pieces = explode(' ', trim($field));
-		return isset($pieces[1]) && strtolower($pieces[1]) == 'in';
 	}
 }
