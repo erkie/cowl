@@ -34,7 +34,7 @@ class Request extends Registry
 	protected function initialize()
 	{
 		$this->data = $_REQUEST;
-		if ( get_magic_quotes_gpc() )
+		if ( function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc() )
 			$this->data = $this->stripSlashes($this->data);
 		$this->request_data = array();
 	}

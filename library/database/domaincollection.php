@@ -55,7 +55,7 @@ class DomainCollection implements Iterator, Countable
 
 	// Method: DomainCollection::rewind
 	// For <Iterator>
-	public function rewind()
+	public function rewind(): void
 	{
 		if ( ! $this->result )
 		{
@@ -68,7 +68,7 @@ class DomainCollection implements Iterator, Countable
 
 	// Method: DomainCollection::current
 	// For <Iterator>
-	public function current()
+	public function current(): mixed
 	{
 		if ( ! $this->result )
 			return current($this->instances);
@@ -78,6 +78,7 @@ class DomainCollection implements Iterator, Countable
 
 	// Method: DomainCollection::key
 	// For <Iterator>
+	#[\ReturnTypeWillChange]
 	public function key()
 	{
 		if ( ! $this->result )
@@ -87,6 +88,7 @@ class DomainCollection implements Iterator, Countable
 
 	// Method: DomainCollection::next
 	// For <Iterator>
+	#[\ReturnTypeWillChange]
 	public function next()
 	{
 		if ( ! $this->result )
@@ -107,7 +109,7 @@ class DomainCollection implements Iterator, Countable
 
 	// Method: DomainCollection::valid
 	// For <Iterator>
-	public function valid()
+	public function valid(): bool
 	{
 		if ( ! $this->result )
 		{
@@ -127,7 +129,7 @@ class DomainCollection implements Iterator, Countable
 			The number of rows as an integer.
 	*/
 
-	public function count()
+	public function count(): int
 	{
 		if ( ! $this->result )
 			return count($this->instances);

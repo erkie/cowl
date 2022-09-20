@@ -28,27 +28,28 @@ abstract class DBResult implements Iterator
 
 	// Method: DBResult::rewind
 	// For <Iterator>
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->position = 0;
 	}
 
 	// Method: DBResult::current
 	// For <Iterator>
-	public function current()
+	public function current(): mixed
 	{
 		return $this->get($this->position);
 	}
 
 	// Method: DBResult::key
 	// For <Iterator>
-	public function key()
+	public function key(): mixed
 	{
 		return $this->position;
 	}
 
 	// Method: DBResult::next
 	// For <Iterator>
+	#[\ReturnTypeWillChange]
  	public function next()
  	{
  		return $this->fetchRow();
@@ -56,6 +57,7 @@ abstract class DBResult implements Iterator
 
  	// Method: DBResult::prev
  	// Returns the previous result.
+	 #[\ReturnTypeWillChange]
  	public function prev()
  	{
  		$this->position--;
@@ -64,7 +66,7 @@ abstract class DBResult implements Iterator
 
 	// Method: DBResult::valid
 	// For <Iterator>
- 	public function valid()
+ 	public function valid(): bool
  	{
  		return (bool)$this->current();
  	}

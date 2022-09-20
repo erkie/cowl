@@ -80,7 +80,9 @@ class Config extends Registry
 		
 		foreach ( $arr as $key => $value )
 		{
-			$arr[$key] = str_replace('~', $base, $value);
+			if (is_scalar($value)) {
+				$arr[$key] = str_replace('~', $base, $value);
+			}
 		}
 		
 		foreach ( $arr as $key => $value )

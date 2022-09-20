@@ -39,6 +39,9 @@ function escape_html($html)
 {
 	if ( $html instanceof HTMLSafeString )
 		return $html;
+	if (!$html) {
+		return "";
+	}
 	return htmlentities($html, ENT_COMPAT, 'UTF-8');
 }
 
