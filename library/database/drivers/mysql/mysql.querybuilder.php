@@ -25,6 +25,9 @@ class MySQLQueryBuilder
 	// The prefix used for the table name in queries. Default value is p, p for prefix!
 	private $prefix = 'p';
 
+	protected $values;
+	protected $format_args;
+
 	/*
 		Method:
 			QueryBuilder::__construct

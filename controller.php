@@ -44,6 +44,7 @@ class Controller
 	private $is_error = false;
 	
 	private $pieces;
+	private $directories;
 	
 	/*
 		Constructor:
