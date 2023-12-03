@@ -43,6 +43,8 @@ class Controller
 	// A flag that is set to true if a command cannot be found, in which case the Error command used in <Controller::parse>
 	private $is_error = false;
 	
+	private $pieces;
+	
 	/*
 		Constructor:
 			Controller::__construct

@@ -19,6 +19,8 @@ class JS extends Plugin
 	// Property: JS::$is_package
 	private $is_package = true;
 	
+	protected $cache;
+	
 	public function __construct()
 	{
 		// Just set some paths and config options

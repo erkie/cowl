@@ -34,6 +34,9 @@ class FrontController
 	// Original URL.
 	protected $path;
 	
+	protected $controller;
+	protected $static_server;
+	
 	/*
 		Constructor:
 			<FrontController::__construct>

@@ -40,7 +40,7 @@ class Helpers
 	public static function load()
 	{
 		$helpers = func_get_args();
-		array_walk($helpers, array('self', 'fetch'));
+		array_walk($helpers, array(self::class, 'fetch'));
 	}
 	
 	/*
