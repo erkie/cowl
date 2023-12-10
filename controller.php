@@ -439,6 +439,8 @@ class RequestData
 	// The method of the request. Not determined by <Controller>, but by <Command> (FIXME: should it be, though?)
 	public $method;
 	
+	public $directory;
+	
 	public function toJSON()
 	{
 		return array(
