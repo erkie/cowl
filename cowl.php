@@ -132,7 +132,8 @@ class Cowl
 			$url .= (strstr($url, '?') ? '&' : '?') . 'response_type=' . $_REQUEST['response_type'];
 		
 		header('Location: ' . $url);
-		exit($url);
+		$escaped = htmlentities($url, ENT_COMPAT, "UTF-8");
+		exit("Redirecting to <a href='" . $escaped . "'>" . $escaped . "</a>");
 	}
 	
 	/*
