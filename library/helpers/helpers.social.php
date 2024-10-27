@@ -59,7 +59,7 @@ function share_url($name, $url, $title, $short_title, $image = '')
 	$short_title = urlencode($short_title);
 	
 	$db = array(
-		'facebook' => sprintf('https://www.facebook.com/sharer/sharer.php?s=100&p%%5Bsummary%%5D=%s&p%%5Burl%%5D=%s&p%%5Btitle%%5D=%s', $title, $url, $short_title),
+		'facebook' => sprintf('https://www.facebook.com/sharer/sharer.php?u=%s&title=%s', $url, $title),
 		'twitter' => sprintf('http://twitter.com/share?text=%s&url=%s', $title, $url),
 		'reddit' => sprintf('http://reddit.com/submit?url=%s&title=%s', $url, $title)
 	);
