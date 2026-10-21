@@ -40,10 +40,12 @@ define('COWL_DEBUG_MODE', false);
 		$arr - The array
 */
 
+if (!function_exists('array_last')) {
 function array_last($arr)
 {
 	$last = end($arr);
 	return $last;
+}
 }
 
 /*
