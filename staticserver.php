@@ -80,6 +80,14 @@ class StaticServer
 			$this->is_file = false;
 			return;
 		}
+
+		// Reject path traversal and null bytes outright. The framework must not
+		// rely on the front web server to normalize these away before serving.
+		if ( strpos($this->path, "\0") !== false || preg_match('#(^|[/\\\\])\.\.([/\\\\]|$)#', $this->path) )
+		{
+			$this->is_file = false;
+			return;
+		}
 		
 		// Check to see if it really exists
 		if ( file_exists($this->path) )

@@ -40,6 +40,9 @@ if ( ! is_dir('cache/') )
 	shell_exec("mkdir cache");
 }
 
-shell_exec("chmod 0777 ./cache");
+# 0775 keeps the cache writable by the owner and web-server group without
+# making it world-writable. Adjust group ownership if your web server runs as
+# a different user (e.g. chown :www-data ./cache).
+shell_exec("chmod 0775 ./cache");
 
 echo "*** Done.\n";

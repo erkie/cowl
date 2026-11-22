@@ -197,6 +197,14 @@ class Templater
 	
 	public function setType($type)
 	{
+		// The type is used to build an include path and can originate from the
+		// request (e.g. ?response_type=). Restrict it to simple names so it can
+		// never be used to reference an unexpected file.
+		if ( ! is_string($type) || ! preg_match('/^[A-Za-z0-9_-]+$/', $type) )
+		{
+			throw new TPLLayoutNotExistsException(self::$layout_dir . 'layout.' . $type . '.php');
+		}
+
 		$name = self::$layout_dir . 'layout.' . $type . '.php';
 		if ( ! file_exists($name) )
 		{

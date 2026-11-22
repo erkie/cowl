@@ -64,11 +64,26 @@ class Upload
 	public function __construct($file_key)
 	{
 		$this->data = isset($_FILES[$file_key]) ? $_FILES[$file_key] : false;
-		
+
 		if ( $this->data )
 		{
-			$this->name = $this->data['name'];
+			$this->name = $this->sanitizeName($this->data['name']);
 		}
+	}
+
+	/*
+		Method:
+			Upload::sanitizeName
+
+		Reduce a filename to a bare basename, stripping any directory components
+		(unix or windows separators) and null bytes. This prevents a client-supplied
+		filename such as "../../evil.php" from writing outside the destination dir.
+	*/
+
+	private function sanitizeName($name)
+	{
+		$name = str_replace(array('\\', "\0"), array('/', ''), (string) $name);
+		return basename($name);
 	}
 	
 	public function setMaxSize($size, $exp = 'mb')
@@ -89,7 +104,7 @@ class Upload
 	
 	public function setName($name, $collision_strategy = Upload::NUMBER)
 	{
-		$this->name = $name;
+		$this->name = $this->sanitizeName($name);
 		$this->name_collision_strategy = Upload::NUMBER;
 	}
 	

@@ -6,6 +6,6 @@
 	// Database
 	'db.server' =>   "localhost",
 	'db.user' =>   "root",
-	'db.password' => "a|>4ssword",
+	'db.password' => "", // Set your production database password here (do not commit real secrets)
 	'db.database' => "cowl"
 );

@@ -116,10 +116,15 @@ function css()
 function js()
 {
 	$request = Current::$request->getInfo('request');
-	
+
+	// Values are JSON-encoded with the HTML-context flags so that request data
+	// (which includes attacker-controlled URL segments) cannot break out of the
+	// inline <script> element, e.g. via a literal "</script>".
+	$json_flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+
 	printf('<script type="text/javascript">');
-	printf('	var COWL_BASE = "%s";', COWL_BASE);
-	printf('	var COWL_CURRENT = [%s];', fimplode('"%__val__;"', array_map('addslashes', $request->original_request), ', '));
+	printf('	var COWL_BASE = %s;', json_encode(COWL_BASE, $json_flags));
+	printf('	var COWL_CURRENT = %s;', json_encode(array_values((array) $request->original_request), $json_flags));
 	printf('</script>');
 	
 	$scripts = Current::$request->getInfo('js');
@@ -140,7 +145,10 @@ function js()
 	if ( $fire = Current::$request->getInfo('js_fire') )
 	{
 		$request = Current::$request->getInfo('request');
-		printf('<script type="text/javascript">Cowl.fire("%s", "%s")</script>', strtolower(implode('.', $request->pieces)), $request->method);
+		$json_flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+		printf('<script type="text/javascript">Cowl.fire(%s, %s)</script>',
+			json_encode(strtolower(implode('.', $request->pieces)), $json_flags),
+			json_encode($request->method, $json_flags));
 	}
 }
 

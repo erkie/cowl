@@ -255,7 +255,7 @@ class MySQLQueryBuilder
 			{
 				foreach ( $object->fetch() as $key => $value )
 				{
-					$query .= sprintf('%s.`%s` = ? AND', $this->prefix, $key) . PHP_EOL;
+					$query .= sprintf('%s.`%s` = ? AND', $this->prefix, $this->escapeIdentifier($key)) . PHP_EOL;
 					$args[] = $value;
 				}
 				$query = substr($query, 0, -strlen(' AND' . PHP_EOL));
@@ -458,7 +458,7 @@ class MySQLQueryBuilder
 		$values_arr = $object->fetch();
 		foreach ( $values_arr as $key => $value )
 		{
-			$fields .= '`' . $key . '`, ';
+			$fields .= '`' . $this->escapeIdentifier($key) . '`, ';
 			$values .= '?, ';
 			$args[] = $value;
 		}
@@ -587,7 +587,56 @@ class MySQLQueryBuilder
 
 	public function quoteField($field)
 	{
-		return $this->prefix . '.`' . $field . '`';
+		return $this->prefix . '.`' . $this->escapeIdentifier($field) . '`';
+	}
+
+	/*
+		Method:
+			QueryBuilder::escapeIdentifier
+
+		Escape backticks inside an identifier (table/column name) by doubling
+		them, so a crafted identifier cannot break out of the backtick quoting.
+	*/
+
+	public function escapeIdentifier($identifier)
+	{
+		return str_replace('`', '``', $identifier);
+	}
+
+	/*
+		Method:
+			QueryBuilder::quoteOperator
+
+		Validate a comparison operator against a whitelist. The operator is
+		spliced into the query verbatim, so it must never contain anything but a
+		known-safe operator.
+	*/
+
+	private function quoteOperator($operator)
+	{
+		$allowed = array('=', '!=', '<>', '<', '>', '<=', '>=', 'like', 'in', 'is', 'not');
+		if ( ! in_array(strtolower($operator), $allowed, true) )
+		{
+			throw new MySQLQBInvalidArgumentException('Illegal operator: ' . $operator);
+		}
+		return $operator;
+	}
+
+	/*
+		Method:
+			QueryBuilder::quoteDirection
+
+		Validate an ORDER BY direction. Only ASC and DESC are permitted.
+	*/
+
+	private function quoteDirection($direction)
+	{
+		$direction = strtoupper(trim($direction));
+		if ( $direction !== 'ASC' && $direction !== 'DESC' )
+		{
+			throw new MySQLQBInvalidArgumentException('Illegal order direction: ' . $direction);
+		}
+		return $direction;
 	}
 
 	/*
@@ -620,7 +669,7 @@ class MySQLQueryBuilder
 			return $this->quoteField($pieces[0]) . ' = ';
 		}
 
-		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
+		return $this->quoteField($pieces[0]) . ' ' . $this->quoteOperator($pieces[1]) . ' ';
 	}
 
 	public function quoteOrder($field)
@@ -632,7 +681,7 @@ class MySQLQueryBuilder
 			return $this->quoteField($pieces[0]);
 		}
 
-		return $this->quoteField($pieces[0]) . ' ' . $pieces[1] . ' ';
+		return $this->quoteField($pieces[0]) . ' ' . $this->quoteDirection($pieces[1]) . ' ';
 	}
 
 	/*

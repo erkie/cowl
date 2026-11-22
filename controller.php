@@ -194,7 +194,19 @@ class Controller
 		// otherwise require should be used, because the performance penalty used is just unnecesary when you
 		// know you are only going to include one command per request.
 		$file_to_include = $request_data->base_directory . $request_data->app_directory . $request_data->command;
-		
+
+		// Defense in depth: never include a file that resolves outside the
+		// commands directory, no matter how the front web server handled the
+		// request path. Fall back to the error command instead.
+		if ( ! $this->isWithinCommands($file_to_include) )
+		{
+			$request_data->app_directory = '';
+			$request_data->directory = self::$commands_dir;
+			$request_data->command = 'command.error.php';
+			$request_data->argv = array_merge(array($this->error_command), $pieces);
+			$file_to_include = $request_data->base_directory . $request_data->command;
+		}
+
 		$this->includeBase($file_to_include);
 		
 		if ( ! self::$use_require_once)
@@ -258,6 +270,34 @@ class Controller
 		return ! $this->directories || ! count($this->directories);
 	}
 	
+	/*
+		Method:
+			Controller::isWithinCommands
+
+		Verify that a command file to be included resolves to a path inside the
+		commands directory. Protects against path traversal via crafted request
+		paths (e.g. "..") regardless of front-web-server normalization.
+	*/
+
+	private function isWithinCommands($file)
+	{
+		if ( strpos($file, "\0") !== false )
+			return false;
+
+		$real = realpath($file);
+
+		// Missing files are handled elsewhere (routing/error command); only
+		// reject here when the path itself tries to traverse.
+		if ( $real === false )
+			return strpos($file, '..') === false;
+
+		$base = realpath(self::$commands_dir);
+		if ( $base === false )
+			return false;
+
+		return $real === $base || strpos($real, $base . DIRECTORY_SEPARATOR) === 0;
+	}
+
 	private function includeBase($path)
 	{
 		$path = str_replace(self::$commands_dir, '', $path);
