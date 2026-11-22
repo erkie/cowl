@@ -372,3 +372,33 @@ Element.implement({
 		return this.match(selector) ? this : this.getParents().filter(selector)[0];
 	}
 });
+
+/*
+	CSRF protection
+
+	Automatically attach the token stored in <meta name="csrf-token"> (emitted by
+	the csrf_meta() view helper) to every MooTools Ajax request as the
+	X-CSRF-Token header. This lets browser-originated XHR satisfy Cowl's CSRF
+	validation without each call having to add the token by hand. If there is no
+	such meta tag on the page, nothing is added.
+*/
+(function() {
+	if ( typeof Request == 'undefined' || ! Request.prototype ) return;
+
+	var cachedToken;
+	function csrfToken() {
+		// Only cache a non-empty token, so a request fired before the meta tag
+		// exists does not permanently cache an empty value.
+		if ( cachedToken ) return cachedToken;
+		var meta = document.getElement && document.getElement('meta[name="csrf-token"]');
+		cachedToken = (meta && meta.get('content')) || '';
+		return cachedToken;
+	}
+
+	var originalSend = Request.prototype.send;
+	Request.prototype.send = function() {
+		var token = csrfToken();
+		if ( token ) this.setHeader('X-CSRF-Token', token);
+		return originalSend.apply(this, arguments);
+	};
+})();
