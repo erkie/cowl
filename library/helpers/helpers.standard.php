@@ -359,3 +359,43 @@ class HTMLSafeString
 		return $this->text;
 	}
 }
+
+/*
+	Function:
+		csrf_token
+
+	Return the current session's CSRF token. Useful for building custom forms
+	or passing the token to JavaScript.
+*/
+
+function csrf_token()
+{
+	return CSRF::token();
+}
+
+/*
+	Function:
+		csrf_field
+
+	Print a hidden input element carrying the CSRF token. Place it inside any
+	hand-written state-changing (<form method="post">) form. Forms built with
+	<form_for> get this automatically.
+*/
+
+function csrf_field()
+{
+	echo CSRF::field();
+}
+
+/*
+	Function:
+		csrf_meta
+
+	Print a <meta name="csrf-token"> tag. Handy for reading the token from
+	JavaScript to send it as the X-CSRF-Token header on AJAX requests.
+*/
+
+function csrf_meta()
+{
+	printf('<meta name="csrf-token" content="%s" />', htmlspecialchars(CSRF::token(), ENT_QUOTES, 'UTF-8'));
+}

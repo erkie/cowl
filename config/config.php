@@ -5,6 +5,11 @@
 	'release_tag' => 'dev', // Change to version number or commit hash when in production mode, used for caches
 	'lang' => 'en', // Change to language of site
 
+	// CSRF protection for state-changing requests (POST/PUT/PATCH/DELETE). Enabled
+	// by default; set to false to opt out site-wide. Tokens are embedded in forms
+	// built with form_for() automatically; use csrf_field()/csrf_meta() otherwise.
+	'csrf.enabled' => true,
+
 	'paths.base'  => "cowl", // Leave base empty for the value to be set at run time
 	'paths.cache' => "~/cache/",
 

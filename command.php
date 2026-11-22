@@ -43,8 +43,20 @@ abstract class Command
 	// Property: <Command::$layouts>
 	// Translation table for layout types. Add a * (start) key for it to be used for every request type
 	protected $layouts = array();
-	
+
 	protected $add_request_to_template = true;
+
+	// Property: <Command::$csrf_protection>
+	// Whether CSRF protection is enforced for this command. CSRF is on by
+	// default (opt-out); set this to false to disable it for the whole command
+	// (e.g. a command that only serves third-party webhooks authenticated some
+	// other way). The global `csrf.enabled` config can disable it site-wide.
+	protected $csrf_protection = true;
+
+	// Property: <Command::$csrf_exempt>
+	// Action method names that are exempt from CSRF validation even when the
+	// command is otherwise protected, e.g. array('webhook', 'callback').
+	protected $csrf_exempt = array();
 	
 	/*
 		Constructor:
@@ -161,12 +173,19 @@ abstract class Command
 			Current::$request->setInfo('request', $request);
 		
 			Current::$plugins->hook('commandRun', $this, $method, $request);
-		
+
 			// Prepare some stuff before firing the command
 			$this->requestBegan();
-		
+
 			$this->error_occured = false;
-		
+
+			// Reject state-changing requests that fail CSRF validation before
+			// the action runs.
+			if ( $this->csrfProtectionActive($method) && ! CSRF::isValidRequest() )
+			{
+				throw new CSRFValidationException($method);
+			}
+
 			// _This_ is where all the magic happens
 			$ret = call_user_func_array(array($this, $method), $args);
 			
@@ -177,17 +196,22 @@ abstract class Command
 				return is_array($ret) ? Cowl::url($ret) : $ret;
 			}
 		}
+		catch (CSRFValidationException $e)
+		{
+			$this->error_occured = 403;
+			http_response_code(403);
+		}
 		catch (RegistryMemberNotFoundException $e)
 		{
 			$this->error_occured = 400;
-			header("HTTP/1.1", true, 400);
+			http_response_code(400);
 		}
 		catch (AbortCommand $e)
 		{
 			$code = $e->getMessage();
 
 			$this->error_occured = $code;
-			header("HTTP/1.1", true, $code);
+			http_response_code($code);
 		}
 		catch (CowlRedirectCommand $e)
 		{
@@ -264,7 +288,45 @@ abstract class Command
 			'success' => $success
 		));
 	}
-	
+
+	/*
+		Method:
+			Command::csrfProtectionActive
+
+		Decide whether the current request to $method must pass CSRF validation.
+		Protection is on by default and skipped when:
+
+			- running from the CLI,
+			- disabled site-wide via the `csrf.enabled` config,
+			- disabled for this command via <Command::$csrf_protection>,
+			- the action is listed in <Command::$csrf_exempt>.
+
+		The actual safe-HTTP-method check lives in <CSRF::isValidRequest>.
+
+		Parameters:
+			$method - The resolved action method name.
+
+		Returns:
+			True if CSRF validation should be enforced.
+	*/
+
+	protected function csrfProtectionActive($method)
+	{
+		if ( COWL_CLI )
+			return false;
+
+		if ( ! $this->csrf_protection )
+			return false;
+
+		if ( in_array($method, $this->csrf_exempt, true) )
+			return false;
+
+		if ( ! Current::$config->getOr('csrf.enabled', true) )
+			return false;
+
+		return true;
+	}
+
 	/*
 		Method:
 			<Command::setTemplateDir>
@@ -434,8 +496,8 @@ abstract class Command
 	public function abort($code)
 	{
 		$this->error_occured = $code;
-		header("HTTP/1.1", true, $code);
-		
+		http_response_code($code);
+
 		throw new AbortCommand($code);
 	}
 	

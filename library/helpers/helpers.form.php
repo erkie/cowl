@@ -174,17 +174,26 @@ class FormHelper
 		
 		$attributes = $this->attributes;
 		$attributes['action'] = $this->path;
-		
+
 		// We need a method, default is POST
 		if ( ! isset($attributes['method']) )
 			$attributes['method'] = 'POST';
-		
+
 		// Default id is formed as modelname_form
 		if ( ! isset($attributes['id']) )
 			$attributes['id'] = sprintf('%s-form', $this->model_name);
-		
+
+		$method = strtoupper($attributes['method']);
+
 		$attributes = fimplode('%__key__;="%__val__;"', $attributes, ' ');
-		return sprintf('<form %s>', $attributes);
+		$form = sprintf('<form %s>', $attributes);
+
+		// Automatically embed a CSRF token in state-changing forms, unless
+		// protection has been disabled site-wide.
+		if ( $method !== 'GET' && class_exists('CSRF') && Current::$config->getOr('csrf.enabled', true) )
+			$form .= CSRF::field();
+
+		return $form;
 	}
 	
 	private function obCallback($a)

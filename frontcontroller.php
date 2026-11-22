@@ -8,6 +8,7 @@ Cowl::timer('cowl require system');
 
 require('controller.php');
 require('staticserver.php');
+require('csrf.php');
 require('command.php');
 require('current.php');
 require('plugins.php');
