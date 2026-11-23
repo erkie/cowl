@@ -179,11 +179,22 @@ abstract class Command
 
 			$this->error_occured = false;
 
-			// Reject state-changing requests that fail CSRF validation before
-			// the action runs.
+			// Validate CSRF on state-changing requests before the action runs.
 			if ( $this->csrfProtectionActive($method) && ! CSRF::isValidRequest() )
 			{
-				throw new CSRFValidationException($method);
+				// In report-only mode (csrf.enforce = false) the failure is logged
+				// but the request is allowed through. This lets a site roll CSRF
+				// out without breaking clients that loaded a page (or cached the
+				// JS) before tokens were deployed; flip csrf.enforce to true once
+				// those old clients have aged out.
+				if ( Current::$config->getOr('csrf.enforce', true) )
+				{
+					throw new CSRFValidationException($method);
+				}
+				else if ( Current::$log )
+				{
+					Current::$log->error('csrf', sprintf('CSRF token missing/invalid for %s::%s (report-only, allowed)', get_class($this), $method));
+				}
 			}
 
 			// _This_ is where all the magic happens

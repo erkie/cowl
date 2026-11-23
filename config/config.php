@@ -10,6 +10,13 @@
 	// built with form_for() automatically; use csrf_field()/csrf_meta() otherwise.
 	'csrf.enabled' => true,
 
+	// Whether a failed CSRF check rejects the request (403). Set to false for a
+	// report-only grace period: tokens are still validated and failures logged,
+	// but requests are allowed through — useful when first rolling CSRF out to a
+	// live site so clients that loaded a page before tokens shipped keep working.
+	// Flip back to true once old clients have aged out.
+	'csrf.enforce' => true,
+
 	'paths.base'  => "cowl", // Leave base empty for the value to be set at run time
 	'paths.cache' => "~/cache/",
 
